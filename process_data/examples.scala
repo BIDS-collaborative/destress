@@ -1,18 +1,17 @@
 // TO RUN WITH BIDMACH DO:
-// /path/to/bidmach utils.scala examples.scala
+// $ /opt/BIDMach_1.0.0-full-linux-x86_64/bidmach utils.scala examples.scala
 // this can be fixed
 
 import utils._  // utility methods
 
-val dir = "/home/anasrferreira/data/";
-// val dictCount = loadIMat(dir+"dictall.imat");
-// val dictWords = Dict(loadSBMat(dir+"dictall.sbmat"));
+val dir = "/var/local/destress/tokenized/";
+// val dictCount = loadIMat(dir+"zz_dict.imat");
+// val dictWords = Dict(loadSBMat(dir+"zz_dict.sbmat"));
 val xmlFile = loadIMat(dir+"zz.xml.imat");
-// val xmlFile2 = loadIMat(dir+"zy.xml.imat");
 
 // newdict with a Dummy value at index 0
 // loadDict is a method in utils.scala
-val newdict = loadDict(dir+"dictall.sbmat",dir+"dictall.imat")
+val newdict = loadDict(dir+"zz_dict.sbmat",dir+"zz_dict.imat")
 
 
 // Check indices
