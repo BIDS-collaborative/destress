@@ -1,5 +1,5 @@
 // Utility Functions to Process Data after xmltweet
-
+import scala.io.Source
 object utils {
 
     // Returns pairs of indices in a xml.imat file with the beginning and end of a specific xml tag
@@ -55,5 +55,37 @@ object utils {
     	val temp = xmlImat(bIdx->eIdx);
 	temp(find(temp>0)) //these are dictionary indices
     }
+    
+        /*Method to combine multiple dictionaries into a single BIDMat.Dict.
+   //Inputs:
+   -directory: directory containing xmlfile imat and dict [sbmat,imat] that were output from xmltweet.
+   -xmlList: input file containing a list of the names of the xml files.
+  //Returns:
+  -BIDMat.Dict object containing a combination of all the counts of the dictionaries.
+  //Example call:
+  //>val k:BIDMat.Dict=combine_dicts("allXmlNames.txt","/Users/helgammal/Downloads/BIDMach_1.0.0-osx-x86_64/src/main/C/newparse")
+  //>k.counts("<posts>")
+*/
+def combine_dicts(xmlList:String,directory:String): BIDMat.Dict = {
+	
+	//Get list of xml files from input file. 
+	var fileList = Source.fromFile(xmlList).getLines().toList;
+	
+	//Initialize currentDict.
+	var someIMat:BIDMat.IMat = loadIMat(directory+"/"+fileList(0)+".xml.imat");
+    var currentDict:BIDMat.Dict = loadDict(directory+"/"+fileList(0)+".xml_dict.sbmat",directory+"/"+fileList(0)+".xml_dict.imat");
+   
+	var finalDict: BIDMat.Dict = currentDict;
+	
+	//Go through list:
+	for (line <- fileList.drop(1)) 
+	{
+		someIMat = loadIMat(directory+"/"+line+".xml.imat");
+        currentDict = loadDict(directory+"/"+line+".xml_dict.sbmat",directory+"/"+line+".xml_dict.imat");
+        finalDict = Dict.union(finalDict,currentDict);
+	}
+
+    finalDict
+}
 
 }
