@@ -117,7 +117,7 @@ public class LiveJournalSearch {
     System.out.print("Enter which field to search or END to stop searching: ");
     fieldStr = userSC.nextLine();
 
-    if (fieldStr.equals("END") || field.Str.equals("end")) {
+    if (fieldStr.equals("END") || fieldStr.equals("end")) {
       return false;
     }
 
