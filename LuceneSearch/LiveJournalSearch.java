@@ -26,19 +26,41 @@ import java.util.Map;
 
 /* 
  *  Rough search implementation using Lucene's API w/ inverted index
- *  Index directory is located at file specified by INDEX_PATH_STr.
+ *  Index directory is located at file specified by INDEX_PATH_STR.
  *  Reads in a csv file and maps corresponding integer to mood strings
  * 
  *
- *  Query structure is as follows:
- *    FIELD:"query"
+ *  EXAMPLE SEARCH:
+ *  (searches in the body-text field, for the string 'I am pregnant', with
+ *   with a limit of 15 matches)
+ *
+ *  Enter which field to search or END to stop searching: ptext
+ *  Query? I am pregnant
+ *  Maxmimum number of searches? 15  
+ *  
+ *  Useful Query Syntax:
+ *  'this is a string' : searches for the exact string  
+ *  'this is*'         : searchs for the specified string PLUS a wildcard (generally more useful)
+ *      Lucene Parser DOES NOT recognize '*' wildcard by itself. Do not preceed or follow it with a whitespace.
+ *      Simply attach it to a string as demonstrated above.
+ * 
  *  This searches for the string specified by query inside a FIELD.
  *    Possible Fields are:
- *      mood : integer value that evalutes to user-specifed moodid tag
  *      path : path to the specific .xml document
  *      ptext: the text body (what the user writes in the blog post)
  *      url  : the url to the actual blog entry, as in LiveJournal
  *      user : the username of the poster
+ *      mood : integer value that evalutes to user-specifed moodid tag
+ *  
+ *  -----TO RUN:--------
+ *  1) connect to mercury, cd to /home/geneyoo/LJ_Lucene
+ *  2) compile with:
+ *     javac -classpath .:lucene-core-4.0.0.jar:lucene-analyzers-common-4.0.0.jar:lucene-queryparser-4.0.0.jar LiveJournalSearch.java 
+ *  3) run with:
+ *     java -classpath .:lucene-core-4.0.0.jar:lucene-analyzers-common-4.0.0.jar:lucene-queryparser-4.0.0.jar LiveJournalSearch
+ *  4) Follow console prompts.
+ *  5) Results will get dumped to the console
+ *
  * @author Gene Yoo
 */
 
