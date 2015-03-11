@@ -153,4 +153,8 @@ val m = Dict.treeFlush(Array[Dict](newdict, newdict2));
 val p = dd.trim(2);
 val mp1 = dd --> p
 
- val m=newdict(find(sum(sBoWposts.t)>20))
+val m = newdict(find(sum(sBoWposts.t)>20)) 
+// slow -> wordcount only within valid <event>
+// Idea: update newdict.counts with this, then trim
+// After that we merge smaller dictionaries
+
