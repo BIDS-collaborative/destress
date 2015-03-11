@@ -6,7 +6,7 @@ import utils._  // utility methods
 
 val dir = "/var/local/destress/tokenized/";
 val xmlFile = loadIMat(dir+"zz.xml.imat");
-val newdict = loadDict(dir+"zz_dict.sbmat",dir+"zz_dict.imat")
+val newdict = loadDict(dir+"zz_dict.sbmat",dir+"zz_dict.imat");
 
 
 val usersIdx = getBeginEnd(xmlFile, newdict, "posts");
@@ -16,7 +16,7 @@ val moodIdx = getBeginEnd(xmlFile, newdict, "current_moodid");
 
 
 // Get nrUsers
-var nrUsers = 0
+var nrUsers = 0;
 if (usersIdx(0,0) != -1) {nrUsers = usersIdx.nrows}
 
 
@@ -30,7 +30,6 @@ val validEvent = find(xmlFile(eventIdx(?,1)-1) == newdict("</string>"));
 val nrValidPosts = validEvent.nrows;
 // valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
 var valEventIdx = eventIdx(validEvent, ?) + (1\ -1);
-
 val valpostIdx = postIdx(validEvent,?); //assumes postIdx.nrows == eventIdx.nrows
 
 
@@ -40,42 +39,37 @@ val nrWords = newdict.cstr.nrows;
 
 // Initialize structures
 // For sparse posts
-var sBoWposts = sparse(izeros(nrWords,0))
-
+var sBoWposts = sparse(izeros(nrWords,0));
 // For now, IMat with (UserId, CurrentMoodId) - later do datetime+replycount
-var labels = izeros(2, nrValidPosts);
+var labels = izeros(2,0);
 
 var posti = 0; // iteration counter for while
 var userk = 0; // current userid
 
-var moodIdx = irow(0,0)
-var moodid = -1; // current moodid
-
-var postStart = 0
-var postEnd = 0
 
 while (posti < nrValidPosts) {
 
-      postStart = valpostIdx(posti, 0)
-      postEnd   = valpostIdx(posti, 1)
+      val postStart = valpostIdx(posti, 0)
+      val postEnd   = valpostIdx(posti, 1)
 
       // Increment userk until the first index of the post is less
       // than the last index of the current user
       while (postStart > usersIdx(userk, 1)) userk += 1
 
       // Get indices of "current_moodid" open and close tags 
-      moodIdx = getBeginEnd(xmlFile(postStart -> postEnd), newdict, "current_moodid");
+      val moodIdx = getBeginEnd(xmlFile(postStart -> postEnd), newdict, "current_moodid");
       // Check to make sure the tags appear and that it is an int
       if (moodIdx.nrows==1 && newdict(xmlFile(postStart+moodIdx(0,0))) =="<int>") {
-           moodid = twoComplementToInt(xmlFile(postStart+moodIdx(0,0)+1))(0)  
-	   }
+      	  val moodid = twoComplementToInt(xmlFile(postStart+moodIdx(0,0)+1))(0);
 
-      	 // Add to "labels" -> userid, currentmoodId
+	  // Add to "labels" -> userid, currentmoodId
+	  labels \= icol(userk, moodid);
 
-	 // Add sparse column of current post BoW, to full BoW     	 
-	 var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
-	 temp = sparse(postWordId,izeros(postWordId.nrows,1),iones(postWordId.nrows,1), nrWords,1);
-	 sBoWposts \= temp; // horizontal concatenation of another post's bag-of-words
+	  // Add sparse column of current post BoW, to full BoW     	 
+	  val postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
+	  val temp = sparse(postWordId,izeros(postWordId.nrows,1),iones(postWordId.nrows,1), nrWords,1);
+	  sBoWposts \= temp; // horizontal concatenation of another post's bag-of-words
+      }
 
       // Next Post
       posti += 1;
