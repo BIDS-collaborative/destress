@@ -1,8 +1,5 @@
 // Utility Functions to Process Data after xmltweet
 
-
-
-
 object utils {
 
     // Returns pairs of indices in a xml.imat file with the beginning and end of a specific xml tag
@@ -12,8 +9,6 @@ object utils {
     // Output: (begin, end): (IMat,IMat)
     //   	   begin - vector with indices for "<xmlTagName>" [+1] (if shiftBegInd)   
     //		   end - vector with indices for "</xmlTagName>"   
-
-
 
     def getBeginEndIndependent(xmlImat:BIDMat.IMat, dict:BIDMat.Dict, xmlTagName:String, shiftBegInd:Boolean = true): (BIDMat.IMat, BIDMat.IMat) = {
     	// assume dict(0) is just a dummy string
