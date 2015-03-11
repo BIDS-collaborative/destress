@@ -49,20 +49,35 @@ var labels = izeros(nrValidPosts, 2);
 
 var posti = 0; // iteration counter for while
 var userk = 0; // current userid
+
+var moodIdx = irow(0,0)
+var moodid = -1; // current moodid
+
+var postStart = 0
+var postEnd = 0
+
 while (posti < nrValidPosts) {
 
-      // Increment userk
-      // for that use info in user[s]Idx and valpostIdx
+      postStart = valpostIdx(posti, 0)
+      postEnd   = valpostIdx(posti, 1)
 
-      // Check if moodid exist
-      // if yes work on it
+      // Increment userk until the first index of the post is less
+      // than the last index of the current user
+      while (postStart > usersIdx(userk, 1)) userk += 1
+
+      // Get indices of "current_moodid" open and close tags 
+      moodIdx = getBeginEnd(xmlFile(postStart -> postEnd), newdict, "current_moodid");
+      // Check to make sure the tags appear and that it is an int
+      if (moodIdx.nrows==1 && newdict(xmlFile(postStart+moodIdx(0,0))) =="<int>") {
+           moodid = twoComplementToInt(xmlFile(postStart+moodIdx(0,0)+1))(0)  
+	   }
 
       	 // Add to "labels" -> userid, currentmoodId
 
 
 	 // Add to cols/rows/values for future sparse matrix
      	 
-	 var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
+//	  var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
 
       posti += 1;
 }
