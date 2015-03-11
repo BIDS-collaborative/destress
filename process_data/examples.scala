@@ -135,3 +135,22 @@ full(newsparse)
 newsparse(?,0\1\2)
 
 // HERE
+
+
+// DICT UNIONS
+val xmlFile2 = loadIMat(dir+"zy.xml.imat");
+val newdict2 = loadDict(dir+"zy_dict.sbmat", dir+"zy_dict.imat");
+val dd = Dict.union(newdict, newdict2);
+val m1 = newdict --> dd;
+val m2 = newdict2 --> dd;
+
+newdict2(2) == dd(m2(2))
+val f = find(xmlFile2==2)
+newdict2(xmlFile2(f(0))) == dd(m2(xmlFile2(f(0))))
+
+
+val m = Dict.treeFlush(Array[Dict](newdict, newdict2));
+val p = dd.trim(2);
+val mp1 = dd --> p
+
+ val m=newdict(find(sum(sBoWposts.t)>20))
