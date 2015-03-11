@@ -55,4 +55,10 @@ object utils {
 
 	Dict.union(dfiller,dict) // union dictionary with dummy
     }
+
+    def getWordsOnly(xmlImat:BIDMat.IMat, bIdx:Int, eIdx:Int): BIDMat.IMat = {
+    	val temp = xmlImat(bIdx->eIdx);
+	temp(find(temp>0)) //these are dictionary indices
+    }
+
 }
