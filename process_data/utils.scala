@@ -60,13 +60,14 @@ object utils {
    //Inputs:
    -directory: directory containing xmlfile imat and dict [sbmat,imat] that were output from xmltweet.
    -xmlList: input file containing a list of the names of the xml files.
+   -maxDictItems: Maximum number of dictionary items before trimming
   //Returns:
   -BIDMat.Dict object containing a combination of all the counts of the dictionaries.
   //Example call:
   //>val k:BIDMat.Dict=combine_dicts("allXmlNames.txt","/Users/helgammal/Downloads/BIDMach_1.0.0-osx-x86_64/src/main/C/newparse")
   //>k.counts("<posts>")
 */
-def combine_dicts(xmlList:String,directory:String): BIDMat.Dict = {
+def combine_dicts(xmlList:String,directory:String,maxDictItems:Int = 1000000): BIDMat.Dict = {
 	
 	//Get list of xml files from input file. 
 	var fileList = Source.fromFile(xmlList).getLines().toList;
@@ -81,8 +82,18 @@ def combine_dicts(xmlList:String,directory:String): BIDMat.Dict = {
 	for (line <- fileList.drop(1)) 
 	{
 		someIMat = loadIMat(directory+"/"+line+".xml.imat");
-        currentDict = loadDict(directory+"/"+line+".xml_dict.sbmat",directory+"/"+line+".xml_dict.imat");
+        currentDict = loadDict(directory+"/"+line+"_dict.sbmat",directory+"/"+line+"_dict.imat");
         finalDict = Dict.union(finalDict,currentDict);
+	
+
+	   // Automatically trim until number of dictionary entries less 
+	   // than maxDictItems
+	   var threshold=1
+	   while (finalDict.length>maxDictItems) {
+	           finalDict=finalDict.trim(threshold);
+		   threshold+=1;
+	   }
+	   // TO DO: RE-PAD THE DICTIONARY AFTER TRIM
 	}
 
     finalDict
