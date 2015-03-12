@@ -73,7 +73,7 @@ def combine_dicts(xmlList:String,directory:String): BIDMat.Dict = {
 	
 	//Initialize currentDict.
 	var someIMat:BIDMat.IMat = loadIMat(directory+"/"+fileList(0)+".xml.imat");
-    var currentDict:BIDMat.Dict = loadDict(directory+"/"+fileList(0)+".xml_dict.sbmat",directory+"/"+fileList(0)+".xml_dict.imat");
+    var currentDict:BIDMat.Dict = loadDict(directory+"/"+fileList(0)+"_dict.sbmat",directory+"/"+fileList(0)+"_dict.imat");
    
 	var finalDict: BIDMat.Dict = currentDict;
 	
