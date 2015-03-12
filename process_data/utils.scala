@@ -78,9 +78,14 @@ def combine_dicts(xmlList:String,directory:String,maxDictItems:Int = 1000000): B
    
 	var finalDict: BIDMat.Dict = currentDict;
 	
+	// print progress
+	println(s"Processing tokenized files from ${fileList(0)}.xml")
+
 	//Go through list:
 	for (line <- fileList.drop(1)) 
 	{
+	   // Print progress
+	   println(s"Processing tokenized files from ${line}.xml")
 		someIMat = loadIMat(directory+"/"+line+".xml.imat");
         currentDict = loadDict(directory+"/"+line+"_dict.sbmat",directory+"/"+line+"_dict.imat");
         finalDict = Dict.union(finalDict,currentDict);
@@ -90,9 +95,11 @@ def combine_dicts(xmlList:String,directory:String,maxDictItems:Int = 1000000): B
 	   // than maxDictItems
 	   var threshold=1
 	   while (finalDict.length>maxDictItems) {
-	           finalDict=finalDict.trim(threshold);
-		   threshold+=1;
+	   	 threshold+=1;
+		 // Trims dict entries with less than threshold counts
+	         finalDict=finalDict.trim(threshold); 
 	   }
+	   if (threshold>1) println(s"Trimmed dictionaries to a threshold of $threshold.") 
 	   // TO DO: RE-PAD THE DICTIONARY AFTER TRIM
 	}
 
