@@ -6,7 +6,7 @@ import utils._  // utility methods
 val dir = "/var/local/destress/tokenized/";
 val fileListPath= dir+"fileList.txt";
 
-val masterDict = loadDict(dir+"mastrDict.sbmat",dir+"masterDict.imat");
+val masterDict = loadDict(dir+"masterDict.sbmat",dir+"masterDict.dmat");
 
 // Get nrWords in master dictionary
 val nrWords = masterDict.cstr.nrows;
@@ -57,6 +57,8 @@ for (line <- fileList.drop(1)) {
 
 		val postStart = valpostIdx(posti, 0);
 		val postEnd   = valpostIdx(posti, 1);
+    
+    var userk: Int = 0;
 
 		// Increment userk until the first index of the post is less
 		// than the last index of the current user
