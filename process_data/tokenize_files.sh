@@ -8,6 +8,8 @@ readonly INDIR=/var/local/destress/combined/events
 readonly OUTDIR=/var/local/destress/tokenized
 readonly FILELIST=/var/local/destress/tokenized/fileList.txt
 
+rm $FILELIST # This script always overwrites FILELIST
+
 for dat in $(ls ${INDIR}/*.xml); # Loop over all .xml files
 do
     filename=${dat##*/}
