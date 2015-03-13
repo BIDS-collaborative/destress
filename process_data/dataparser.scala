@@ -1,13 +1,14 @@
 // TO RUN WITH BIDMACH DO:
 // $ /opt/BIDMach_1.0.0-full-linux-x86_64/bidmach utils.scala examples.scala
 
-
 import utils._  // utility methods
 
 val dir = "/var/local/destress/tokenized/";
 val xmlFile = loadIMat(dir+"zz.xml.imat");
 val xmlDict = loadDict(dir+"zz_dict.sbmat",dir+"zz_dict.imat");
 
+val masterDict = loadDict(dir+"mastrDict.sbmat",dir+"masterDict.imat");
+val mapToMaster = xmlDict-->masterDict 
 
 val usersIdx = getBeginEnd(xmlFile, xmlDict, "posts");
 val postIdx = getBeginEnd(xmlFile, xmlDict, "post");
@@ -65,10 +66,16 @@ while (posti < nrValidPosts) {
 	  // Add to "labels" -> userid, currentmoodId
 	  labels \= icol(userk, moodid);
 
-	  // Add sparse column of current post BoW, to full BoW     	 
-	  val postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
+	  // Get the post text, discarding numbers     	 
+	  var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
+	  // Map the text to the masterDict
+	  postWordId = mapToMaster(postWordId)
+	  // Discard -1's corresponding to words which aren't in the masterDict
+	  postWordId = postWordId(find(postWordId>=0))
+	  // Create a sparse column with the BoW from this post
 	  val temp = sparse(postWordId,izeros(postWordId.nrows,1),iones(postWordId.nrows,1), nrWords,1);
-	  sBoWposts \= temp; // horizontal concatenation of another post's bag-of-words
+	  // Add sparse column of current post BoW, to full BoW by horizontal concatenation
+	  sBoWposts \= temp;
       }
 
       // Next Post
