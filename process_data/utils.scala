@@ -72,14 +72,13 @@ def combine_dicts(xmlList:String,directory:String,maxDictItems:Int = 1000000): B
 	//Get list of xml files from input file. 
 	var fileList = Source.fromFile(xmlList).getLines().toList;
 	
-	//Initialize currentDict.
-	var someIMat:BIDMat.IMat = loadIMat(directory+"/"+fileList(0)+".xml.imat");
-    var currentDict:BIDMat.Dict = loadDict(directory+"/"+fileList(0)+"_dict.sbmat",directory+"/"+fileList(0)+"_dict.imat");
+	//Initialize currentDict
+        var currentDict:BIDMat.Dict = loadDict(directory+"/"+fileList(0)+"_dict.sbmat",directory+"/"+fileList(0)+"_dict.imat");
    
 	var finalDict: BIDMat.Dict = currentDict;
 	
 	// print progress
-	println(s"Processing tokenized files from ${fileList(0)}.xml")
+	println(s"Merging dictionary from ${fileList(0)}.xml")
 
 	// Keep track of the current minimum threshold before trimming
 	var threshold=1
@@ -88,10 +87,10 @@ def combine_dicts(xmlList:String,directory:String,maxDictItems:Int = 1000000): B
 	for (line <- fileList.drop(1)) 
 	{
 	   // Print progress
-	   println(s"Processing tokenized files from ${line}.xml")
-		someIMat = loadIMat(directory+"/"+line+".xml.imat");
-        currentDict = loadDict(directory+"/"+line+"_dict.sbmat",directory+"/"+line+"_dict.imat");
-        finalDict = Dict.union(finalDict,currentDict);
+	   println(s"Merging dictionary from ${line}.xml")
+
+           currentDict = loadDict(directory+"/"+line+"_dict.sbmat",directory+"/"+line+"_dict.imat");
+           finalDict = Dict.union(finalDict,currentDict);
 	
 
 	   // Automatically trim until number of dictionary entries less 
