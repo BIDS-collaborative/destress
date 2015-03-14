@@ -3,10 +3,11 @@
 
 import utils._  // utility methods
 
-val dir = "/var/local/destress/tokenized/";
-val fileListPath= dir+"fileList.txt";
+val indir = "/var/local/destress/tokenized/";
+val outdir = "/var/local/destress/featurized/"
+val fileListPath= indir+"fileList.txt";
 
-val masterDict = loadDict(dir+"masterDict.sbmat",dir+"masterDict.dmat");
+val masterDict = loadDict(indir+"masterDict.sbmat",indir+"masterDict.dmat");
 
 // Get nrWords in master dictionary
 val nrWords = masterDict.cstr.nrows;
@@ -22,12 +23,18 @@ var nrValidPosts = 0; // Total number of posts with <event><string>...</string><
 var sBoWposts = sparse(izeros(nrWords,0)); // Sparse matrix of feature vectors
 var labels = izeros(2,0); // Dense IMat with (UserId, CurrentMoodId) - later do datetime+replycount
 
+// Keeps track of the first filename since last write out of features/labels
+var startName = fileList(1)
+
 //Go through list:
 for (line <- fileList.drop(1)) {
+  
+  // Print a status update so the user can see something is happening
+  println(s"Currently featurizing ${line}.xml");
 
 	// Get the current xml file data and original dictionary
-	val xmlFile = loadIMat(dir+line+".xml.imat");
-	val xmlDict = loadDict(dir+line+"_dict.sbmat",dir+line+"dict.imat");
+	val xmlFile = loadIMat(indir+line+".xml.imat");
+	val xmlDict = loadDict(indir+line+"_dict.sbmat",indir+line+"_dict.imat");
 
   // Map from the native dictionary to merged dictionary
 	val mapToMaster = xmlDict-->masterDict;
@@ -48,8 +55,8 @@ for (line <- fileList.drop(1)) {
 	nrValidPosts += validEvent.nrows;
   
 	// valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
-	val valEventIdx = eventIdx(validEvent, ?) + (1\ -1);
-	val valpostIdx = postIdx(validEvent,?); //assumes postIdx.nrows == eventIdx.nrows
+  val valEventIdx: IMat = if (eventIdx.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2)
+  val valpostIdx = postIdx(validEvent,?); //assumes postIdx.nrows == eventIdx.nrows
 
 	var posti = 0; // iteration counter for while
 
@@ -85,6 +92,23 @@ for (line <- fileList.drop(1)) {
 					val temp = sparse(postWordId,izeros(postWordId.nrows,1),iones(postWordId.nrows,1), nrWords,1);
 			// Add sparse column of current post BoW, to full BoW by horizontal concatenation
 			sBoWposts \= temp;
+      
+      // Write the features to a file once a size threshold is passed
+      // This is supposed to write at 100Mb intervals (uncompressed size)
+      if (sBoWposts.contents.nrows>125000*100) {
+        
+        println(s"Writing ${startName}2${line} to file.")
+        
+        saveSMat(outdir+startName+"2"+line+".smat.lz4",sBoWposts); // Compress the sparse matrices, saves about half the disk space
+        sBoWposts = sparse(izeros(nrWords,0)); // Reset the sparse matrix
+        
+        saveIMat(outdir+startName+"2"+line+".imat",labels); // These are very small, no reason to compress
+        labels = izeros(2,0); // Reset the labels matrix
+        
+        startName = line; // Save the current file for naming purposes
+        
+      }
+      
 		}
 
 		// Next Post
