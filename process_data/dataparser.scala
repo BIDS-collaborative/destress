@@ -7,8 +7,8 @@ val indir = "/var/local/destress/tokenized/";
 val outdir = "/var/local/destress/featurized/"
 val fileListPath= indir+"fileList.txt";
 
-val maxMb = 100 // Approximate size of sparse matrix save batches (uncompressed)
-val postPerMb = 1000 // Approximate number of posts which take 1Mb of saved space. May change!
+val maxMb = 25 // Approximate size of sparse matrix save batches (uncompressed)
+val postPerMb = 1000 // (Very) approximate number of posts which take 1Mb of saved space. May change!
 
 val masterDict = loadDict(indir+"masterDict.sbmat",indir+"masterDict.dmat");
 
@@ -30,7 +30,7 @@ var labels = izeros(2,0); // Dense IMat with (UserId, CurrentMoodId) - later do 
 var batchNumber = 1
 
 //Go through list:
-for (line <- fileList.drop(1)) {
+for (line <- fileList) {
 
 	// Print a status update so the user can see something is happening
 	println(s"Currently featurizing ${line}.xml");
@@ -41,7 +41,7 @@ for (line <- fileList.drop(1)) {
 
 	// Map from the native dictionary to merged dictionary
 	val mapToMaster = xmlDict-->masterDict;
-
+  
 	val usersIdx = getBeginEnd(xmlFile, xmlDict, "posts"); // Indexes for <posts> and </posts> (which enclose all activity by one user)
 	val postIdx = getBeginEnd(xmlFile, xmlDict, "post"); // Indexes for <post> and </post> (which enclose each activity by a user)
 	val eventIdx = getBeginEnd(xmlFile, xmlDict, "event"); // Indexes for <event> and </event> (which could be a text post)
@@ -58,14 +58,13 @@ for (line <- fileList.drop(1)) {
 	nrValidPosts += validEvent.nrows;
 
 	// valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
-
-	val valEventIdx: IMat = if (eventIdx.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2)
-			val valpostIdx = postIdx(validEvent,?); //assumes postIdx.nrows == eventIdx.nrows
+	val valEventIdx: IMat = if (eventIdx.nrows>0 && validEvent.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2);
+	val valpostIdx: IMat = if (postIdx.nrows==eventIdx.nrows) postIdx(validEvent,?) else izeros(0,2); //assumes postIdx.nrows == eventIdx.nrows
 
 	var posti = 0; // iteration counter for while
-
+  
 	while (posti < validEvent.nrows) {
-
+    
 		val postStart = valpostIdx(posti, 0);
 		val postEnd   = valpostIdx(posti, 1);
 
