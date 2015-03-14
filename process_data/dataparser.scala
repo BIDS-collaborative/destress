@@ -7,6 +7,9 @@ val indir = "/var/local/destress/tokenized/";
 val outdir = "/var/local/destress/featurized/"
 val fileListPath= indir+"fileList.txt";
 
+val maxMb = 100 // Approximate size of sparse matrix save batches (uncompressed)
+val postPerMb = 1000 // Approximate number of posts which take 1Mb of saved space. May change!
+
 val masterDict = loadDict(indir+"masterDict.sbmat",indir+"masterDict.dmat");
 
 // Get nrWords in master dictionary
@@ -23,8 +26,8 @@ var nrValidPosts = 0; // Total number of posts with <event><string>...</string><
 var sBoWposts = sparse(izeros(nrWords,0)); // Sparse matrix of feature vectors
 var labels = izeros(2,0); // Dense IMat with (UserId, CurrentMoodId) - later do datetime+replycount
 
-// Keeps track of the first filename since last write out of features/labels
-var startName = fileList(1)
+// Keeps track of number of batches, increasing each time one is saved
+var batchNumber = 1
 
 //Go through list:
 for (line <- fileList.drop(1)) {
@@ -95,18 +98,17 @@ for (line <- fileList.drop(1)) {
 			sBoWposts \= temp;
 
 			// Write the features to a file once a size threshold is passed
-			// This is supposed to write at 100Mb intervals (uncompressed size)
-			if (sBoWposts.contents.nrows>125000*100) {
+			if (labels.ncols==maxMb*postPerMb) {
 
-				println(s"Writing ${startName}2${line} to file.")
+				println(s"\nWriting batch $batchNumber to file.\n");
 
-				saveSMat(outdir+startName+"2"+line+".smat.lz4",sBoWposts); // Compress the sparse matrices, saves about half the disk space
+				saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4",sBoWposts); // Compress the sparse matrices, saves about half the disk space
 				sBoWposts = sparse(izeros(nrWords,0)); // Reset the sparse matrix
 
-				saveIMat(outdir+startName+"2"+line+".imat",labels); // These are very small, no reason to compress
+				saveIMat(outdir+"data"+s"$batchNumber"+".imat",labels); // These are very small, no reason to compress
 				labels = izeros(2,0); // Reset the labels matrix
 
-				startName = line; // Save the current file for naming purposes
+				batchNumber+=1;
 
 			}
 
