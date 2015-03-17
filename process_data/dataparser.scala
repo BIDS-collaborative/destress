@@ -41,7 +41,7 @@ for (line <- fileList) {
 
 	// Map from the native dictionary to merged dictionary
 	val mapToMaster = xmlDict-->masterDict;
-  
+
 	val usersIdx = getBeginEnd(xmlFile, xmlDict, "posts"); // Indexes for <posts> and </posts> (which enclose all activity by one user)
 	val postIdx = getBeginEnd(xmlFile, xmlDict, "post"); // Indexes for <post> and </post> (which enclose each activity by a user)
 	val eventIdx = getBeginEnd(xmlFile, xmlDict, "event"); // Indexes for <event> and </event> (which could be a text post)
@@ -62,9 +62,9 @@ for (line <- fileList) {
 	val valpostIdx: IMat = if (postIdx.nrows==eventIdx.nrows) postIdx(validEvent,?) else izeros(0,2); //assumes postIdx.nrows == eventIdx.nrows
 
 	var posti = 0; // iteration counter for while
-  
+
 	while (posti < validEvent.nrows) {
-    
+
 		val postStart = valpostIdx(posti, 0);
 		val postEnd   = valpostIdx(posti, 1);
 
@@ -88,11 +88,11 @@ for (line <- fileList) {
 			// Get the post text, discarding numbers     	 
 			var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
 			// Map the text to the masterDict
-			postWordId = mapToMaster(postWordId)
-					// Discard -1's corresponding to words which aren't in the masterDict
-					postWordId = postWordId(find(postWordId>=0))
-					// Create a sparse column with the BoW from this post
-					val temp = sparse(postWordId,izeros(postWordId.nrows,1),iones(postWordId.nrows,1), nrWords,1);
+			postWordId = mapToMaster(postWordId);
+			// Discard -1's corresponding to words which aren't in the masterDict
+			postWordId = postWordId(find(postWordId>=0));
+			// Create a sparse column with the BoW from this post
+			val temp = sparse(postWordId,izeros(postWordId.nrows,1),iones(postWordId.nrows,1), nrWords,1);
 			// Add sparse column of current post BoW, to full BoW by horizontal concatenation
 			sBoWposts \= temp;
 
