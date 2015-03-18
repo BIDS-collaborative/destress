@@ -14,8 +14,8 @@ object utils {
 		// assume dict(0) is just a dummy string
 		var begin = find(xmlImat == dict("<"+xmlTagName+">")); //index of taglocation
 		if (shiftBegInd) { begin += 1; } //index of taglocation+1
-		val end = find(xmlImat == dict("</"+xmlTagName+">"))
-				(begin, end)
+		val end = find(xmlImat == dict("</"+xmlTagName+">"));
+		(begin, end)
 	}
 
 	def getBeginEnd(xmlImat:BIDMat.IMat, dict:BIDMat.Dict, xmlTagName:String, shiftBegInd:Boolean = true): BIDMat.IMat = {
@@ -27,9 +27,6 @@ object utils {
 		else {
 			begin \ end
 		}
-		// note about the "+1" for begin
-		// col 0 has index after <xmltag> and col1 has index of </xmltag>
-		// allows indexing with elcol0->elcol1 and get the content inside only
 	}
 
 	// OLD def twoComplementToInt(twoComp:BIDMat.IMat): BIDMat.IMat = {Int.MinValue+twoComp}
@@ -42,13 +39,19 @@ object utils {
 				out
 	}
 
+	def loadDict(sbmatFile:String): BIDMat.Dict = {
+	    val dfiller = Dict(csrow("<xx>"));
+	    val dWords = Dict(CSMat(loadSBMat(sbmatFile)));
+	    Dict.union(dfiller, dWords)
+	}
+
 	def loadDict(sbmatFile:String, imatFile:String): BIDMat.Dict = {
 		val dfiller = Dict(csrow("<xx>"), irow(0)); //dummy to use up index 0
 		val dWords = CSMat(loadSBMat(sbmatFile)); // load dict.sbmat
 		val dCount = loadMat(imatFile); // load dict.imat
 		val dict = Dict(dWords, DMat(dCount)); // combine to dictionary
 
-		Dict.union(dfiller,dict) // union dictionary with dummy
+		Dict.union(dfiller, dict) // union dictionary with dummy
 	}
 
 	def getWordsOnly(xmlImat:BIDMat.IMat, bIdx:Int, eIdx:Int): BIDMat.IMat = {
@@ -81,7 +84,7 @@ object utils {
 		println(s"Merging dictionary from ${fileList(0)}.xml")
 
 		// Keep track of the current minimum threshold before trimming
-		var threshold=1
+		var threshold = 1
 
 		//Go through list:
 		for (line <- fileList.drop(1)) 
