@@ -32,7 +32,7 @@ var labels = izeros(2, 0); // Dense IMat with (UserId, CurrentMoodId) - later do
 var batchNumber = 1
 
 
-val nrFiles: Int = fileList.size;
+val nrFiles: Int = 20;//fileList.size;
 var filei: Int = 0;
 
 
@@ -78,14 +78,13 @@ while (filei < nrFiles) {
 	val valEventIdx: IMat = if (eventIdx.nrows>0 && validEvent.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2);
 	val valpostIdx: IMat = if (postIdx.nrows==eventIdx.nrows) postIdx(validEvent,?) else izeros(0,2); //assumes postIdx.nrows == eventIdx.nrows
 
-	var posti = 0; // iteration counter for while
+	var posti: Int = 0; // iteration counter for while
+	var userk: Int = 0;
 
 	while (posti < validEvent.nrows) {
 
 		val postStart = valpostIdx(posti, 0);
 		val postEnd   = valpostIdx(posti, 1);
-
-		var userk: Int = 0;
 
 		// Increment userk until the first index of the post is less
 		// than the last index of the current user
