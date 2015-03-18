@@ -32,7 +32,7 @@ var labels = izeros(2, 0); // Dense IMat with (UserId, CurrentMoodId) - later do
 var batchNumber = 1
 
 
-val nrFiles: Int = 20;//fileList.size;
+val nrFiles: Int = fileList.size;
 var filei: Int = 0;
 
 
