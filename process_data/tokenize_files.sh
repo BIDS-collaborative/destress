@@ -3,7 +3,7 @@
 # This script will run xmltweet seperately on all files in $INDIR, outputting the tokenized representations and dictionaries to $OUTDIR. 
 # Tokenizer must have the new behavior
 
-readonly TOKENIZER=/var/local/destress/scripts/xmltweet.exe  # tokenizer path
+readonly TOKENIZER=$(dirname $0)/xmltweet.exe  # tokenizer path
 readonly INDIR=/var/local/destress/combined/events
 readonly OUTDIR=/var/local/destress/tokenized
 readonly FILELIST=/var/local/destress/tokenized/fileList.txt
