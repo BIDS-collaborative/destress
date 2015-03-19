@@ -5,7 +5,7 @@
   extern void addtok(int tok);
   extern int parsedate(char * str);
   extern int numlines;
-  
+
 %}
 
 %option never-interactive
@@ -17,9 +17,9 @@ DIGT	   [0-9][0-9]
 DIGIT	   [0-9]
 PUNCT	   [;:,.?!]
 
-%% 
+%%
 
-"<base64>".+"</base64>" /* eat up base64 tokens */
+"<base64>"[^<>]+"</base64>" /* eat up base64 tokens */
 
 [:;]"</string>" {
     int iv = checkword(yytext+1);
@@ -37,8 +37,8 @@ PUNCT	   [;:,.?!]
   if (iv > 0 || iv < -1) {
     addtok(iv);
   }
-}	     
-     
+}
+
 -?{DIGIT}+"."{DIGIT}*   {
   float f = (float)strtod(yytext, NULL);
   int iv = *((int *)(&f));
@@ -132,10 +132,9 @@ PUNCT	   [;:,.?!]
 	  if (numlines % 1000000 == 0) {
 	  fprintf(stderr, "\r%05d lines", numlines);
       fflush(stderr);
-	  }	  
+	  }
 	  }
 
 .         {}
 
 %%
-
