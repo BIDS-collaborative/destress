@@ -3,7 +3,7 @@
 # meant to be run on mercury.dlab.berkeley.edu
 
 DATA_PATH=/var/local/destress/lj-annex/data/events
-OUTPUT_PATH=/var/local/destress/combined2/events
+OUTPUT_PATH=/var/local/destress/combined3/events
 
 MAX_FILE_SIZE=104857600 # 100Mb
 
@@ -13,14 +13,14 @@ mkdir -p $OUTPUT_PATH
 for d in `ls $DATA_PATH`; do
     echo $d
     OUT_FILE_COUNTER=1 # Counter to track when files are split
-    for f in `ls $DATA_PATH/$d`; do
+    for f in `ls $DATA_PATH/$d/*.xml`; do
         if [ "$OUT_FILE_COUNTER" -eq 1 ]
           then
             OUT_FILE=$OUTPUT_PATH/$d.xml
           else
             OUT_FILE=$OUTPUT_PATH/$d$OUT_FILE_COUNTER.xml
         fi
-        cat $DATA_PATH/$d/$f >> $OUT_FILE # Add to combined file
+        cat $f >> $OUT_FILE # Add to combined file
 
 	# Split files if too large
         FILE_SIZE=$(stat -c%s $OUT_FILE)
