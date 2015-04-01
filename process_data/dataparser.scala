@@ -54,7 +54,7 @@ object featurizers {
 
 			//Go through list:
 			for (line <- fileList) {
-				flip;
+				tic;
 
 				// Print a status update so the user can see something is happening
 				println(s"Currently featurizing ${line}.xml");
@@ -173,7 +173,7 @@ object featurizers {
 				// Update nrUsers to include this file
 				if (usersIdx.nrows > 0 && usersIdx(0,0) != -1) {nrUsers += usersIdx.nrows}
 
-				println(s"Tokenized in ${flop._2}s");
+				println(s"Featurized in ${toc}s");
 			}
 
 			// Save the leftover data that didn't make the size threshold
