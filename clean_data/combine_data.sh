@@ -3,7 +3,7 @@
 # meant to be run on mercury.dlab.berkeley.edu
 
 DATA_PATH=/var/local/destress/lj-annex/data/events
-OUTPUT_PATH=/var/local/destress/combined3/events
+OUTPUT_PATH=/var/local/destress/combined2/events
 
 MAX_FILE_SIZE=104857600 # 100Mb
 

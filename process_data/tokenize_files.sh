@@ -4,10 +4,11 @@
 # Tokenizer must have the new behavior
 
 readonly TOKENIZER=$(dirname $0)/xmltweet.exe  # tokenizer path
-readonly INDIR=/var/local/destress/combined/events
-readonly OUTDIR=/var/local/destress/tokenized
-readonly FILELIST=/var/local/destress/tokenized/fileList.txt
+readonly INDIR=/var/local/destress/combined2/events
+readonly OUTDIR=/var/local/destress/tokenized2
+readonly FILELIST=$OUTDIR/fileList.txt
 
+mkdir -p $OUTDIR
 rm $FILELIST # This script always overwrites FILELIST
 
 for dat in $(ls ${INDIR}/*.xml); # Loop over all .xml files

@@ -1,5 +1,9 @@
 // Utility Functions to Process Data after xmltweet
 import scala.io.Source
+
+import BIDMat.{CMat, CSMat, DMat, Dict, FMat, FND, GMat, GDMat, GIMat, GLMat, GSMat, GSDMat, HMat, IDict, Image, IMat, LMat, Mat, SMat, SBMat, SDMat}
+import BIDMat.MatFunctions._
+
 object utils {
 
 	// Returns pairs of indices in a xml.imat file with the beginning and end of a specific xml tag
@@ -111,5 +115,11 @@ object utils {
 		// Trim the dictionary to the current threshold for consistency
 		finalDict.trim(threshold)
 	}
-
+  
 }
+
+//import utils._;
+//var masterDict=combine_dicts("/var/local/destress/tokenized2/fileList.txt","/var/local/destress/tokenized2/");
+//saveSBMat("/var/local/destress/tokenized2/masterDict.sbmat",SBMat(masterDict.cstr));
+//saveDMat("/var/local/destress/tokenized2/masterDict.dmat",masterDict.counts);
+//println("FINISHED");

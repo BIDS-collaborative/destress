@@ -3,148 +3,184 @@
 
 import utils._  // utility methods
 
-val indir = "/var/local/destress/tokenized/";
-val outdir = "/var/local/destress/featurized/"
-val fileListPath= indir+"fileList.txt";
+import scala.io.Source
 
-val maxMb = 25 //25 // Approx size of sparse mat save batches (uncompressed)
-val postPerMb = 1000 // (Very) approx nr of posts which take 1Mb of saved space. May change!
+import BIDMat.{CMat, CSMat, DMat, Dict, FMat, FND, GMat, GDMat, GIMat, GLMat, GSMat, GSDMat, HMat, IDict, Image, IMat, LMat, Mat, SMat, SBMat, SDMat}
+import BIDMat.MatFunctions._
 
-val masterDict = loadDict(indir+"masterDict.sbmat",indir+"masterDict.dmat");
+object featurizers {
 
-// Get nrWords in master dictionary
-val nrWords = masterDict.cstr.nrows;
+	def increaseBuffer(m:IMat,n: Int): IMat = {m\iones(m.nrows,n)};
 
-//Get list of xml files from input file.
-var source = Source.fromFile(fileListPath);
-var fileList = source.getLines.toList;
-source.close() 
+	def featurizeMoodID(indir: String, dictdir:String,outdir:String,fileListPath: String): Unit = {
 
-// Save various stats in these variables
-var nrUsers = 0; // Total number of users
-var nrValidPosts = 0; // Total number of posts with <event><string>...</string></event> form
+			//    val indir = "/var/local/destress/tokenized2/";
+			//    var dictdir = "/var/local/destress/tokenized/";
+			//    val outdir = "/var/local/destress/featurized/";
+			//    val fileListPath= indir+"fileList.txt";
 
-// Initialize structures
-var sBagOfWords = sparse(izeros(nrWords, 0)); // Sparse matrix of feature vectors
-var labels = izeros(2, 0); // Dense IMat with (UserId, CurrentMoodId) - later do datetime+replycount
+			val MaxMb = 100; // Approx size of sparse mat save batches (uncompressed)
+			val postPerMb = 1000; // (Very) approx nr of posts which take 1Mb of saved space. May change!
 
-// Keeps track of number of batches, increasing each time one is saved
-var batchNumber = 1
+			val wordsPerPost = 400; // (Very) approx number of words per post. 
+      val initialBuffer = MaxMb*postPerMb*wordsPerPost; // Start size of rowIndices and colIndices buffers
+      val bufferIncrease = MaxMb*postPerMb*25; // Amount to increase buffers storing sparse matrix entries if they overfill
 
+			val masterDict = loadDict(dictdir+"masterDict.sbmat",dictdir+"masterDict.dmat");
 
-val nrFiles: Int = fileList.size;
-var filei: Int = 0;
+			// Get nrWords in master dictionary
+			val nrWords = masterDict.cstr.nrows;
 
+			//Get list of xml files from input file.
+			var source = Source.fromFile(fileListPath);
+			var fileList = source.getLines.toList;
+			source.close();
 
-while (filei < nrFiles) {
+			// Save various stats in these variables
+			var nrUsers = 0; // Total number of users
+			var nrValidPosts = 0; // Total number of posts with <event><string>...</string></event> form
 
-        var line = fileList(filei);
-	flip
+			// Initialize buffers to store word locations in sparse matrix
+			var rowIndices = izeros(1,initialBuffer);
+			var colIndices = izeros(1,initialBuffer);
 
-	// Print a status update so the user can see something is happening
-	println(s"Currently featurizing ${line}.xml");
+			var labels = izeros(2, MaxMb*postPerMb); // Dense IMat with (UserId, CurrentMoodId) - later do datetime+replycount
 
-	// Get the current xml file data and original dictionary
-	var xmlFile = izeros(0,0);
-	try {
-		xmlFile = loadIMat(indir+line+".xml.imat");
-	} catch {
-	  	case e: Exception => println("exception caught in ${line}: " + e);	  
-	}
-	var xmlDict = loadDict(indir+line+"_dict.sbmat"); // only load words
+			// Keeps track of number of batches, increasing each time one is saved
+			var batchNumber = 1;
 
-	// Map from the native dictionary to merged dictionary
-	val mapToMaster = xmlDict --> masterDict;
+			var sparseEntryNumber=0; // Stores the current index at which to write data in rowIndices, colIndices
+			var denseEntryNumber=0; // Stores the current col in which to write data to labels, also current col in sparse matrix
 
-	// Indexes for <posts> and </posts> (which enclose all activity by one user)
-	val usersIdx = getBeginEnd(xmlFile, xmlDict, "posts");
-	// Indexes for <post> and </post> (which enclose each activity by a user)
-	val postIdx = getBeginEnd(xmlFile, xmlDict, "post"); 
-	// Indexes for <event> and </event> (which could be a text post)
-	val eventIdx = getBeginEnd(xmlFile, xmlDict, "event"); 
+			//Go through list:
+			for (line <- fileList) {
+				flip;
 
+				// Print a status update so the user can see something is happening
+				println(s"Currently featurizing ${line}.xml");
 
-	// Get nrValidPosts
-	// Valid posts are of the form <event><string>...</string></event>
-	// If </string> is not parsed properly, the post is discarded
-	val validEvent = find(xmlFile(eventIdx(?,1)-1) == xmlDict("</string>"));
-	// If don't want to discard just append
-	// find(xmlFile(eventIdx(?,1)-1) == xmlDict("string"));
+				// Get the current xml file data and original dictionary
+				var xmlFile = izeros(0,0);
+				try {
+					xmlFile = loadIMat(indir+line+".xml.imat");
+				} catch {
+				case e: Exception => println("exception caught in ${line}: " + e);    
+				}
+				var xmlDict = loadDict(indir+line+"_dict.sbmat"); // only load words
 
-	// Update total number of valid posts
-	nrValidPosts += validEvent.nrows;
+				var intIndex = xmlDict("<int>"); // Find the index of <int> tag in xmlDict
 
-	// valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
-	val valEventIdx: IMat = if (eventIdx.nrows>0 && validEvent.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2);
-	val valpostIdx: IMat = if (postIdx.nrows==eventIdx.nrows) postIdx(validEvent,?) else izeros(0,2); //assumes postIdx.nrows == eventIdx.nrows
+				// Map from the native dictionary to merged dictionary
+				val mapToMaster = xmlDict --> masterDict;
 
-	var posti: Int = 0; // iteration counter for while
-	var userk: Int = 0;
+				// Indexes for <posts> and </posts> (which enclose all activity by one user)
+				val usersIdx = getBeginEnd(xmlFile, xmlDict, "posts");
+				// Indexes for <post> and </post> (which enclose each activity by a user)
+				val postIdx = getBeginEnd(xmlFile, xmlDict, "post"); 
+				// Indexes for <event> and </event> (which could be a text post)
+				val eventIdx = getBeginEnd(xmlFile, xmlDict, "event"); 
 
-	while (posti < validEvent.nrows) {
+				// Get nrValidPosts
+				// Valid posts are of the form <event><string>...</string></event>
+				// If </string> is not parsed properly, the post is discarded
+				val validEvent = find(xmlFile(eventIdx(?,1)-1) == xmlDict("</string>"));
 
-		val postStart = valpostIdx(posti, 0);
-		val postEnd   = valpostIdx(posti, 1);
+				// If don't want to discard just append
+				// find(xmlFile(eventIdx(?,1)-1) == xmlDict("string"));
 
-		// Increment userk until the first index of the post is less
-		// than the last index of the current user
-		while (postStart > usersIdx(userk, 1)) userk += 1;
+				// Update total number of valid posts
+				nrValidPosts += validEvent.nrows;
 
-		// Get indices of "current_moodid" open and close tags 
-		val moodIdx = getBeginEnd(xmlFile(postStart -> postEnd), xmlDict, "current_moodid");
+				// valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
+				val valEventIdx: IMat = if (eventIdx.nrows>0 && validEvent.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2);
+				val valpostIdx: IMat = if (postIdx.nrows==eventIdx.nrows) postIdx(validEvent,?) else izeros(0,2); //assumes postIdx.nrows == eventIdx.nrows
 
-		// Check to make sure the current_moodid exists and that it is an int
-		if (moodIdx.nrows==1 && xmlDict(xmlFile(postStart+moodIdx(0,0))) =="<int>") {
+				var posti: Int = 0; // iteration counter for while
+				var userk: Int = 0;
 
-			val moodid = twoComplementToInt(xmlFile(postStart+moodIdx(0,0)+1))(0);
+				while (posti < validEvent.nrows ) {
 
-			// Add to "labels" -> userid, currentmoodId
-			labels \= icol(userk+nrUsers, moodid);
+					val postStart = valpostIdx(posti, 0);
+					val postEnd   = valpostIdx(posti, 1);
 
-			// Get the post text, discarding numbers     	 
-			var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
-			// Map the text to the masterDict
-			postWordId = mapToMaster(postWordId);
-			// Discard -1's corresponding to words which aren't in the masterDict
-			postWordId = postWordId(find(postWordId >= 0));
-			// Create a sparse column with the BoW from this post
-			val temp = sparse(postWordId, izeros(postWordId.nrows,1), iones(postWordId.nrows,1), nrWords, 1);
-			// Add sparse column of current post BoW, to full BoW by horizontal concatenation
-			sBagOfWords \= temp;
+					// Increment userk until the first index of the post is less
+					// than the last index of the current user
+					while (postStart > usersIdx(userk, 1)) userk += 1;
 
-			// Write the features to a file once a size threshold is passed
-			if (labels.ncols == maxMb*postPerMb) {
+					// Get indices of "current_moodid" open and close tags 
+					val moodIdx = getBeginEnd(xmlFile(postStart -> postEnd), xmlDict, "current_moodid");
 
-				println(s"\nWriting batch $batchNumber to file.\n");
-				// Compress the sparse matrices, saves about half the disk space
-				saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sBagOfWords);
-				// Reset the sparse matrix
-				sBagOfWords = sparse(izeros(nrWords, 0));
-				// These are very small, no reason to compress
-				saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels); 
-				// Reset the labels matrix
-				labels = izeros(2,0); 
+					// Check to make sure the current_moodid exists and that it is an int
+					if (moodIdx.nrows==1 && xmlFile(postStart+moodIdx(0,0)) == intIndex ) {
 
-				batchNumber+=1;
+						val moodid = twoComplementToInt(xmlFile(postStart+moodIdx(0,0)+1))(0);
 
+						// Add to "labels" -> userid, currentmoodId
+						labels(0,denseEntryNumber) = userk+nrUsers
+								labels(1,denseEntryNumber) = moodid;
+
+						// Get the post text, discarding numbers       
+						var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
+						// Map the text to the masterDict
+						postWordId = mapToMaster(postWordId);
+						// Discard -1's corresponding to words which aren't in the masterDict
+						postWordId = postWordId(find(postWordId >= 0));
+
+						val nWords = postWordId.nrows;
+
+						// Save indices and rows for sparse feature matrix from this post.
+            // If buffer is full, increase buffer size permanently
+						try {
+							rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t; 
+						} catch{
+//  						case oob: java.lang.IndexOutOfBoundsException => {println("Increasing buffer size.");
+                case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(MaxMb*postPerMb)} to ${(rowIndices.ncols+bufferIncrease)/(MaxMb*postPerMb)} words per post.\n");
+  						  rowIndices=increaseBuffer(rowIndices,bufferIncrease);
+                colIndices=increaseBuffer(rowIndices,bufferIncrease);
+                rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t;};   
+						}
+						colIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=iones(1,nWords)*denseEntryNumber; 
+
+						// Increment the index counters
+						denseEntryNumber+=1;
+						sparseEntryNumber+=nWords;
+
+						// Write the features to a file once MaxMb*postPerMb posts are processed
+						if (denseEntryNumber == MaxMb*postPerMb) {
+
+							println(s"\nWriting batch $batchNumber to file.\n");
+
+							// Compress the sparse matrices, saves about half the disk space
+							saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber)));
+							// Label IMats are very small, no reason to compress
+							saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels); 
+
+							// Reset the index/col trackers
+							denseEntryNumber=0;
+							sparseEntryNumber=0;
+
+							// Increment batch number
+							batchNumber+=1;
+
+						}
+
+					}
+
+					// Next Post
+					posti += 1;
+				}
+
+				// Update nrUsers to include this file
+				if (usersIdx.nrows > 0 && usersIdx(0,0) != -1) {nrUsers += usersIdx.nrows}
+
+				println(s"Tokenized in ${flop._2}s");
 			}
 
-		}
+			// Save the leftover data that didn't make the size threshold
+			println(s"\nWriting batch $batchNumber to file.\n");
+			saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber)));
+			saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels(?,0 until denseEntryNumber)); 
 
-		// Next Post
-		posti += 1;
 	}
 
-	// Update nrUsers to include this file
-	if (usersIdx.nrows > 0 && usersIdx(0,0) != -1) {nrUsers += usersIdx.nrows}
-
-	// Next File
-	filei += 1;
-
-	println(s"${flop}")
 }
-
-// Save the leftover data that didn't make the size threshold
-saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4",sBagOfWords);
-saveIMat(outdir+"data"+s"$batchNumber"+".imat",labels); // These are very small, no reason to compress
-
