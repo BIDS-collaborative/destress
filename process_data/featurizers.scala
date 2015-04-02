@@ -4,9 +4,11 @@
 import utils._  // utility methods
 
 import scala.io.Source
+import scala.math
 
 import BIDMat.{CMat, CSMat, DMat, Dict, FMat, FND, GMat, GDMat, GIMat, GLMat, GSMat, GSDMat, HMat, IDict, Image, IMat, LMat, Mat, SMat, SBMat, SDMat}
 import BIDMat.MatFunctions._
+import BIDMat.SciFunctions._
 
 object featurizers {
 
@@ -38,7 +40,17 @@ object featurizers {
 
 			// Save various stats in these variables
 			var nrUsers = 0; // Total number of users
-			var nrValidPosts = 0; // Total number of posts with <event><string>...</string></event> form
+      var nrPosts = 0; // Total number of posts
+			var nrStringPosts = 0; // Total number of posts with <event><string>...</string></event> form      
+      var moodIDFreq = izeros(1,134) // Histogram of moodids
+      
+      val maxWordCount = 100000; 
+      var wordCountFreq = izeros(1,maxWordCount+1) // Histogram of word counts in posts before discarding
+      
+      val maxDiscardCount = 100000;
+      var discardCountFreq = izeros(1,maxDiscardCount+1) // Histogram of word counts in posts after discarding tokens not in masterDict
+      
+      val usersWithPosts = irow(0,-1) // Entry 0 counts the number of users with string posts, entry 1 tracks the current user
 
 			// Initialize buffers to store word locations in sparse matrix
 			var rowIndices = izeros(1,initialBuffer);
@@ -77,11 +89,11 @@ object featurizers {
 				val usersIdx = getBeginEnd(xmlFile, xmlDict, "posts");
 				// Indexes for <post> and </post> (which enclose each activity by a user)
 				val postIdx = getBeginEnd(xmlFile, xmlDict, "post"); 
+        nrPosts+=postIdx.nrows;
 				// Indexes for <event> and </event> (which could be a text post)
 				val eventIdx = getBeginEnd(xmlFile, xmlDict, "event"); 
 
-				// Get nrValidPosts
-				// Valid posts are of the form <event><string>...</string></event>
+        // Valid posts contain <event><string>...</string></event>
 				// If </string> is not parsed properly, the post is discarded
 				val validEvent = find(xmlFile(eventIdx(?,1)-1) == xmlDict("</string>"));
 
@@ -89,7 +101,7 @@ object featurizers {
 				// find(xmlFile(eventIdx(?,1)-1) == xmlDict("string"));
 
 				// Update total number of valid posts
-				nrValidPosts += validEvent.nrows;
+				nrStringPosts += validEvent.nrows;
 
 				// valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
 				val valEventIdx: IMat = if (eventIdx.nrows>0 && validEvent.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2);
@@ -106,6 +118,12 @@ object featurizers {
 					// Increment userk until the first index of the post is less
 					// than the last index of the current user
 					while (postStart > usersIdx(userk, 1)) userk += 1;
+          
+          // Track the number of users with at least one <event><string>...
+          if(userk+nrUsers>usersWithPosts(1)) {
+            usersWithPosts(0)+=1;
+            usersWithPosts(1)=userk+nrUsers;
+          }
 
 					// Get indices of "current_moodid" open and close tags 
 					val moodIdx = getBeginEnd(xmlFile(postStart -> postEnd), xmlDict, "current_moodid");
@@ -114,53 +132,65 @@ object featurizers {
 					if (moodIdx.nrows==1 && xmlFile(postStart+moodIdx(0,0)) == intIndex ) {
 
 						val moodid = twoComplementToInt(xmlFile(postStart+moodIdx(0,0)+1))(0);
+            
+            // Check to make sure that it is actually a valid moodid, at least one isn't
+						if (moodid>0 && moodid < 135 && moodid!=50 && moodid!=94) {
 
-						// Add to "labels" -> userid, currentmoodId
-						labels(0,denseEntryNumber) = userk+nrUsers
-								labels(1,denseEntryNumber) = moodid;
+							moodIDFreq(moodid-1)+=1; // Increment the histogram array
 
-						// Get the post text, discarding numbers       
-						var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
-						// Map the text to the masterDict
-						postWordId = mapToMaster(postWordId);
-						// Discard -1's corresponding to words which aren't in the masterDict
-						postWordId = postWordId(find(postWordId >= 0));
+							// Add to "labels" -> userid, currentmoodId
+							labels(0,denseEntryNumber) = userk+nrUsers;
+							labels(1,denseEntryNumber) = moodid;
 
-						val nWords = postWordId.nrows;
+							// Get the post text, discarding numbers       
+							var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
 
-						// Save indices and rows for sparse feature matrix from this post.
-            // If buffer is full, increase buffer size permanently
-						try {
-							rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t; 
-						} catch{
-//  						case oob: java.lang.IndexOutOfBoundsException => {println("Increasing buffer size.");
-                case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(MaxMb*postPerMb)} to ${(rowIndices.ncols+bufferIncrease)/(MaxMb*postPerMb)} words per post.\n");
-  						  rowIndices=increaseBuffer(rowIndices,bufferIncrease);
-                colIndices=increaseBuffer(rowIndices,bufferIncrease);
-                rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t;};   
-						}
-						colIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=iones(1,nWords)*denseEntryNumber; 
+							wordCountFreq( min(postWordId.nrows,maxWordCount) )+=1; // Update histogram of word counts before discards
 
-						// Increment the index counters
-						denseEntryNumber+=1;
-						sparseEntryNumber+=nWords;
+							// Map the text to the masterDict
+							postWordId = mapToMaster(postWordId);
+							// Discard -1's corresponding to words which aren't in the masterDict
+							postWordId = postWordId(find(postWordId >= 0));
 
-						// Write the features to a file once MaxMb*postPerMb posts are processed
-						if (denseEntryNumber == MaxMb*postPerMb) {
+							val nWords = postWordId.nrows;
 
-							println(s"\nWriting batch $batchNumber to file.\n");
+							discardCountFreq( min(nWords, maxDiscardCount) )+=1; // Update histogram of word counts after discards
 
-							// Compress the sparse matrices, saves about half the disk space
-							saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber)));
-							// Label IMats are very small, no reason to compress
-							saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels); 
+							// Save indices and rows for sparse feature matrix from this post.
+							// If buffer is full, increase buffer size permanently
+							try {
+								rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t; 
+							} catch{
+								//  						case oob: java.lang.IndexOutOfBoundsException => {println("Increasing buffer size.");
+							case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(MaxMb*postPerMb)} to ${(rowIndices.ncols+bufferIncrease)/(MaxMb*postPerMb)} words per post.\n");
+							rowIndices=increaseBuffer(rowIndices,bufferIncrease);
+							colIndices=increaseBuffer(rowIndices,bufferIncrease);
+							rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t;};   
+							}
+							colIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=iones(1,nWords)*denseEntryNumber; 
 
-							// Reset the index/col trackers
-							denseEntryNumber=0;
-							sparseEntryNumber=0;
+							// Increment the index counters
+							denseEntryNumber+=1;
+							sparseEntryNumber+=nWords;
 
-							// Increment batch number
-							batchNumber+=1;
+							// Write the features to a file once MaxMb*postPerMb posts are processed
+							if (denseEntryNumber == MaxMb*postPerMb) {
+
+								println(s"\nWriting batch $batchNumber to file.\n");
+
+								// Compress the sparse matrices, saves about half the disk space
+								saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber)));
+								// Label IMats are very small, no reason to compress
+								saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels); 
+
+								// Reset the index/col trackers
+								denseEntryNumber=0;
+								sparseEntryNumber=0;
+
+								// Increment batch number
+								batchNumber+=1;
+
+							}
 
 						}
 
@@ -173,14 +203,23 @@ object featurizers {
 				// Update nrUsers to include this file
 				if (usersIdx.nrows > 0 && usersIdx(0,0) != -1) {nrUsers += usersIdx.nrows}
 
-				println(s"Featurized in ${toc}s");
+				println(s"Featurized in ${toc}s\n");
 			}
 
 			// Save the leftover data that didn't make the size threshold
 			println(s"\nWriting batch $batchNumber to file.\n");
 			saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber)));
 			saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels(?,0 until denseEntryNumber)); 
+      
+      // Print some data statistics
+      println(s"\nThere are a total of $nrUsers users in the data set.");
+      println(s"Of these, ${usersWithPosts(0)} have at least one <string> post.");
+      println(s"There are a total of $nrPosts <post> fields in the xml files.");
+      println(s"There are a total of $nrStringPosts <string> posts, ${100*(sum(moodIDFreq)(0)/nrStringPosts.toFloat)}% of which have a moodid tag.");
 
+      saveIMat(outdir+"wordCountHistogram.imat",wordCountFreq); // histogram of words per post before discarding
+      saveIMat(outdir+"wordCountHistogram2.imat",discardCountFreq); // histogram of words per post before discarding
+      saveIMat(outdir+"moodIDHistogram.imat",moodIDFreq); //histogram of moodids
 	}
 
 }
