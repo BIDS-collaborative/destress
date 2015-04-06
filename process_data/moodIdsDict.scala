@@ -1,10 +1,9 @@
 // TO RUN WITH BIDMACH DO:
 // $ /opt/BIDMach_1.0.0-full-linux-x86_64/bidmach utils.scala examples.scala
 
-import utils._   // utility methods
 import scala.io.Source
 
-val indir = "/Users/ana/Documents/UCBSemesters/Spring15/BIDProject/destress/moodids_dict.csv";
+val indir = "/home/anasrferreira/destress/moodids_dict.csv";
 
 val src = Source.fromFile(indir).getLines()
 val headerLine = src.take(1).next
@@ -32,3 +31,4 @@ if (mainList.filter(x => x(0)=="94").size == 0) {
 mainList = mainList.sortBy(_(0).toInt)
 
 val dict = Dict(csrow(mainList.map(x => x(1))), irow(mainList.map(x => x(0).toInt)));
+saveSBMat("/var/local/destress/moodDict.sbmat", SBMat(dict.cstr))
