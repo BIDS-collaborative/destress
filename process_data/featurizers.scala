@@ -35,11 +35,6 @@ object featurizers {
   // This function will increase the size of a buffer array m by n columns
 	def increaseBuffer(m:IMat,n: Int): IMat = {m\iones(m.nrows,n)};
   
-  def dictEmoticons(dict: Dict): Dict = {
-    find()    
-    
-  }
-  
 	def featurizeMoodID(indir: String, dictdir:String,outdir:String,fileListPath: String): Unit = {
 
 			//    val indir = "/var/local/destress/tokenized/";
@@ -205,7 +200,7 @@ object featurizers {
 								println(s"\nWriting batch $batchNumber to file.\n");
 
 								// Compress the sparse matrices, saves about half the disk space
-								saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),MaxMb*postPerMb, nrWords ) ));
+								saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,MaxMb*postPerMb));
 								// Label IMats are very small, no reason to compress
 								saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels); 
 
@@ -234,7 +229,7 @@ object featurizers {
 
 			// Save the leftover data that didn't make the size threshold
 			println(s"\nWriting batch $batchNumber to file.\n");
-			saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber)));
+			saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,MaxMb*postPerMb));
 			saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels(?,0 until denseEntryNumber)); 
       
       // Print some data statistics
