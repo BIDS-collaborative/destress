@@ -20,8 +20,8 @@ object featurizers {
     """:\'-?\("""+"|"+"""[:;]o\)"""+"|"+"""8\)"""+"|"+""":^\)"""+"|"+"XD"+"|"+""":|"""+"|"+"""^[-_]^""";
     
   // Functions to help get the list of emoticons in a dictionary
-  def fullyMatches(regEx: scala.util.matching.Regex, s: String): Boolean = (regEx unapplySeq s).isDefined;
-  def findMatches(regEx: scala.util.matching.Regex, s: CSMat): IMat = {
+  def fullyMatches(s: String, regEx: scala.util.matching.Regex): Boolean = (regEx unapplySeq s).isDefined;
+  def findMatches(s: CSMat, regEx: scala.util.matching.Regex): IMat = {
     val sLength = s.length;
     var indices=izeros(sLength,1)
     var i=0;
@@ -184,16 +184,18 @@ object featurizers {
 							} catch{
 								//  						case oob: java.lang.IndexOutOfBoundsException => {println("Increasing buffer size.");
 							case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(MaxMb*postPerMb)} to ${(rowIndices.ncols+bufferIncrease)/(MaxMb*postPerMb)} words per post.\n");
-							rowIndices=increaseBuffer(rowIndices,bufferIncrease);
-							colIndices=increaseBuffer(rowIndices,bufferIncrease);
-							rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t;};   
+						  	rowIndices=increaseBuffer(rowIndices,bufferIncrease);
+							  colIndices=increaseBuffer(rowIndices,bufferIncrease);
+							  rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t;};   
 							}
 							colIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=iones(1,nWords)*denseEntryNumber; 
 
 							// Increment the index counters
-							denseEntryNumber+=1;
-							sparseEntryNumber+=nWords;
-
+              if (nWords>0) {
+            	  denseEntryNumber+=1;
+            	  sparseEntryNumber+=nWords;
+              }
+              
 							// Write the features to a file once MaxMb*postPerMb posts are processed
 							if (denseEntryNumber == MaxMb*postPerMb) {
 
