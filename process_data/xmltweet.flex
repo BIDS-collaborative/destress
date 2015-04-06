@@ -62,27 +62,28 @@ PUNCT	   [;:,.?!]
   int iv = checkword(yytext);
 	}
 
-[:;]-[>)}PD] {
+
+[:;=]-?[>)}PD/o\]\\] {
   int iv = checkword(yytext);
 	  }
 
-[:;=][>)}PD] {
+[)(\]\[]-?[:;8=] {
   int iv = checkword(yytext);
-	  }
+      }
 
 ">"?:"-"?< {
     int iv = checkword(yytext);
-}
+      }
 
 ">"?[:;]-[(\[\{O] {
         int iv = checkword(yytext);
 	  }
 
-">"?[:;][(\[\{O] {
+">"?[:;=][(\[\{O] {
   int iv = checkword(yytext);
 	  }
 
-[8]-?[D] {
+[8:]-?[D] {
   int iv = checkword(yytext);
 	  }
 
@@ -106,7 +107,7 @@ PUNCT	   [;:,.?!]
   int iv = checkword(yytext);
 	  }
 
-":o)"    {
+[:;]"o)"    {
   int iv = checkword(yytext);
 	  }
 
@@ -121,6 +122,14 @@ PUNCT	   [;:,.?!]
 "XD"    {
   int iv = checkword(yytext);
       }
+
+":|"    {
+int iv = checkword(yytext);
+}
+
+"^"[-_]"^"    {
+int iv = checkword(yytext);
+}
 
 {PUNCT}	  {
   int iv = checkword(yytext);
