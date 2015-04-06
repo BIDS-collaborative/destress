@@ -11,12 +11,38 @@ import BIDMat.MatFunctions._
 import BIDMat.SciFunctions._
 
 object featurizers {
+  
+  // List of all the regexes which give emoticons in the flex file, as string.
+  // Concatenated by "|" into a single regex. 
+	val emoticonRegexes = """[:;=]-?[>)}PD/o\]\\]"""+"|"+"""[)(\]\[]-?[:;8=]"""+"|"+""">?:-?<"""+"|"+
+    """>?[:;=]-[(\[\{O]"""+"|"+""">?[:;][(\[\{O]"""+"|"+"""[8:]-?[D]"""+"|"+
+    """:-||"""+"|"+""":@"""+"|"+"""D:<?"""+"|"+"""D[8=]"""+"|"+
+    """:\'-?\("""+"|"+"""[:;]o\)"""+"|"+"""8\)"""+"|"+""":^\)"""+"|"+"XD"+"|"+""":|"""+"|"+"""^[-_]^""";
+    
+  // Functions to help get the list of emoticons in a dictionary
+  def fullyMatches(regEx: scala.util.matching.Regex, s: String): Boolean = (regEx unapplySeq s).isDefined;
+  def findMatches(regEx: scala.util.matching.Regex, s: CSMat): IMat = {
+    val sLength = s.length;
+    var indices=izeros(sLength,1)
+    var i=0;
+    while(i<sLength) {
+      if (fullyMatches(regEx,s(i))) indices(i)=1;
+      i+=1;
+    }
+    find(indices);
+  }
 
+  // This function will increase the size of a buffer array m by n columns
 	def increaseBuffer(m:IMat,n: Int): IMat = {m\iones(m.nrows,n)};
-
+  
+  def dictEmoticons(dict: Dict): Dict = {
+    find()    
+    
+  }
+  
 	def featurizeMoodID(indir: String, dictdir:String,outdir:String,fileListPath: String): Unit = {
 
-			//    val indir = "/var/local/destress/tokenized2/";
+			//    val indir = "/var/local/destress/tokenized/";
 			//    var dictdir = "/var/local/destress/tokenized/";
 			//    val outdir = "/var/local/destress/featurized/";
 			//    val fileListPath= indir+"fileList.txt";
@@ -42,13 +68,13 @@ object featurizers {
 			var nrUsers = 0; // Total number of users
       var nrPosts = 0; // Total number of posts
 			var nrStringPosts = 0; // Total number of posts with <event><string>...</string></event> form      
-      var moodIDFreq = izeros(1,134) // Histogram of moodids
+      var moodIDFreq = izeros(1,135) // Histogram of moodids
       
       val maxWordCount = 100000; 
-      var wordCountFreq = izeros(1,maxWordCount+1) // Histogram of word counts in posts before discarding
+      var wordCountFreq = izeros(1,maxWordCount+1); // Histogram of word counts in posts before mapping to masterDict
       
       val maxDiscardCount = 100000;
-      var discardCountFreq = izeros(1,maxDiscardCount+1) // Histogram of word counts in posts after discarding tokens not in masterDict
+      var discardCountFreq = izeros(1,maxDiscardCount+1) // Histogram of word counts in posts after mapping to masterDict
       
       val usersWithPosts = irow(0,-1) // Entry 0 counts the number of users with string posts, entry 1 tracks the current user
 
@@ -136,7 +162,7 @@ object featurizers {
             // Check to make sure that it is actually a valid moodid, at least one isn't
 						if (moodid>0 && moodid < 135 && moodid!=50 && moodid!=94) {
 
-							moodIDFreq(moodid-1)+=1; // Increment the histogram array
+							moodIDFreq(moodid)+=1; // Increment the histogram array
 
 							// Add to "labels" -> userid, currentmoodId
 							labels(0,denseEntryNumber) = userk+nrUsers;
@@ -179,7 +205,7 @@ object featurizers {
 								println(s"\nWriting batch $batchNumber to file.\n");
 
 								// Compress the sparse matrices, saves about half the disk space
-								saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber)));
+								saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),MaxMb*postPerMb, nrWords ) ));
 								// Label IMats are very small, no reason to compress
 								saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels); 
 
