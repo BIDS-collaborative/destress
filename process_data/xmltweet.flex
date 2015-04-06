@@ -62,11 +62,11 @@ PUNCT	   [;:,.?!]
   int iv = checkword(yytext);
 	}
 
-[:;]-[>)}] {
+[:;]-[>)}PD] {
   int iv = checkword(yytext);
 	  }
 
-[:;][>)}] {
+[:;=][>)}PD] {
   int iv = checkword(yytext);
 	  }
 
@@ -82,7 +82,7 @@ PUNCT	   [;:,.?!]
   int iv = checkword(yytext);
 	  }
 
-[:8]-?[D] {
+[8]-?[D] {
   int iv = checkword(yytext);
 	  }
 
@@ -117,6 +117,10 @@ PUNCT	   [;:,.?!]
 ":^)"    {
   int iv = checkword(yytext);
 	  }
+
+"XD"    {
+  int iv = checkword(yytext);
+      }
 
 {PUNCT}	  {
   int iv = checkword(yytext);
