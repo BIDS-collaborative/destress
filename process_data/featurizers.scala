@@ -26,14 +26,14 @@ object featurizers {
     var indices=izeros(sLength,1)
     var i=0;
     while(i<sLength) {
-      if (fullyMatches(regEx,s(i))) indices(i)=1;
+      if (fullyMatches(s(i),regEx)) indices(i)=1;
       i+=1;
     }
     find(indices);
   }
 
   // This function will increase the size of a buffer array m by n columns
-	def increaseBuffer(m:IMat,n: Int): IMat = {m\iones(m.nrows,n)};
+	def increaseBuffer(m:IMat,n: Int): IMat = {m\izeros(m.nrows,n)};
   
 	def featurizeMoodID(indir: String, dictdir:String,outdir:String,fileListPath: String): Unit = {
 
@@ -56,7 +56,7 @@ object featurizers {
 
 			//Get list of xml files from input file.
 			var source = Source.fromFile(fileListPath);
-			var fileList = source.getLines.toList;
+			val fileList = source.getLines.toList;
 			source.close();
 
 			// Save various stats in these variables
@@ -71,7 +71,7 @@ object featurizers {
       val maxDiscardCount = 100000;
       var discardCountFreq = izeros(1,maxDiscardCount+1) // Histogram of word counts in posts after mapping to masterDict
       
-      val usersWithPosts = irow(0,-1) // Entry 0 counts the number of users with string posts, entry 1 tracks the current user
+      var usersWithPosts = irow(0,-1); // Entry 0 counts the number of users with string posts, entry 1 tracks the current user
 
 			// Initialize buffers to store word locations in sparse matrix
 			var rowIndices = izeros(1,initialBuffer);
@@ -93,15 +93,10 @@ object featurizers {
 				println(s"Currently featurizing ${line}.xml");
 
 				// Get the current xml file data and original dictionary
-				var xmlFile = izeros(0,0);
-				try {
-					xmlFile = loadIMat(indir+line+".xml.imat");
-				} catch {
-				case e: Exception => println("exception caught in ${line}: " + e);    
-				}
-				var xmlDict = loadDict(indir+line+"_dict.sbmat"); // only load words
+				val xmlFile = loadIMat(indir+line+".xml.imat");
+				val xmlDict = loadDict(indir+line+"_dict.sbmat"); // only load words
 
-				var intIndex = xmlDict("<int>"); // Find the index of <int> tag in xmlDict
+				val intIndex = xmlDict("<int>"); // Find the index of <int> tag in xmlDict
 
 				// Map from the native dictionary to merged dictionary
 				val mapToMaster = xmlDict --> masterDict;
@@ -231,7 +226,7 @@ object featurizers {
 
 			// Save the leftover data that didn't make the size threshold
 			println(s"\nWriting batch $batchNumber to file.\n");
-			saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,MaxMb*postPerMb));
+			saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,denseEntryNumber));
 			saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels(?,0 until denseEntryNumber)); 
       
       // Print some data statistics
@@ -244,5 +239,173 @@ object featurizers {
       saveIMat(outdir+"wordCountHistogram2.imat",discardCountFreq); // histogram of words per post before discarding
       saveIMat(outdir+"moodIDHistogram.imat",moodIDFreq); //histogram of moodids
 	}
+
+	def featurizeByUser(indir: String, dictdir:String,outdir:String,fileListPath: String): Unit = {
+
+			//    val indir = "/var/local/destress/tokenized/";
+			//    var dictdir = "/var/local/destress/tokenized/";
+			//    val outdir = "/var/local/destress/featurized/";
+			//    val fileListPath= indir+"fileList.txt";
+
+			val MaxMb = 150; // Approx size of sparse mat save batches (uncompressed)
+			val usersPerMb = 13000; // (Very) approx nr of posts which take 1Mb of saved space. May change!
+			val usersPerBatch = MaxMb*usersPerMb;
+
+			val moodIDPerUser = 50; // (Very) approx number of moodIDs per user 
+			val initialBuffer = usersPerBatch*moodIDPerUser; // Start size of rowIndices and colIndices buffers
+			val bufferIncrease = usersPerBatch*5; // Amount to increase buffers storing sparse matrix entries if they overfill
+
+			//Get list of xml files from input file.
+			var source = Source.fromFile(fileListPath);
+			val fileList = source.getLines.toList;
+			source.close();
+
+			// Save various stats in these variables
+			var nrUsers = 0; // Total number of users
+			var nrPosts = 0; // Total number of posts
+
+      var nrMoods = 0; // Total number of <current_mood> and <current_moodid> tags
+      var nrMoodStrings = 0; // Total number of <current_mood> tags enclosing <string> tags
+      var nrMoodIDs = 0; // Total number of current_moodid tags, whether valid integers or not
+      
+			var moodIDFreq = izeros(1,135); // Histogram of moodids
+
+			val maxMoodIDCount = 1000; 
+			var moodIDCountFreq = izeros(1,maxMoodIDCount+1); // Histogram of the number of moodids per user
+
+			// Initialize buffers to store word locations in sparse matrix
+			var rowIndices = izeros(1,initialBuffer);
+			var colIndices = izeros(1,initialBuffer);
+      
+			// Keeps track of number of batches, increasing each time one is saved
+			var batchNumber = 1;
+
+			var sparseEntryNumber=0; // Stores the current index at which to write data in rowIndices, colIndices
+			var denseEntryNumber=0; // Stores the current col in sparse matrix
+
+			//Go through list:
+			for (line <- fileList) {
+				tic;
+
+				// Print a status update so the user can see something is happening
+				println(s"Currently featurizing ${line}.xml");
+
+				// Get the current xml file data and original dictionary
+				val xmlFile = loadIMat(indir+line+".xml.imat");
+				val xmlDict = loadDict(indir+line+"_dict.sbmat"); // only load words
+
+				val strIndex = xmlDict("<string>"); // Find the index of <string> tag in xmlDict
+        val intIndex = xmlDict("<int>"); // Find the index of <int> tag in xmlDict
+
+				// Indexes for <posts> and </posts> (which enclose all activity by one user) (starts after <posts> tag)
+				val usersIdx = getBeginEnd(xmlFile, xmlDict, "posts");
+
+				var useri: Int = 0; // iteration counter for while
+
+				while (useri < usersIdx.nrows ) {
+
+					val userStart = usersIdx(useri, 0);
+					val userEnd   = usersIdx(useri, 1);
+
+					if( userEnd > userStart+1 ) {
+
+            // This section keeps counts of the numbers of non-integer moods
+						var moodIdx = getBeginEnd(xmlFile(userStart -> userEnd), xmlDict, "current_mood")+userStart; 
+            nrMoods += moodIdx.nrows;
+						moodIdx = moodIdx(find(xmlFile(moodIdx(?,0)) == strIndex),0)+1;
+						nrMoodStrings += moodIdx.nrows;
+            
+						// Indexes for <current_moodid> and </current_moodid> 
+						moodIdx = getBeginEnd(xmlFile(userStart -> userEnd), xmlDict, "current_moodid")+userStart; 
+
+            if(moodIdx.nrows>0) {          
+            
+            	nrMoodIDs+=moodIdx.nrows; // Count all moodids
+
+            	// Only want integer mood_ids, reduce to a list of the indices pointing to the integers
+            	moodIdx = moodIdx(find(xmlFile(moodIdx(?,0)) == intIndex),0)+1;
+            	// Get the moodids then filter out invalid integers
+            	var moodIDs = twoComplementToInt(xmlFile(moodIdx));
+            	moodIDs = moodIDs(find(moodIDs>0));
+            	moodIDs = moodIDs(find(moodIDs<135));
+            	moodIDs = moodIDs(find(moodIDs!=50));
+            	moodIDs = moodIDs(find(moodIDs!=94));
+
+            	val nIDs = moodIDs.nrows;
+
+            	// Update the histograms
+            	moodIDCountFreq( min(nIDs,maxMoodIDCount) )+=1; 
+
+            	var counter = 0;
+            	while( counter < nIDs ) {moodIDFreq(moodIDs(counter)) += 1;counter+=1;};
+
+            	// Save indices and rows for sparse feature matrix from this user.
+            	// If buffer is full, increase buffer size permanently
+            	try {
+            		rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=moodIDs.t; 
+            	} catch{
+            	case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(usersPerBatch)} to ${(rowIndices.ncols+bufferIncrease)/(usersPerBatch)} moodids per user.\n");
+            	  rowIndices=increaseBuffer(rowIndices,bufferIncrease);
+            	  colIndices=increaseBuffer(rowIndices,bufferIncrease);
+            	  rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=moodIDs.t;};   
+            	}
+            	colIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=iones(1,nIDs)*denseEntryNumber; 
+
+            	// Increment the index counters
+            	if (nIDs>0) {
+            		denseEntryNumber+=1;
+            		sparseEntryNumber+=nIDs;
+            	}
+
+            	// Write the features to a file once usersPerBatch posts are processed
+            	if (denseEntryNumber == usersPerBatch) {
+
+            		println(s"\nWriting batch $batchNumber to file.\n");
+
+            		// Compress the sparse matrices, saves about half the disk space
+            		saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),135,usersPerBatch));
+
+            		// Reset the index/col trackers
+            		denseEntryNumber=0;
+            		sparseEntryNumber=0;
+
+            		// Increment batch number
+            		batchNumber+=1;
+                
+              } // Close if (denseEntryNumber == usersPerBatch)
+              
+            } // if(moodIdx.nrows>0)
+
+					} // Close if( userEnd > userStart+1 )
+
+					// Next user
+					useri += 1;
+          
+				} // Close while (useri < usersIdx.nrows )
+
+				// Update nrUsers to include this file
+				if (usersIdx.nrows > 0 && usersIdx(0,0) != -1) {nrUsers += usersIdx.nrows}
+
+				println(s"Featurized in ${toc}s\n");
+          
+			} // Close for (line <- fileList)
+
+			// Save the leftover data that didn't make the size threshold
+			println(s"\nWriting batch $batchNumber to file.\n");
+			saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),135,denseEntryNumber));
+
+			// Print some data statistics
+			println(s"\nThere are a total of $nrUsers users in the data set.");
+
+			val nrValidMoodIDs = (batchNumber-1)*usersPerBatch+denseEntryNumber;
+			println(s"Of these, ${nrValidMoodIDs} (${100.0*nrValidMoodIDs/nrUsers}%) have at least one valid integer moodid.");
+
+			println(s"The total number of <current_mood> and <current_moodid> tags is ${nrMoodIDs+nrMoods}.");
+			println(s"There are ${nrMoodStrings} custom moods specified by strings.")      
+			println(s"The total number of <current_moodid> tags is ${nrMoodIDs}. Of these, ${sum(moodIDFreq)} (${100.0*sum(moodIDFreq)/nrMoodIDs}%) are valid integers.")
+
+			saveIMat(outdir+"moodIDCountHistogram.imat",moodIDCountFreq); // histogram of number of moodids per user
+			saveIMat(outdir+"moodIDHistogram.imat",moodIDFreq); // histogram of moodids by integer
+	} // Close def featurizeByUser
 
 }
