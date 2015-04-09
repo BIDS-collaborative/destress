@@ -3,6 +3,7 @@ import scala.io.Source
 
 import BIDMat.{CMat, CSMat, DMat, Dict, FMat, FND, GMat, GDMat, GIMat, GLMat, GSMat, GSDMat, HMat, IDict, Image, IMat, LMat, Mat, SMat, SBMat, SDMat}
 import BIDMat.MatFunctions._
+import BIDMat.SciFunctions._
 
 object utils {
 
