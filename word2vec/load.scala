@@ -16,7 +16,33 @@ var trainingdir = "/var/local/destress/";
 //val masterDict = loadDict(dictdir+"masterDict.sbmat",dictdir+"masterDict.dmat"); 
 val training = loadFMat(trainingdir+"vectors.txt"); 
 
-val 
+val source = Source.fromFile("/home/yxing/destress/word2vec/oneLiner.txt");
+val lines = try source.mkString finally source.close();
+val words = lines.split(" ");
+val listwords = words.toList; 
+val a = csrow(listwords)
+val index = irow(List.range(1,3000001)) 
+val googleDict = Dict(a, index)
+
+val pw = new PrintWriter(new File("MATRIX.txt"))
+
+
+
+//val cs = CSMat(3000000, 1,  
+val zeros = irow(List.fill(300)(0))
+
+for ( i <- 1 to masterDict.length) {
+	val lookup = masterDict(i); 
+	if (googleDict(lookup) != -1 ) {
+		pw.write( trainedMatrix(googleDict(lookup), ?) + "\n"); 
+	}
+	else {
+		pw.write( List.fill(300)(0) mkString (" ") + "\n" ); 
+	
+	}
+}
+
+pw.close;
 
 
 
