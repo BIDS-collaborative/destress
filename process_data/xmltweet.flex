@@ -31,9 +31,15 @@ AMP        ("&"|"&amp;")
 {AMP}"quot;" /* Discard quotation marks */
 
 [:;]"</string>" {
-  int iv = checkword(yytext+1);
-  unput(yytext[0]);
-} /* Protect close tags from becoming emoticons */
+  int i;
+  /* Copy yytext because unput() trashes yytext */
+  char *yycopy = strdup( yytext );
+  for ( i = yyleng - 1; i >= 1; --i )
+    unput( yycopy[i] );
+  unput( ' ' );
+  unput( yycopy[0] );
+  free( yycopy );
+} /* Protect close tags from becoming emoticons by inserting a space */
 
 "http"s?"://" {
 int iv = checkword(yytext);
