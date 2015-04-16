@@ -22,7 +22,18 @@ AMP        ("&"|"&amp;")
 
 "<base64>"[^<>]+"</base64>" /* eat up base64 tokens */
 
-"&lt;"[^&<]*"&gt;" /* eat up some simple ampersand based html tags in text */
+"&lt;"[^&<=]{1,15}"&gt;"
+"&amp;lt;"[^&<=]{1,15}"&amp;&gt;" /* eat up some short, simple ampersand based html tags in text */
+
+"&lt;"[^&<=]*"="[^&<]*"&gt;" /* eat up longer html tags, these usually contain = signs
+
+"&lt;!"[^&<]*"&gt;" /* eat up xml comment tags <!-- comment -->, onditional tags <!-[if condition]>, even when formatted incorrectly
+
+{AMP}"lt;""/"?[wo]":"[^&<]*{AMP}"gt;" /* eat some Microsoft tags that show up regularly */
+
+{AMP}"lt;""/"?st[0-9]":"[^&<]*{AMP}"gt;" /* eat some more Microsoft "smart tags" */
+
+{AMP}"lt;option"[ ]+"selected"{AMP}"gt;" /* Eat up a common tag that appears in polls */
 
 {AMP}"nbsp;" /* These are nonbreaking spaces, eat them */
 
@@ -161,14 +172,14 @@ int iv = checkword(yytext);
   int iv = checkword(yytext);
 }
 
-("<"|"&lt;"|"&amp;lt;")"3"    {
+("<"|"&lt;"|"&amp;lt;")"3"+    {
   yytext[0]='<';
   yytext[1]='3';
   yytext[2] = '\0';
   int iv = checkword(yytext);
 } /* Heart emoticons <3 */
 
-("<"|"&lt;"|"&amp;lt;")[\\/]"3"    {
+("<"|"&lt;"|"&amp;lt;")[\\/]"3"+    {
   yytext[0]='<';
   yytext[1]='/';
   yytext[2]='3';
