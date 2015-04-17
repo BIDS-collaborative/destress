@@ -10,13 +10,16 @@ var magic = data.t * googleVecs;
 var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
 
-def query( query_s : String , top : Int) : Int = {
+def query( query_s : String , top : Int) = {
 
   var query_vec = googleVecs(0, ?) * 0;
 
   var ss = query_s.split(" ");
   var s = "";
-  for(s <- ss) {
+
+  for(x <- ss) {
+    s = x.toLowerCase();
+
     if(dict(s) == -1) {
       printf("WARNING: did not find %s in master dict\n", s);
     } else {
@@ -39,20 +42,37 @@ def query( query_s : String , top : Int) : Int = {
 
   res(find(n == 0)) = -1; // sentence sums to 0
 
-  res(find(res > 0.9999)) = -1; // single word, not interesting
+  // res(find(res > 0.9999)) = -1; // single word, not interesting
 
-  var (x, ind) = sortdown2(res);
-  var bestIndex = ind(0 until top);
+  var (x, bestIndex) = sortdown2(res);
+  // var bestIndex = ind(0 until top);
 
-  for(i <- 0 until bestIndex.length) {
+  var nwords = size(sents)(0);
+  var prev = "   ";
+  var prev_res = -1f;
+
+  var i = 0;
+  var count = 0;
+  // for(i <- 0 until bestIndex.length) {
+  while(count < top) {
     var ix = bestIndex(i);
-    var z = dict(IMat(FMat(sents(find(sents(?, ix) != 0), ix)))).t;
+    var curr = IMat(FMat(sents(find(sents(?, ix) != 0), ix)));
+    var z = dict(curr).t;
     var sent = (z ** csrow(" ")).toString().replace(" ,", " ");
-    printf("%.3f -- %s\n", res(ix), sent);
+
+    // if(sent.substring(0, sent.length-2) != prev.substring(0, prev.length-2)) {
+    if(res(ix) != prev_res) {
+      prev = sent;
+    prev_res = res(ix);
+      printf("%.3f -- %s\n", res(ix), sent);
+      count += 1;
+    }
+    // else {
+    //   printf("ignoring %s\n", sent);
+    // }
+    i += 1;
   }
   println();
-
-  return bestIndex.length;
 }
 
 // Example usage:
