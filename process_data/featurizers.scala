@@ -274,10 +274,10 @@ object featurizers {
     var nrStringPosts = 0; // Total number of posts with <event><string>...</string></event> form
     var moodIDFreq = izeros(1,135) // Histogram of moodids
 
-    val maxWordCount = 100000;
+    val maxWordCount = 500;
     var wordCountFreq = izeros(1,maxWordCount+1); // Histogram of word counts in posts before mapping to masterDict
 
-    val maxDiscardCount = 100000;
+    val maxDiscardCount = 500;
     var discardCountFreq = izeros(1,maxDiscardCount+1) // Histogram of word counts in posts after mapping to masterDict
 
     var usersWithPosts = irow(0,-1); // Entry 0 counts the number of users with string posts, entry 1 tracks the current user
@@ -286,7 +286,10 @@ object featurizers {
     var rowIndices = izeros(1,initialBuffer);
     var colIndices = izeros(1,initialBuffer);
 
-    var labels = izeros(3, MaxMb*postPerMb+10000); // Dense IMat with (UserId, CurrentMoodId, PostID) - later do datetime+replycount
+    var labels = izeros(3, MaxMb*postPerMb*2); // Dense IMat with (UserId, CurrentMoodId, PostID) - later do datetime+replycount
+
+    // var sents = CSMat(1, MaxMb*postPerMb+10000);
+    var sents = IMat(maxWordCount, MaxMb*postPerMb*2);
 
     // Keeps track of number of batches, increasing each time one is saved
     var batchNumber = 1;
@@ -296,7 +299,7 @@ object featurizers {
 
     //Go through list:
     for (line <- fileList) {
-      tic;
+      // tic;
 
       // Print a status update so the user can see something is happening
       println(s"Currently featurizing ${line}.xml");
@@ -367,7 +370,7 @@ object featurizers {
 	      // Get the post text, discarding numbers
 	      var postWordId = getWordsOnly(xmlFile, valEventIdx(posti,0), valEventIdx(posti,1));
 
-	      wordCountFreq( min(postWordId.nrows,maxWordCount) )+=1; // Update histogram of word counts before discards
+	      // wordCountFreq( min(postWordId.nrows,maxWordCount) )+=1; // Update histogram of word counts before discards
 
 	      // Map the text to the masterDict
 	      postWordId = mapToMaster(postWordId);
@@ -380,7 +383,7 @@ object featurizers {
                 break;
               }
 
-	      discardCountFreq( min(nWords, maxDiscardCount) )+=1; // Update histogram of word counts after discards
+	      // discardCountFreq( min(nWords, maxDiscardCount) )+=1; // Update histogram of word counts after discards
 
 	      // Save indices and rows for sparse feature matrix from this post.
 	      // If buffer is full, increase buffer size permanently
@@ -396,10 +399,11 @@ object featurizers {
 
               var punctSpots = (postWordId == masterDict(".")) + (postWordId == masterDict("!")) + (postWordId == masterDict("?"));
               var sentID = cumsum(punctSpots);
+              sentID(1 until sentID.length) = sentID(0 until sentID.length - 1);
 
 	      colIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))= sentID.t + denseEntryNumber; //iones(1,nWords)*denseEntryNumber;
 
-              var nSents = sum(punctSpots)(0) + 1;
+              var nSents = maxi(sentID)(0) + 1;
               var denseNums = irow(denseEntryNumber -> (denseEntryNumber + nSents));
 
               // Add to "labels" -> userid, currentmoodId
@@ -407,6 +411,39 @@ object featurizers {
 	      labels(1,denseNums) = moodid;
               labels(2,denseNums) = posti;
 
+
+              // var currSent = "";
+              // var currID = 0;
+              // var sentIx = 0;
+
+              // for(sentIx <- 0 until sentID.length) {
+              //   if(currID != sentID(sentIx)) {
+              //     sents(0, currID + denseEntryNumber) = currSent;
+              //     currID = sentID(sentIx);
+              //     currSent = "";
+              //   }
+              //   currSent += masterDict(postWordId(sentIx));
+              //   currSent += " ";
+              // }
+              // sents(0, currID + denseEntryNumber) = currSent;
+
+              var currIx = 0;
+              var currID = 0;
+
+              for(sentIx <- 0 until sentID.length) {
+                if(currID != sentID(sentIx)) {
+                  currID = sentID(sentIx);
+                  wordCountFreq( min(currIx,maxWordCount) )+=1; // Update histogram of word counts before discards
+                  currIx = 0;
+                }
+         
+                if(currIx < maxWordCount) {
+                  sents(currIx, currID + denseEntryNumber) = postWordId(sentIx); // convert word ID from int to float, to store in sparse mat
+                }
+                currIx += 1;
+              }
+              wordCountFreq( min(currIx,maxWordCount) )+=1; // Update histogram of word counts before discards
+              
 	      // Increment the index counters
               if (nWords>0) {
                 denseEntryNumber+=nSents;
@@ -416,12 +453,18 @@ object featurizers {
 	      // Write the features to a file once MaxMb*postPerMb posts are processed
 	      if (denseEntryNumber >= MaxMb*postPerMb) {
 
-	        println(s"\nWriting batch $batchNumber to file.\n");
+	        println(s"\nWriting batch $batchNumber to file.");
+                tic;
 
 	        // Compress the sparse matrices, saves about half the disk space
 	        saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,denseEntryNumber));
 	        // Label IMats are very small, no reason to compress
-	        saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels);
+	        saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels(?, 0 until denseEntryNumber));
+                saveSMat(outdir+"data"+s"$batchNumber"+"_sent.smat.lz4", sparse(sents(?, 0 until denseEntryNumber)));
+
+                saveIMat(outdir+"wordCountHistogram.imat",wordCountFreq); // histogram of words per post before discarding
+
+                sents = sents * 0;
 
 	        // Reset the index/col trackers
 	        denseEntryNumber=0;
@@ -430,6 +473,7 @@ object featurizers {
 	        // Increment batch number
 	        batchNumber+=1;
 
+                println(s"Written in ${toc}s\n");
 	      }
 
 	    }
@@ -445,7 +489,7 @@ object featurizers {
       // Update nrUsers to include this file
       if (usersIdx.nrows > 0 && usersIdx(0,0) != -1) {nrUsers += usersIdx.nrows}
 
-      println(s"Featurized in ${toc}s\n");
+      // println(s"Featurized in ${toc}s\n");
     }
 
     // Save the leftover data that didn't make the size threshold
@@ -460,7 +504,7 @@ object featurizers {
     println(s"There are a total of $nrStringPosts <string> posts, ${100*(sum(moodIDFreq)(0)/nrStringPosts.toFloat)}% of which have a moodid tag.");
 
     saveIMat(outdir+"wordCountHistogram.imat",wordCountFreq); // histogram of words per post before discarding
-    saveIMat(outdir+"wordCountHistogram2.imat",discardCountFreq); // histogram of words per post before discarding
+    // saveIMat(outdir+"wordCountHistogram2.imat",discardCountFreq); // histogram of words per post before discarding
     saveIMat(outdir+"moodIDHistogram.imat",moodIDFreq); //histogram of moodids
   }
 
