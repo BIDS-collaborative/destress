@@ -17,10 +17,10 @@ object featurizers {
 
   // List of all the regexes which give emoticons in the flex file, as string.
   // Concatenated by "|" into a single regex.
-  val emoticonRegexes = """[:;=]-?[>)}PD/o\]\\]"""+"|"+"""[)(\]\[]-?[:;8=]"""+"|"+""">?:-?<"""+"|"+
-  """>?[:;=]-[(\[\{O]"""+"|"+""">?[:;][(\[\{O]"""+"|"+"""[8:]-?[D]"""+"|"+
-  """:-||"""+"|"+""":@"""+"|"+"""D:<?"""+"|"+"""D[8=]"""+"|"+
-  """:\'-?\("""+"|"+"""[:;]o\)"""+"|"+"""8\)"""+"|"+""":^\)"""+"|"+"XD"+"|"+""":|"""+"|"+"""^[-_]^""";
+  val emoticonRegexes = """[:;=]-?[>)}PD/o\]\\]"""+"|"+"""[(\[][:;8=]"""+"|"+"""[)(\]\[]-[:;8=]"""+"|"+""">?:-?<"""+"|"+
+  """>?[:;]-[(\[\{O]"""+"|"+""">?[:;=][(\[\{O]"""+"|"+"""[8:]-?[D]"""+"|"+
+  """:-\|{1,2}"""+"|"+""":@"""+"|"+"""D:<?"""+"|"+"""D[8=]"""+"|"+
+  """:\'-?\("""+"|"+"""[:;]o\)"""+"|"+"""8\)"""+"|"+""":^\)"""+"|"+"XD"+"|"+""":\|"""+"|"+"""^[-_]^"""+"|"+"""</?3""";
 
   // Functions to help get the list of emoticons in a dictionary
   def fullyMatches(s: String, regEx: scala.util.matching.Regex): Boolean = (regEx unapplySeq s).isDefined;
@@ -38,7 +38,7 @@ object featurizers {
   // This function will increase the size of a buffer array m by n columns
   def increaseBuffer(m:IMat,n: Int): IMat = {m\izeros(m.nrows,n)};
 
-  def featurizeMoodID(indir: String, dictdir:String,outdir:String,fileListPath: String): Unit = {
+  def featurizeMoodID(indir: String, dictdir:String,outdir:String,fileListPath: String,dictName: String="masterDict"): Unit = {
 
     //    val indir = "/var/local/destress/tokenized/";
     //    var dictdir = "/var/local/destress/tokenized/";
@@ -52,7 +52,7 @@ object featurizers {
     val initialBuffer = MaxMb*postPerMb*wordsPerPost; // Start size of rowIndices and colIndices buffers
     val bufferIncrease = MaxMb*postPerMb*25; // Amount to increase buffers storing sparse matrix entries if they overfill
 
-    val masterDict = loadDict(dictdir+"masterDict.sbmat",dictdir+"masterDict.dmat");
+    val masterDict = loadDict(dictdir+dictName+".sbmat",dictdir+dictName+".dmat");
 
     // Get nrWords in master dictionary
     val nrWords = masterDict.cstr.nrows;
@@ -200,9 +200,9 @@ object featurizers {
 	      println(s"\nWriting batch $batchNumber to file.\n");
 
 	      // Compress the sparse matrices, saves about half the disk space
-	      saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,MaxMb*postPerMb));
+	      saveSMat(outdir+"data"+f"$batchNumber%03d"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,MaxMb*postPerMb));
 	      // Label IMats are very small, no reason to compress
-	      saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels);
+	      saveIMat(outdir+"data"+f"$batchNumber%03d"+".imat", labels);
 
 	      // Reset the index/col trackers
 	      denseEntryNumber=0;
@@ -229,8 +229,8 @@ object featurizers {
 
     // Save the leftover data that didn't make the size threshold
     println(s"\nWriting batch $batchNumber to file.\n");
-    saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,denseEntryNumber));
-    saveIMat(outdir+"data"+s"$batchNumber"+".imat", labels(?,0 until denseEntryNumber));
+    saveSMat(outdir+"data"+f"$batchNumber%03d"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,denseEntryNumber));
+    saveIMat(outdir+"data"+f"$batchNumber%03d"+".imat", labels(?,0 until denseEntryNumber));
 
     // Print some data statistics
     println(s"\nThere are a total of $nrUsers users in the data set.");
