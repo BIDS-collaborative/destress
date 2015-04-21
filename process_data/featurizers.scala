@@ -52,7 +52,7 @@ object featurizers {
     val initialBuffer = MaxMb*postPerMb*wordsPerPost; // Start size of rowIndices and colIndices buffers
     val bufferIncrease = MaxMb*postPerMb*25; // Amount to increase buffers storing sparse matrix entries if they overfill
 
-    val masterDict = loadDict(dictdir+dictName+".sbmat",dictdir+dictName+".dmat");
+    val masterDict = loadDict(dictdir+dictName+".sbmat");
 
     // Get nrWords in master dictionary
     val nrWords = masterDict.cstr.nrows;
@@ -69,10 +69,12 @@ object featurizers {
     var moodIDFreq = izeros(1,135) // Histogram of moodids
 
     val maxWordCount = 100000;
-    var wordCountFreq = izeros(1,maxWordCount+1); // Histogram of word counts in posts before mapping to masterDict
+    var wordCountFreq = izeros(1,maxWordCount+1); // Histogram of word count per post before mapping to masterDict
 
     val maxDiscardCount = 100000;
-    var discardCountFreq = izeros(1,maxDiscardCount+1) // Histogram of word counts in posts after mapping to masterDict
+    var discardCountFreq = izeros(1,maxDiscardCount+1); // Histogram of word count per post after mapping to masterDict
+    
+    var dictCountsNew = dzeros(nrWords,1); // Counts in the dictionary for post text only
 
     var usersWithPosts = irow(0,-1); // Entry 0 counts the number of users with string posts, entry 1 tracks the current user
 
@@ -87,7 +89,6 @@ object featurizers {
 
     var sparseEntryNumber=0; // Stores the current index at which to write data in rowIndices, colIndices
     var denseEntryNumber=0; // Stores the current col in which to write data to labels, also current col in sparse matrix
-
     //Go through list:
     for (line <- fileList) {
       tic;
@@ -182,9 +183,9 @@ object featurizers {
 	    } catch{
 	      //  						case oob: java.lang.IndexOutOfBoundsException => {println("Increasing buffer size.");
 	      case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(MaxMb*postPerMb)} to ${(rowIndices.ncols+bufferIncrease)/(MaxMb*postPerMb)} words per post.\n");
-		rowIndices=increaseBuffer(rowIndices,bufferIncrease);
-		colIndices=increaseBuffer(rowIndices,bufferIncrease);
-		rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t;};
+	      rowIndices=increaseBuffer(rowIndices,bufferIncrease);
+	      colIndices=increaseBuffer(rowIndices,bufferIncrease);
+	      rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=postWordId.t;};
 	    }
 	    colIndices(0,sparseEntryNumber until (sparseEntryNumber+nWords))=iones(1,nWords)*denseEntryNumber;
 
@@ -203,7 +204,9 @@ object featurizers {
 	      saveSMat(outdir+"data"+f"$batchNumber%03d"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,MaxMb*postPerMb));
 	      // Label IMats are very small, no reason to compress
 	      saveIMat(outdir+"data"+f"$batchNumber%03d"+".imat", labels);
-
+        
+        // Update word counts for post text
+        dictCountsNew += accum(rowIndices(0 until sparseEntryNumber).t,dones(sparseEntryNumber,1),nrWords,1);
 	      // Reset the index/col trackers
 	      denseEntryNumber=0;
 	      sparseEntryNumber=0;
@@ -231,7 +234,12 @@ object featurizers {
     println(s"\nWriting batch $batchNumber to file.\n");
     saveSMat(outdir+"data"+f"$batchNumber%03d"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),nrWords,denseEntryNumber));
     saveIMat(outdir+"data"+f"$batchNumber%03d"+".imat", labels(?,0 until denseEntryNumber));
-
+    
+    // Update word counts from post text
+    dictCountsNew += accum(rowIndices(0 until sparseEntryNumber).t,ones(sparseEntryNumber,1),nrWords,1);
+    // Save word counts from post text
+    saveDMat(outdir+dictName+".dmat",dictCountsNew);  
+    
     // Print some data statistics
     println(s"\nThere are a total of $nrUsers users in the data set.");
     println(s"Of these, ${usersWithPosts(0)} have at least one <string> post.");
