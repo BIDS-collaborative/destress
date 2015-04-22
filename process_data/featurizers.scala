@@ -206,7 +206,7 @@ object featurizers {
 	      saveIMat(outdir+"data"+f"$batchNumber%03d"+".imat", labels);
         
         // Update word counts for post text
-        dictCountsNew += accum(rowIndices(0 until sparseEntryNumber).t,dones(sparseEntryNumber,1),nrWords,1);
+        dictCountsNew += accum(rowIndices(0 until sparseEntryNumber).t,ones(sparseEntryNumber,1),nrWords,1);
 	      // Reset the index/col trackers
 	      denseEntryNumber=0;
 	      sparseEntryNumber=0;
