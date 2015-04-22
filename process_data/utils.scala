@@ -3,6 +3,7 @@ import scala.io.Source
 
 import BIDMat.{CMat, CSMat, DMat, Dict, FMat, FND, GMat, GDMat, GIMat, GLMat, GSMat, GSDMat, HMat, IDict, Image, IMat, LMat, Mat, SMat, SBMat, SDMat}
 import BIDMat.MatFunctions._
+import BIDMat.SciFunctions._
 
 object utils {
 
@@ -115,11 +116,19 @@ object utils {
 		// Trim the dictionary to the current threshold for consistency
 		finalDict.trim(threshold)
 	}
+ 
+	def histoStats(histo: IMat): (Float,Float,Float) = {
+    
+		val mean: Float = (sum(FMat(histo)*@irow(0 until histo.length))/sum(histo))(0);
+		val median: Float = find(FMat(cumsum(histo))>sum(histo)(0)/2)(0);
+    val mode: Float = maxi2(histo)._2(0);
+    
+    println(s"The mean is ${mean}.");
+    println(s"The median is $median.");
+    println(s"The mode is $mode.");
+    
+    (mean,median,mode);
+    
+  }
   
 }
-
-//import utils._;
-//var masterDict=combine_dicts("/var/local/destress/tokenized2/fileList.txt","/var/local/destress/tokenized2/");
-//saveSBMat("/var/local/destress/tokenized2/masterDict.sbmat",SBMat(masterDict.cstr));
-//saveDMat("/var/local/destress/tokenized2/masterDict.dmat",masterDict.counts);
-//println("FINISHED");
