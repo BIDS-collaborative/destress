@@ -125,10 +125,13 @@ val wMat = (fweights*fweights.t)*1/nFeat;
 
 
 
-//val outdir = "/home/anasrferreira/plotdata/";
+val outdir = "/home/anasrferreira/plotdata/";
+saveAs(outdir+"wMat.mat", wMat, "wMat")
+
 //saveDMat(outdir+"confMatA.txt", confMatA);
 //saveDMat(outdir+"confMatB.txt", confMatB);
 
+saveAs(outdir+"moodCount.mat", moodCountTrain, "moodCountTrain", moodCountTest, "moodCountTest")
 //saveIMat(outdir+"moodCount.txt", moodCount);
 
 
