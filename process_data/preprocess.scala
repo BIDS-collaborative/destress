@@ -28,8 +28,11 @@ object preprocessors {
 
     var map=irow(0 until nrWords);
     if (sort) map = sortdown2(masterDict.counts)._2;
-      //masterDict = Dict(masterDict.cstr(map),masterDict.counts(map))
-
+    
+    // Save the dictionary in its new order with the preprocessed data
+    saveSBMat(outdir+"masterDict.sbmat",masterDict.cstr(map))
+    saveDMat(outdir+"masterDict.dmat",masterDict.counts(map));
+    
     for ( n <- nrs ) {
 
       println(s"Currently preprocessing "+n);
@@ -65,6 +68,8 @@ object preprocessors {
       saveFMat(outdir+ "idf.fmat",docFreq);
     }
 
+    
+    
   } // end def preprocess()
 
 }
