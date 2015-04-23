@@ -12,7 +12,6 @@ import BIDMat.SciFunctions._
 
 import util.control.Breaks._
 
-
 object featurizers {
 
   // List of all the regexes which give emoticons in the flex file, as string.
@@ -66,9 +65,9 @@ object featurizers {
       var nrUsers = 0; // Total number of users
       var nrPosts = 0; // Total number of posts
       var nrStringPosts = 0; // Total number of posts with <event><string>...</string></event> form
-      var moodIDFreq = izeros(1,135) // Histogram of moodids
+      var moodIDFreq = izeros(1,135); // Histogram of moodids
 
-          val maxWordCount = 100000;
+      val maxWordCount = 100000;
       var wordCountFreq = izeros(1,maxWordCount+1); // Histogram of word count per post before mapping to masterDict
 
       val maxDiscardCount = 100000;
@@ -213,7 +212,7 @@ object featurizers {
 
                 // Increment batch number
                 batchNumber+=1;
-
+                
               }
 
             }
@@ -237,8 +236,8 @@ object featurizers {
 
       // Update word counts from post text
       dictCountsNew += accum(rowIndices(0 until sparseEntryNumber).t,ones(sparseEntryNumber,1),nrWords,1);
-      // Save word counts from post text
-      saveDMat(outdir+dictName+".dmat",dictCountsNew);  
+      // Save word counts from post text without the first buffer entry
+      saveDMat(outdir+dictName+".dmat",dictCountsNew(1 until nrWords));  
 
       // Print some data statistics
       println(s"\nThere are a total of $nrUsers users in the data set.");
