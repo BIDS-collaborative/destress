@@ -90,7 +90,9 @@ var moodCountTest = sum(tcats.t);
 
 
 // MODEL
-val (nn, opts, tnn, topts) = GLM.learner(data, cats, tdata, tcatsHat, GLM.logistic); //GLM.maxp);
+val (nn, opts) = GLM.learner(data, cats, GLM.logistic); //GLM.maxp);
+//val (nn, opts, tnn, topts) = GLM.learner(data, cats, tdata, tcatsHat, GLM.logistic); //GLM.maxp);
+// initializing learner and predictor together makes autoReset = false (by default) for both opts/topts
 opts.batchSize = 10000;
 opts.npasses = 3;
 opts.autoReset = false;
@@ -100,6 +102,10 @@ opts.texp = 0.5; // default 0.5
 
 // Train and Predict
 nn.train
+
+val (tnn, topts) = GLM.predictor(nn.model, tdata, tcatsHat);
+topts.autoReset = false; // if this doesn't happen, then nn.modelmat will reset to zeros
+
 tnn.predict
 var weights = FMat(nn.modelmat)
 
@@ -125,15 +131,18 @@ val wMat = (fweights*fweights.t)*1/nFeat;
 
 
 
-//val outdir = "/home/anasrferreira/plotdata/";
+val outdir = "/home/anasrferreira/plotdata/";
+saveAs(outdir+"wMat.mat", wMat, "wMat")
+
 //saveDMat(outdir+"confMatA.txt", confMatA);
 //saveDMat(outdir+"confMatB.txt", confMatB);
 
+saveAs(outdir+"moodCount.mat", moodCountTrain, "moodCountTrain", moodCountTest, "moodCountTest")
 //saveIMat(outdir+"moodCount.txt", moodCount);
 
 
 //val correct = sum(maxi2(tcatsHat)._2 == labels(1,nrTrainPts->nrDataPts))
 //val total = nrDataPts-nrTrainPts
 
-resetGPU; 
-Mat.clearCaches;
+//resetGPU; 
+//Mat.clearCaches;
