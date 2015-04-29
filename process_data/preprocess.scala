@@ -19,15 +19,14 @@ object preprocessors {
     // tfidf trackers
     var ndocs:Double=0;
     var docFreq=zeros(nrWords,1);
-    var nonZeros:(IMat,IMat)=(izeros(0,0),izeros(0,0));
+    var nonZeros:(IMat,IMat)=(null,null); 
 
     // Load the filenames of all the imats in indir
     val listLabels = new File(indir).list.filter(_.endsWith(".imat")).filter(_.startsWith("data"));
     // From list, get the number xx from dataxx.imat in listLabels, sorted (dropRight, then drop)
     val nrs = listLabels.map(c => c.split('.')(0)).map(c => c.drop(4)).sortBy(_.toInt); //.sortWith(_<_);
 
-    var map=irow(0 until nrWords);
-    if (sort) map = sortdown2(masterDict.counts)._2;
+    var map= if (sort) sortdown2(masterDict.counts)._2 else irow(0 until nrWords);
     
     // Save the dictionary in its new order with the preprocessed data
     saveSBMat(outdir+"masterDict.sbmat",SBMat(masterDict.cstr(map)));
@@ -44,7 +43,7 @@ object preprocessors {
 
       // Build bag of words and truncate
       var bagOfWords = loadSMat(indir + "data" + n + ".smat.lz4");
-      if(sort) bagOfWords=bagOfWords(map(1 to nrWords),?) else bagOfWords = bagOfWords(1 to nrWords,?);
+      if(sort) bagOfWords=bagOfWords(map(0 until nrWords),?) else bagOfWords = bagOfWords(0 until nrWords,?);
       
       if(transformation=="sqrt") bagOfWords.contents(?)=sqrt(bagOfWords);
       if(transformation=="tfidf") {

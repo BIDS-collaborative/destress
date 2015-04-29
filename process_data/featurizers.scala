@@ -51,7 +51,7 @@ object featurizers {
       val initialBuffer = MaxMb*postPerMb*wordsPerPost; // Start size of rowIndices and colIndices buffers
       val bufferIncrease = MaxMb*postPerMb*25; // Amount to increase buffers storing sparse matrix entries if they overfill
 
-      val masterDict = loadDict(dictdir+dictName+".sbmat");
+      val masterDict = loadDict(dictdir+dictName+".sbmat",pad=false);
 
       // Get nrWords in master dictionary
       val nrWords = masterDict.cstr.nrows;
@@ -97,7 +97,7 @@ object featurizers {
 
         // Get the current xml file data and original dictionary
         val xmlFile = loadIMat(indir+line+".xml.imat");
-        val xmlDict = loadDict(indir+line+"_dict.sbmat"); // only load words
+        val xmlDict = loadDict(indir+line+"_dict.sbmat",pad=true); // only load words
 
         val intIndex = xmlDict("<int>"); // Find the index of <int> tag in xmlDict
 
@@ -568,7 +568,7 @@ object featurizers {
 
       // Get the current xml file data and original dictionary
       val xmlFile = loadIMat(indir+line+".xml.imat");
-      val xmlDict = loadDict(indir+line+"_dict.sbmat"); // only load words
+      val xmlDict = loadDict(indir+line+"_dict.sbmat",pad=true); // only load words
 
       val strIndex = xmlDict("<string>"); // Find the index of <string> tag in xmlDict
       val intIndex = xmlDict("<int>"); // Find the index of <int> tag in xmlDict

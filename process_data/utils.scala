@@ -44,20 +44,12 @@ object utils {
 				out
 	}
 
-	def loadDict(sbmatFile:String): BIDMat.Dict = {
-	    val dfiller = Dict(csrow("<xx>"));
-	    val dWords = Dict(CSMat(loadSBMat(sbmatFile)));
-	    Dict.union(dfiller, dWords)
-	}
-
-	def loadDict(sbmatFile:String, imatFile:String): BIDMat.Dict = {
-		val dfiller = Dict(csrow("<xx>"), irow(0)); //dummy to use up index 0
-		val dWords = CSMat(loadSBMat(sbmatFile)); // load dict.sbmat
-		val dCount = loadMat(imatFile); // load dict.imat
-		val dict = Dict(dWords, DMat(dCount)); // combine to dictionary
-
-		Dict.union(dfiller, dict) // union dictionary with dummy
-	}
+  def loadDict(sbmatFile:String, imatFile:String=null, pad:Boolean=true): BIDMat.Dict = {
+    val dfiller = Dict(csrow("<xx>"), irow(0)); //dummy to use up index 0
+    val dWords = CSMat(loadSBMat(sbmatFile)); // load dict.sbmat
+    val dict = if (imatFile!=null) Dict(dWords, DMat(loadMat(imatFile))) else Dict(dWords); // combine to dictionary
+    if (pad) Dict.union(dfiller, dict) else dict // union dictionary with dummy if desired
+  }
 
 	def getWordsOnly(xmlImat:BIDMat.IMat, bIdx:Int, eIdx:Int): BIDMat.IMat = {
 		val temp = xmlImat(bIdx->eIdx);
