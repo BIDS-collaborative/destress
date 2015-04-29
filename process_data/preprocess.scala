@@ -30,7 +30,7 @@ object preprocessors {
     if (sort) map = sortdown2(masterDict.counts)._2;
     
     // Save the dictionary in its new order with the preprocessed data
-    saveSBMat(outdir+"masterDict.sbmat",masterDict.cstr(map))
+    saveSBMat(outdir+"masterDict.sbmat",SBMat(masterDict.cstr(map)));
     saveDMat(outdir+"masterDict.dmat",masterDict.counts(map));
     
     for ( n <- nrs ) {
