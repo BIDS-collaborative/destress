@@ -116,13 +116,10 @@ object featurizers {
         // If </string> is not parsed properly, the post is discarded
         val validEvent = find(xmlFile(eventIdx(?,1)-1) == xmlDict("</string>"));
 
-        // If don't want to discard just append
-        // find(xmlFile(eventIdx(?,1)-1) == xmlDict("string"));
-
         // Update total number of valid posts
         nrStringPosts += validEvent.nrows;
 
-        // valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
+        // valEventIdx points to <string> and </string>
         val valEventIdx: IMat = if (eventIdx.nrows>0 && validEvent.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2);
         val valpostIdx: IMat = if (postIdx.nrows==eventIdx.nrows) postIdx(validEvent,?) else izeros(0,2); //assumes postIdx.nrows == eventIdx.nrows
 
