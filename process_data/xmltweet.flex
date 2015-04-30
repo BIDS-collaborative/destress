@@ -58,7 +58,7 @@ int iv = checkword(yytext);
 
 {AMP}"lt;"|{AMP}"gt;" {
 int iv = checkword(yytext);
-} /* if one of these does show up outside an emoticon or html tag, tokenize it properly so the semicolon doesn't dangle into an emoticon' */
+} /* if one of these does show up outside an emoticon or html tag, tokenize it properly so the semicolon doesn't dangle into an emoticon */
 
 {AMP}"amp;" /* Discard the remaining ampersands */
 
@@ -127,7 +127,7 @@ int iv = checkword(yytext);
   int iv = checkword(yytext);
 	  }
 
-":-||"    {
+":-"\|{1,2}    {
   int iv = checkword(yytext);
 	  }
 
@@ -185,7 +185,7 @@ int iv = checkword(yytext);
   yytext[2]='3';
   yytext[3] = '\0';
   int iv = checkword(yytext);
-} /* Broken heart emoticons <3 */
+} /* Broken heart emoticons </3 */
 
 {PUNCT}	  {
   int iv = checkword(yytext);
