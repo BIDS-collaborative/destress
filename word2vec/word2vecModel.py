@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     fileName = 'sents_1'
     sentences = LineSentence(sentDirectory+fileName)
-    model = Word2Vec(LineSentence(inp), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
+    model = Word2Vec(LineSentence(sentences), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
     model.save(outputModel)
 
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         model = Word2Vec.load(outputModel)
         fileName = 'sents_' + str(i)
         sentences = LineSentence(sentDirectory+fileName)
-        model = Word2Vec(LineSentence(inp), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
+        model = Word2Vec(LineSentence(sentences), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
         model.save(outputModel)
 
 """ 
