@@ -27,7 +27,7 @@ if __name__ == '__main__':
     outputModel = '/var/local/destress/word2vecLJ.model'
 
 
-    fileName = 'sents_1'
+    fileName = 'sents_1.txt'
     sentences = LineSentence(sentDirectory+fileName)
     model = Word2Vec(LineSentence(sentences), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
     model.save(outputModel)
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     for i in range(2, 1132):
         #load the previous model
         model = Word2Vec.load(outputModel)
-        fileName = 'sents_' + str(i)
+        fileName = 'sents_' + str(i)+'.txt'
         sentences = LineSentence(sentDirectory+fileName)
         model = Word2Vec(LineSentence(sentences), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
         model.save(outputModel)
