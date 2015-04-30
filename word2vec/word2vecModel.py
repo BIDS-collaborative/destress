@@ -25,13 +25,12 @@ if __name__ == '__main__':
 
     sentDirectory = '/var/local/destress/text_sent_ids/'
     outputModel = '/var/local/destress/word2vecLJ.model'
-
-
     fileName = 'sents_1.txt'
-    sentences = LineSentence(sentDirectory+fileName)
-    model = Word2Vec(LineSentence(sentences), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
-    model.save(outputModel)
 
+    sentences = LineSentence(sentDirectory+fileName)
+
+    model = Word2Vec(sentences, size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
+    model.save(outputModel)
 
     #This feels very inefficient... but AFAIK, gensim requires you to load/save each time for multiple files
 
@@ -40,7 +39,7 @@ if __name__ == '__main__':
         model = Word2Vec.load(outputModel)
         fileName = 'sents_' + str(i)+'.txt'
         sentences = LineSentence(sentDirectory+fileName)
-        model = Word2Vec(LineSentence(sentences), size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
+        model = Word2Vec(sentences, size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
         model.save(outputModel)
 
 """ 
