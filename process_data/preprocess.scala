@@ -130,13 +130,14 @@ object preprocessors {
     
     // Reprocess files with tfidf transformation if selected
     if(transformation=="tfidf") {
-      docFreq=log(ndocs)-ln(docFreq);
+      val nonZeroIdx=find(docFreq!=0);
+      docFreq(nonZeroIdx)=log(ndocs)-ln(docFreq(nonZeroIdx));
       saveFMat(outdir+ "idf.fmat",docFreq);
       for ( n <- 0 to trainBatchNumber ){
         println("Applying tfidf weighting to training batch "+n);
         saveMat(outdir+ "trainData" + f"$n%03d" + ".smat.lz4", loadSMat(outdir+ "trainData" + f"$n%03d" + ".smat.lz4")*@docFreq);  
       }
-      for ( n <- 0 to testBatchNumber ){
+      for ( n <- 0 to trainBatchNumber ){
         println("Applying tfidf weighting to test batch "+n);
         saveMat(outdir+ "testData" + f"$n%03d" + ".smat.lz4", loadSMat(outdir+ "testData" + f"$n%03d" + ".smat.lz4")*@docFreq);  
       }
