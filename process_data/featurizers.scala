@@ -97,7 +97,7 @@ object featurizers {
 
         // Get the current xml file data and original dictionary
         val xmlFile = loadIMat(indir+line+".xml.imat");
-        val xmlDict = loadDict(indir+line+"_dict.sbmat",pad=true); // only load words
+        val xmlDict = loadDict(indir+line+"_dict.sbmat",pad=true); // only load words, pad to be consistent with xmltweet output
 
         val intIndex = xmlDict("<int>"); // Find the index of <int> tag in xmlDict
 
@@ -116,13 +116,10 @@ object featurizers {
         // If </string> is not parsed properly, the post is discarded
         val validEvent = find(xmlFile(eventIdx(?,1)-1) == xmlDict("</string>"));
 
-        // If don't want to discard just append
-        // find(xmlFile(eventIdx(?,1)-1) == xmlDict("string"));
-
         // Update total number of valid posts
         nrStringPosts += validEvent.nrows;
 
-        // valEventIdx points to <string> +1 and to </string>: do col(0)->col(1)
+        // valEventIdx points to <string> and </string>
         val valEventIdx: IMat = if (eventIdx.nrows>0 && validEvent.nrows>0) eventIdx(validEvent, ?) + (1\ -1) else izeros(0,2);
         val valpostIdx: IMat = if (postIdx.nrows==eventIdx.nrows) postIdx(validEvent,?) else izeros(0,2); //assumes postIdx.nrows == eventIdx.nrows
 
@@ -237,8 +234,10 @@ object featurizers {
       // Update word counts from post text
       dictCountsNew += accum(rowIndices(0 until sparseEntryNumber).t,ones(sparseEntryNumber,1),nrWords,1);
       // Save word counts from post text without the first buffer entry
-      saveDMat(outdir+dictName+".dmat",dictCountsNew(1 until nrWords));  
-
+      saveDMat(outdir+dictName+".dmat",dictCountsNew);  
+      // Also save the dictionary strings to the outdir so that it can't get lost
+      saveSBMat(outdir+dictName+".sbmat",SBMat(masterDict.cstr));
+      
       // Print some data statistics
       println(s"\nThere are a total of $nrUsers users in the data set.");
       println(s"Of these, ${usersWithPosts(0)} have at least one <string> post.");
@@ -585,72 +584,72 @@ object featurizers {
 
 	if( userEnd > userStart+1 ) {
 
-          // This section keeps counts of the numbers of non-integer moods
+	  // This section keeps counts of the numbers of non-integer moods
 	  var moodIdx = getBeginEnd(xmlFile(userStart -> userEnd), xmlDict, "current_mood")+userStart;
-          nrMoods += moodIdx.nrows;
+	  nrMoods += moodIdx.nrows;
 	  moodIdx = moodIdx(find(xmlFile(moodIdx(?,0)) == strIndex),0)+1;
 	  nrMoodStrings += moodIdx.nrows;
 
 	  // Indexes for <current_moodid> and </current_moodid>
 	  moodIdx = getBeginEnd(xmlFile(userStart -> userEnd), xmlDict, "current_moodid")+userStart;
 
-          if(moodIdx.nrows>0) {
+	  if(moodIdx.nrows>0) {
 
-            nrMoodIDs+=moodIdx.nrows; // Count all moodids
+	    nrMoodIDs+=moodIdx.nrows; // Count all moodids
 
-            // Only want integer mood_ids, reduce to a list of the indices pointing to the integers
-            moodIdx = moodIdx(find(xmlFile(moodIdx(?,0)) == intIndex),0)+1;
-            // Get the moodids then filter out invalid integers
-            var moodIDs = twoComplementToInt(xmlFile(moodIdx));
-            moodIDs = moodIDs(find(moodIDs>0));
-            moodIDs = moodIDs(find(moodIDs<135));
-            moodIDs = moodIDs(find(moodIDs!=50));
-            moodIDs = moodIDs(find(moodIDs!=94));
+	    // Only want integer mood_ids, reduce to a list of the indices pointing to the integers
+	    moodIdx = moodIdx(find(xmlFile(moodIdx(?,0)) == intIndex),0)+1;
+	    // Get the moodids then filter out invalid integers
+	    var moodIDs = twoComplementToInt(xmlFile(moodIdx));
+	    moodIDs = moodIDs(find(moodIDs>0));
+	    moodIDs = moodIDs(find(moodIDs<135));
+	    moodIDs = moodIDs(find(moodIDs!=50));
+	    moodIDs = moodIDs(find(moodIDs!=94));
 
-            val nIDs = moodIDs.nrows;
+	    val nIDs = moodIDs.nrows;
 
-            // Update the histograms
-            moodIDCountFreq( min(nIDs,maxMoodIDCount) )+=1;
+	    // Update the histograms
+	    moodIDCountFreq( min(nIDs,maxMoodIDCount) )+=1;
 
-            var counter = 0;
-            while( counter < nIDs ) {moodIDFreq(moodIDs(counter)) += 1;counter+=1;};
+	    var counter = 0;
+	    while( counter < nIDs ) {moodIDFreq(moodIDs(counter)) += 1;counter+=1;};
 
-            // Save indices and rows for sparse feature matrix from this user.
-            // If buffer is full, increase buffer size permanently
-            try {
-              rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=moodIDs.t;
-            } catch{
-              case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(usersPerBatch)} to ${(rowIndices.ncols+bufferIncrease)/(usersPerBatch)} moodids per user.\n");
-            	rowIndices=increaseBuffer(rowIndices,bufferIncrease);
-            	colIndices=increaseBuffer(rowIndices,bufferIncrease);
-            	rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=moodIDs.t;};
-            }
-            colIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=iones(1,nIDs)*denseEntryNumber;
+	    // Save indices and rows for sparse feature matrix from this user.
+	    // If buffer is full, increase buffer size permanently
+	    try {
+	      rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=moodIDs.t;
+	    } catch{
+	    case oob: java.lang.RuntimeException => {println(s"\nIncreasing buffer size from ${rowIndices.ncols/(usersPerBatch)} to ${(rowIndices.ncols+bufferIncrease)/(usersPerBatch)} moodids per user.\n");
+	    rowIndices=increaseBuffer(rowIndices,bufferIncrease);
+	    colIndices=increaseBuffer(rowIndices,bufferIncrease);
+	    rowIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=moodIDs.t;};
+	    }
+	    colIndices(0,sparseEntryNumber until (sparseEntryNumber+nIDs))=iones(1,nIDs)*denseEntryNumber;
 
-            // Increment the index counters
-            if (nIDs>0) {
-              denseEntryNumber+=1;
-              sparseEntryNumber+=nIDs;
-            }
+	    // Increment the index counters
+	    if (nIDs>0) {
+	      denseEntryNumber+=1;
+	      sparseEntryNumber+=nIDs;
+	    }
 
-            // Write the features to a file once usersPerBatch posts are processed
-            if (denseEntryNumber == usersPerBatch) {
+	    // Write the features to a file once usersPerBatch posts are processed
+	    if (denseEntryNumber == usersPerBatch) {
 
-              println(s"\nWriting batch $batchNumber to file.\n");
+	      println(s"\nWriting batch $batchNumber to file.\n");
 
-              // Compress the sparse matrices, saves about half the disk space
-              saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),135,usersPerBatch));
+	      // Compress the sparse matrices, saves about half the disk space
+	      saveSMat(outdir+"data"+s"$batchNumber"+".smat.lz4", sparse(rowIndices(0 until sparseEntryNumber),colIndices(0 until sparseEntryNumber),iones(1,sparseEntryNumber),135,usersPerBatch));
 
-              // Reset the index/col trackers
-              denseEntryNumber=0;
-              sparseEntryNumber=0;
+	      // Reset the index/col trackers
+	      denseEntryNumber=0;
+	      sparseEntryNumber=0;
 
-              // Increment batch number
-              batchNumber+=1;
+	      // Increment batch number
+	      batchNumber+=1;
 
-            } // Close if (denseEntryNumber == usersPerBatch)
+	    } // Close if (denseEntryNumber == usersPerBatch)
 
-          } // if(moodIdx.nrows>0)
+	  } // if(moodIdx.nrows>0)
 
 	} // Close if( userEnd > userStart+1 )
 
