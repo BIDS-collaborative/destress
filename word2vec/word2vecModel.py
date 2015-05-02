@@ -40,7 +40,7 @@ if __name__ == '__main__':
         #model = Word2Vec(sentences, size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
 
     model.save(outputModel)      # save in gensim format
-    model.save_word2vec_format(outputModelOG)     #save in original google's C format
+    model.save_word2vec_format(outputModelOG, binary=True)     #save in original google's C format
 
 """ 
     When we finish training w/ negative sampling (after we pick out the "bad queries") 
