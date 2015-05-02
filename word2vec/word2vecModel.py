@@ -25,16 +25,16 @@ if __name__ == '__main__':
 
     sentDirectory = '/var/local/destress/text_sent_ids/'
     outputModel = '/var/local/destress/word2vecLJ.model'
-    outputModelOG = '/var/local/destress/word2vecLJ.fmat'
-
+    outputModelOG = '/var/local/destress/word2vecLJ.bin' 
 
     fileName = 'sents_1.txt'
     sentences = LineSentence(sentDirectory+fileName)
 
-    model = Word2Vec(sentences, size=300, window=5, min_count=5, workers=multiprocessing.cpu_count(), negative=15)
+    model = Word2Vec(sentences, size=300, window=10, min_count=5, workers=multiprocessing.cpu_count())
 
-    for i in range(2, 1132):
-        fileName = 'sents_' + str(i)+'.txt'
+    for i in range(2, 1131):
+        print('TEXT FILE NUMBER : ', str(i))
+    fileName = 'sents_' + str(i)+'.txt'
         sentences = LineSentence(sentDirectory+fileName)
         model.train(sentences)
         #model = Word2Vec(sentences, size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
