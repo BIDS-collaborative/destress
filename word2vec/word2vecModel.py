@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     sentDirectory = '/var/local/destress/text_sent_ids/'
     outputModel = '/var/local/destress/word2vecLJ.model'
-    outputModelOG = '/var/local/destress/word2vecLJ.bin' 
+    outputModelOG = '/var/local/destress/word2vecLJ.bin'
 
     fileName = 'sents_1.txt'
     sentences = LineSentence(sentDirectory+fileName)
