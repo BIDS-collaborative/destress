@@ -2,9 +2,7 @@
     word2vec implementation via Gensim, training over our LiveJournal Corpus
     Following guideline of code from the forum at: https://groups.google.com/forum/#!topic/gensim/MJWrDw_IvXw 
 
-    Currently trying to train over 1131 separate text files.
-    If this is too slow and/or memory inefficient, we will probably just concatentate all text files into one
-    and rerun.
+    Currently training over 1130s] separate text files.
 """
 
 import logging
@@ -25,7 +23,7 @@ if __name__ == '__main__':
 
     sentDirectory = '/var/local/destress/text_sent_ids/'
     outputModel = '/var/local/destress/word2vecLJ.model'
-    outputModelOG = '/var/local/destress/word2vecLJ.bin'
+    outputModelOG = '/var/local/destress/word2vecLJGoogle.bin'
 
     fileName = 'sents_1.txt'
     sentences = LineSentence(sentDirectory+fileName)
@@ -40,10 +38,10 @@ if __name__ == '__main__':
         #model = Word2Vec(sentences, size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
 
     model.save(outputModel)      # save in gensim format
-    model.save_word2vec_format(outputModelOG, binary=True)     #save in original google's C format
+    model.save_word2vec_format(outputModelOG, binary=True)     #save in original google's C binary format
 
 """ 
     When we finish training w/ negative sampling (after we pick out the "bad queries") 
-    we can save a LOT of Ram with the following:
+    we can save a lot of Ram with the following:
     model.init_sims(replace=True) 
 """
