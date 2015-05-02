@@ -9,8 +9,27 @@ import scala.math.log
 
 object preprocessors {
 
-  def preprocess(nrWords:Int,indir:String,outdir:String,masterDict:Dict,sort:Boolean=true,transformation:String="None") {
+  def preprocess(nrWords:Int,indir:String,outdir:String,masterDict:Dict,testPercent:Float=0.0f,sort:Boolean=true,transformation:String="none") {
 
+    /** This function preprocesses raw bag-of-words data points from featurizeMoodID
+     *  
+     *  nrWords: Number of words from dictionary to use in training
+     *  indir: Folder containing files in the format data###.imat and data###.smat, e.g. data001.imat
+     *  outdir: Folder to save preprocessed train and test data
+     *  masterDict: Dictionary corresponding to the rows of featurized smats, including counts to sort by if desired
+     *  testPercent: Fraction of data to reserve as a test set, randomly sampling from each input file.
+     *  sort: If true then resort the words by the counts in masterDict before truncating. Default is 
+     *  transformation: "none" - Does no additional processing on data
+     *                  "sqrt" - Takes the sqrt of the frequencies in the bag of words
+     *                  "tfidf"- Performs tfidf weighting using idf calculated on training data only. idf is give by log N-log docFreq
+     *                             where N is the number of training posts and docFreq is the number of training posts where a word occurs. 
+     */
+    
+    // Might want to make this an argument and/or allow different sizes for test and train
+    val batchSize=100000;
+    var trainBatchNumber=0;
+    var testBatchNumber=0;
+    
     // Constants
     val nrMoods = 132+1+2;
     val nrValidMoods = nrMoods-3;
@@ -26,11 +45,17 @@ object preprocessors {
     // From list, get the number xx from dataxx.imat in listLabels, sorted (dropRight, then drop)
     val nrs = listLabels.map(c => c.split('.')(0)).map(c => c.drop(4)).sortBy(_.toInt); //.sortWith(_<_);
 
-    var map= if (sort) sortdown2(masterDict.counts)._2 else irow(0 until nrWords);
+    var map= if (sort) sortdown2(masterDict.counts)._2(0 until nrWords) else irow(0 until nrWords);
     
     // Save the dictionary in its new order with the preprocessed data
     saveSBMat(outdir+"masterDict.sbmat",SBMat(masterDict.cstr(map)));
     saveDMat(outdir+"masterDict.dmat",masterDict.counts(map));
+    
+    // Buffers of test and train data. This is not a very efficient implementation
+    var testData = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrWords,0);
+    var testLabels = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0);
+    var trainData = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrWords,0);
+    var trainLabels = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0);
     
     for ( n <- nrs ) {
 
@@ -42,33 +67,83 @@ object preprocessors {
       slabels = slabels(validMoodIdx, ?);
 
       // Build bag of words and truncate
-      var bagOfWords = loadSMat(indir + "data" + n + ".smat.lz4");
-      if(sort) bagOfWords=bagOfWords(map(0 until nrWords),?) else bagOfWords = bagOfWords(0 until nrWords,?);
+      var bagOfWords = loadSMat(indir + "data" + n + ".smat.lz4")(map,?);
+      
+      // Split train and test data. Should these be sorted after splitting to improve sparsification speed?
+      val randIdx=randperm(labels.ncols); 
+      val testIdx=randIdx(0 until ceil(labels.ncols*testPercent)(0).toInt);
+      val trainIdx=randIdx( ceil(labels.ncols*testPercent)(0).toInt until labels.ncols );
       
       if(transformation=="sqrt") bagOfWords.contents(?)=sqrt(bagOfWords);
       if(transformation=="tfidf") {
-        nonZeros=find2(bagOfWords>0);
-        docFreq+=sum(sparse(nonZeros._1,nonZeros._2,iones(nonZeros._1.length,1),nrWords,bagOfWords.ncols),2);
-        ndocs+=bagOfWords.ncols;
+        // Get idf weights from train data only
+        nonZeros=find2(bagOfWords(?,testIdx)>0);
+        docFreq+=accum(nonZeros._1,iones(nonZeros._1.length,1),nrWords,1);
+        ndocs+=trainIdx.length;
       }
+      
+      // Concatenate the test and train data to buffers
+      trainData=trainData \ bagOfWords(?,trainIdx);
+      trainLabels=trainLabels \ slabels(?,trainIdx);
+      
+      testData=testData \ bagOfWords(?,testIdx);
+      testLabels=testLabels \ slabels(?,testIdx);
 
-      saveSMat(outdir+ "labels" + n + ".smat.lz4", slabels);
-      saveSMat(outdir+ "data" + n + ".smat.lz4", bagOfWords);  
-      saveSMat(outdir+ "all" + n + ".smat.lz4", slabels on bagOfWords);
+      // Save a train batch if the buffer is big enough
+      while (trainData.ncols>batchSize) {
+        saveSMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels(?,0 until batchSize));
+        saveSMat(outdir+ "trainData" + f"$trainBatchNumber%03d" + ".smat.lz4", trainData(?,0 until batchSize));  
+        //saveSMat(outdir+ "train" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels(0 until batchSize,?) on trainData(0 until batchSize,?));
+        
+        trainLabels = trainLabels(?,batchSize until trainLabels.ncols);
+        trainData = trainData(?,batchSize until trainData.ncols);
+        
+        trainBatchNumber+=1;
+      }
+      
+      // Save a test batch if the buffer is big enough
+      while (testData.ncols>batchSize) {
+        saveSMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels(?,0 until batchSize));
+        saveSMat(outdir+ "testData" + f"$testBatchNumber%03d" + ".smat.lz4", testData(?,0 until batchSize));  
+        //saveSMat(outdir+ "test" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels(0 until batchSize,?) on testData(0 until batchSize,?));
+        
+        testLabels = testLabels(?,batchSize until testLabels.ncols);
+        testData = testData(?,batchSize until testData.ncols);
+        
+        testBatchNumber+=1;
+      }
 
     } 
     
+    // Save leftovers, if any
+    if (trainLabels.ncols!=0) {
+      saveSMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels);
+      saveSMat(outdir+ "trainData" + f"$trainBatchNumber%03d" + ".smat.lz4", trainData); 
+      //saveSMat(outdir+ "train" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels on trainData);
+    } else trainBatchNumber-=1;
+    
+    if (testLabels.ncols!=0) {
+      saveSMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels);
+      saveSMat(outdir+ "testData" + f"$testBatchNumber%03d" + ".smat.lz4", testData);  
+      //saveSMat(outdir+ "test" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels on testData);
+    } else testBatchNumber-=1;
+    
+    // Reprocess files with tfidf transformation if selected
     if(transformation=="tfidf") {
-      docFreq=log(ndocs)-ln(docFreq);
-      for ( n <- nrs ){
-        println("Applying tfidf weighting to "+n);
-        saveMat(outdir+ "data" + n + ".smat.lz4", loadSMat(outdir+ "data" + n + ".smat.lz4")*@docFreq);  
-      }
+      val nonZeroIdx=find(docFreq!=0);
+      docFreq(nonZeroIdx)=log(ndocs)-ln(docFreq(nonZeroIdx));
       saveFMat(outdir+ "idf.fmat",docFreq);
-    }
+      for ( n <- 0 to trainBatchNumber ){
+        println("Applying tfidf weighting to training batch "+n);
+        saveMat(outdir+ "trainData" + f"$n%03d" + ".smat.lz4", loadSMat(outdir+ "trainData" + f"$n%03d" + ".smat.lz4")*@docFreq);  
+      }
+      for ( n <- 0 to trainBatchNumber ){
+        println("Applying tfidf weighting to test batch "+n);
+        saveMat(outdir+ "testData" + f"$n%03d" + ".smat.lz4", loadSMat(outdir+ "testData" + f"$n%03d" + ".smat.lz4")*@docFreq);  
+      }
 
-    
-    
+    } // end if(transformation=="tfidf")
+
   } // end def preprocess()
 
 }
