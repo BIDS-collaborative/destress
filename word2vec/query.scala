@@ -4,7 +4,7 @@ import utils._
 var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
 var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
-var googleVecs = loadFMat("/var/local/destress/wordvec_google_2.fmat")
+var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
 
 var magic = data.t * googleVecs;
 var n = sum(magic^2, 2);
