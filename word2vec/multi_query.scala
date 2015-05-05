@@ -58,7 +58,7 @@ def make_query_vec(query_s : String) : FMat  = {
 }
 
 
-def multi_query(queries : Array[String], top : Int, report:Boolean = true) : Array[String] =  {
+def multi_query(queries : Array[String], top : Int, report:Boolean = true, ignore:Int = 0) : Array[String] =  {
   var res = zeros(data.ncols, 1);
 
   var i = 0;
@@ -82,7 +82,7 @@ def multi_query(queries : Array[String], top : Int, report:Boolean = true) : Arr
 
   i = 0;
 
-  var out = new Array[String](top);
+  var out = new Array[String](top-ignore);
 
   var count = 0;
   
@@ -95,7 +95,10 @@ def multi_query(queries : Array[String], top : Int, report:Boolean = true) : Arr
     if(res(ix) != prev_res) {
       prev = sent;
       prev_res = res(ix);
-      out(count) = sent;
+
+      if(count >= ignore) {
+        out(count - ignore) = sent;
+      }
 
       if(report) {
         printf("%.3f -- %s\n", res(ix), sent);
