@@ -91,7 +91,7 @@ object preprocessors {
 
       // Save a train batch if the buffer is big enough
       while (trainData.ncols>batchSize) {
-        saveSMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels(?,0 until batchSize));
+        saveFMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".fmat.lz4", full(trainLabels(?,0 until batchSize)));
         saveSMat(outdir+ "trainData" + f"$trainBatchNumber%03d" + ".smat.lz4", trainData(?,0 until batchSize));  
         //saveSMat(outdir+ "train" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels(0 until batchSize,?) on trainData(0 until batchSize,?));
         
@@ -103,7 +103,7 @@ object preprocessors {
       
       // Save a test batch if the buffer is big enough
       while (testData.ncols>batchSize) {
-        saveSMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels(?,0 until batchSize));
+        saveFMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".fmat.lz4", full(testLabels(?,0 until batchSize)));
         saveSMat(outdir+ "testData" + f"$testBatchNumber%03d" + ".smat.lz4", testData(?,0 until batchSize));  
         //saveSMat(outdir+ "test" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels(0 until batchSize,?) on testData(0 until batchSize,?));
         
@@ -117,13 +117,13 @@ object preprocessors {
     
     // Save leftovers, if any
     if (trainLabels.ncols!=0) {
-      saveSMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels);
+      saveFMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".fmat.lz4", full(trainLabels));
       saveSMat(outdir+ "trainData" + f"$trainBatchNumber%03d" + ".smat.lz4", trainData); 
       //saveSMat(outdir+ "train" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels on trainData);
     } else trainBatchNumber-=1;
     
     if (testLabels.ncols!=0) {
-      saveSMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels);
+      saveFMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".fmat.lz4", full(testLabels));
       saveSMat(outdir+ "testData" + f"$testBatchNumber%03d" + ".smat.lz4", testData);  
       //saveSMat(outdir+ "test" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels on testData);
     } else testBatchNumber-=1;

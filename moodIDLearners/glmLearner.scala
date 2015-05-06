@@ -49,7 +49,7 @@ class xopts extends Learner.Options with FilesDS.Opts with GLM.Opts with ADAGrad
 val opts = new xopts;
 
 opts.fnames = List(FilesDS.simpleEnum(indir+"trainData%03d.smat.lz4", 1, 0), 
-                     FilesDS.simpleEnum(indir+"trainLabels%03d.smat.lz4", 1, 0));
+                     FilesDS.simpleEnum(indir+"trainLabels%03d.fmat.lz4", 1, 0));
 //opts.nstart = 0;                 // Don't set these, and BIDMach will automatically run over all files
 //opts.nend = 10;
 opts.order = 1;                  // (0) sample order, 0=linear, 1=random
@@ -87,7 +87,7 @@ var weights = FMat(nn.modelmat) // Save weights
 // Test model on subset of test set
 // First creat a FilesDS of test data
 opts.fnames = List(FilesDS.simpleEnum(indir+"testData%03d.smat.lz4", 1, 0), 
-    FilesDS.simpleEnum(indir+"testLabels%03d.smat.lz4", 1, 0));
+    FilesDS.simpleEnum(indir+"testLabels%03d.fmat.lz4", 1, 0));
 opts.batchSize = 100000;  // Read full file each time
 opts.nstart = 0;                 
 opts.nend = 7;            // Only use first 7 (out of 15) files, save the rest for a real test later
