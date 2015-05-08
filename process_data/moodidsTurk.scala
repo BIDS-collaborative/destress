@@ -9,9 +9,9 @@ import BIDMat.{CMat, CSMat, DMat, Dict, FMat, FND, GMat, GDMat, GIMat, GLMat, GS
 import BIDMat.MatFunctions._
 import BIDMat.SciFunctions._
 
-val indir="/val/local/destress/featurized/"
+val indir="/var/local/destress/featurized/"
 
-val item=1
+var item=1
 val Labels=Array.ofDim[Int](15,50)  // Label mapping --> rows are categories
 Labels(0)=Array(122,35,15,125,131,66,72,99,21,26,93,109,126,13,32,42,67,70,105,115,116,117,121)
 Labels(1)=Array(62,98)
@@ -30,13 +30,15 @@ Labels(13)=Array(76,64,86)
 Labels(14)=Array(112,91,54,90,14,31,40,49,51,132,74,108,6,18,27,34,48,81,82,83,84,97,111,130)
 
 while(item>0){
-	val moodid=loadIMat(indir+"data"+"f$item"+".scala")
-	for (val iter<- 0 to length(a)){
-		for(val emos<- 0 to Labels.size){
-			if(Labels(emos) contains a(1,iter)){
-				val moodidred(1,iter)=emos
-			}
-		}
+	val moodid=loadIMat(indir+"data"+f"$item"+".imat")
+	for (iter<- 0 to length(moodid)/2-1){
+	  for(emos<- 0 to Labels.size-1){
+	    if(Labels(emos) contains moodid(1,iter)){
+        moodid(1,iter)=emos
+      }
+    }
 	}
-	item++
+  saveIMat(indir+"data"+f"$item"+"s.imat",moodid)
+  println("saving file "+moodid+"s.scala")
+  item += 1
 }
