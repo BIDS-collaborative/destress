@@ -9,7 +9,7 @@ import scala.math.log
 
 object preprocessors {
 
-  def preprocess(nrWords:Int,indir:String,outdir:String,masterDict:Dict,testPercent:Float=0.0f,sort:Boolean=true,transformation:String="none") {
+  def preprocess(nrWords:Int,indir:String,outdir:String,masterDict:Dict,testPercent:Float=0.0f,sort:Boolean=true,transformation:String="none",labelTransf:Mat=null) {
 
     /** This function preprocesses raw bag-of-words data points from featurizeMoodID
      *  
@@ -53,9 +53,9 @@ object preprocessors {
     
     // Buffers of test and train data. This is not a very efficient implementation
     var testData = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrWords,0);
-    var testLabels = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0);
+    var testLabels = if(labelTransf==null) sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0) else sparse(izeros(0,0),izeros(0,0),izeros(0,0),labelTransf.nrows,0);
     var trainData = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrWords,0);
-    var trainLabels = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0);
+    var trainLabels = if(labelTransf==null) sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0) else sparse(izeros(0,0),izeros(0,0),izeros(0,0),labelTransf.nrows,0);
     
     for ( n <- nrs ) {
 
@@ -64,8 +64,17 @@ object preprocessors {
       // Build sparse matrix of one hot encoded labels, keeping only the valid rows
       var labels = loadIMat(indir + "data" + n + ".imat");
       var slabels = oneHot(labels(1,?), nrMoods);
-      slabels = slabels(validMoodIdx, ?);
 
+      if(labelTransf==null) slabels = slabels(validMoodIdx, ?) 
+      else if (labelTransf.ncols==nrMoods) {
+        slabels=SMat(labelTransf)*slabels;
+      }
+      else if (labelTransf.ncols==nrValidMoods) {
+        slabels = slabels(validMoodIdx, ?);
+        slabels = SMat(labelTransf)*slabels;
+      }
+      else println("ERRROR: INVALID LABEL TRANSFORMATION MATRIX");
+      
       // Build bag of words and truncate
       var bagOfWords = loadSMat(indir + "data" + n + ".smat.lz4")(map,?);
       
