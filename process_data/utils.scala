@@ -111,29 +111,29 @@ object utils {
 	}
  
 	def histoStats(histo: IMat): (Float,Float,Float) = {    
-	    val mean: Float = (sum(FMat(histo)*@irow(0 until histo.length))/sum(histo))(0);
-	    val median: Float = find(FMat(cumsum(histo))>sum(histo)(0)/2)(0);
-    	    val mode: Float = maxi2(histo)._2(0);    
+	  val mean: Float = (sum(FMat(histo)*@irow(0 until histo.length))/sum(histo))(0);
+  	val median: Float = find(FMat(cumsum(histo))>sum(histo)(0)/2)(0);
+	  val mode: Float = maxi2(histo)._2(0);    
 
-	    println(s"The mean is ${mean}.");
-	    println(s"The median is $median.");
-    	    println(s"The mode is $mode.");    
+	  println(s"The mean is ${mean}.");
+	  println(s"The median is $median.");
+  	println(s"The mode is $mode.");    
 
-	    (mean,median,mode);    
-  	}
+	  (mean,median,mode);    
+	}
 
-       def covarMat(matX: BIDMat.FMat, matY: BIDMat.FMat): BIDMat.FMat = {
-          // Assume matX dimensions are nrValidMoods x nrPts
-           ((matX-mean(matX, 2))*^(matY-mean(matY,2)))/(matX.ncols-1)
-       }
-       def covarMat(MatX: BIDMat.FMat): BIDMat.FMat = {
-           covarMat(MatX, MatX)
-       }
-       def corrMat(MatX: BIDMat.FMat, MatY: BIDMat.FMat): BIDMat.FMat = {
-           val vars = sqrt(variance(MatX,2))*^sqrt(variance(MatY,2))
-           covarMat(MatX, MatY)/vars
-       }
-       def corrMat(MatX: BIDMat.FMat): BIDMat.FMat = {
-           corrMat(MatX, MatX)
-       }
+	def covarMat(matX: BIDMat.FMat, matY: BIDMat.FMat): BIDMat.FMat = {
+	  // Assume matX dimensions are nrValidMoods x nrPts
+	  ((matX-mean(matX, 2))*^(matY-mean(matY,2)))/(matX.ncols-1)
+	}
+	def covarMat(MatX: BIDMat.FMat): BIDMat.FMat = {
+	  covarMat(MatX, MatX)
+	}
+	def corrMat(MatX: BIDMat.FMat, MatY: BIDMat.FMat): BIDMat.FMat = {
+	  val vars = sqrt(variance(MatX,2))*^sqrt(variance(MatY,2))
+	      covarMat(MatX, MatY)/vars
+	}
+	def corrMat(MatX: BIDMat.FMat): BIDMat.FMat = {
+	  corrMat(MatX, MatX)
+	}
 }

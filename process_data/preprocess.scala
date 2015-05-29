@@ -9,7 +9,7 @@ import scala.math.log
 
 object preprocessors {
 
-  def preprocess(nrWords:Int,indir:String,outdir:String,masterDict:Dict,testPercent:Float=0.0f,sort:Boolean=true,transformation:String="none") {
+  def preprocess(nrWords:Int,indir:String,outdir:String,masterDict:Dict,testPercent:Float=0.0f,sort:Boolean=true,transformation:String="none",labelTransf:Mat=null) {
 
     /** This function preprocesses raw bag-of-words data points from featurizeMoodID
      *  
@@ -53,9 +53,9 @@ object preprocessors {
     
     // Buffers of test and train data. This is not a very efficient implementation
     var testData = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrWords,0);
-    var testLabels = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0);
+    var testLabels = if(labelTransf==null) sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0) else sparse(izeros(0,0),izeros(0,0),izeros(0,0),labelTransf.nrows,0);
     var trainData = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrWords,0);
-    var trainLabels = sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0);
+    var trainLabels = if(labelTransf==null) sparse(izeros(0,0),izeros(0,0),izeros(0,0),nrValidMoods,0) else sparse(izeros(0,0),izeros(0,0),izeros(0,0),labelTransf.nrows,0);
     
     for ( n <- nrs ) {
 
@@ -64,8 +64,17 @@ object preprocessors {
       // Build sparse matrix of one hot encoded labels, keeping only the valid rows
       var labels = loadIMat(indir + "data" + n + ".imat");
       var slabels = oneHot(labels(1,?), nrMoods);
-      slabels = slabels(validMoodIdx, ?);
 
+      if(labelTransf==null) slabels = slabels(validMoodIdx, ?) 
+      else if (labelTransf.ncols==nrMoods) {
+        slabels=SMat(labelTransf)*slabels;
+      }
+      else if (labelTransf.ncols==nrValidMoods) {
+        slabels = slabels(validMoodIdx, ?);
+        slabels = SMat(labelTransf)*slabels;
+      }
+      else println("ERRROR: INVALID LABEL TRANSFORMATION MATRIX");
+      
       // Build bag of words and truncate
       var bagOfWords = loadSMat(indir + "data" + n + ".smat.lz4")(map,?);
       
@@ -91,7 +100,7 @@ object preprocessors {
 
       // Save a train batch if the buffer is big enough
       while (trainData.ncols>batchSize) {
-        saveSMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels(?,0 until batchSize));
+        saveFMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".fmat.lz4", full(trainLabels(?,0 until batchSize)));
         saveSMat(outdir+ "trainData" + f"$trainBatchNumber%03d" + ".smat.lz4", trainData(?,0 until batchSize));  
         //saveSMat(outdir+ "train" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels(0 until batchSize,?) on trainData(0 until batchSize,?));
         
@@ -103,7 +112,7 @@ object preprocessors {
       
       // Save a test batch if the buffer is big enough
       while (testData.ncols>batchSize) {
-        saveSMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels(?,0 until batchSize));
+        saveFMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".fmat.lz4", full(testLabels(?,0 until batchSize)));
         saveSMat(outdir+ "testData" + f"$testBatchNumber%03d" + ".smat.lz4", testData(?,0 until batchSize));  
         //saveSMat(outdir+ "test" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels(0 until batchSize,?) on testData(0 until batchSize,?));
         
@@ -117,13 +126,13 @@ object preprocessors {
     
     // Save leftovers, if any
     if (trainLabels.ncols!=0) {
-      saveSMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels);
+      saveFMat(outdir+ "trainLabels" + f"$trainBatchNumber%03d" + ".fmat.lz4", full(trainLabels));
       saveSMat(outdir+ "trainData" + f"$trainBatchNumber%03d" + ".smat.lz4", trainData); 
       //saveSMat(outdir+ "train" + f"$trainBatchNumber%03d" + ".smat.lz4", trainLabels on trainData);
     } else trainBatchNumber-=1;
     
     if (testLabels.ncols!=0) {
-      saveSMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels);
+      saveFMat(outdir+ "testLabels" + f"$testBatchNumber%03d" + ".fmat.lz4", full(testLabels));
       saveSMat(outdir+ "testData" + f"$testBatchNumber%03d" + ".smat.lz4", testData);  
       //saveSMat(outdir+ "test" + f"$testBatchNumber%03d" + ".smat.lz4", testLabels on testData);
     } else testBatchNumber-=1;
