@@ -15,18 +15,17 @@ val nrValidMoods = nrMoods-3;
 val validMoodIdx = (1->50) \ (51->94) \ (95->nrMoods) // 0,50,94 aren't valid
 
 // Input directory for test and train data
-val indir = "/var/local/destress/preprocessed5/"; // This one has only 25000 words
+val indir = "/var/local/destress/preprocessed6/"; // This one has 75000 words
 
 val (nn,opts)= DNN.learnerX(indir+"trainData%03d.smat.lz4",indir+"trainLabels%03d.fmat.lz4");
-//val (nn,opts)= DNN.learnerX(loadSMat(indir+"trainData000.smat.lz4"),loadSMat(indir+"trainLabels000.mat.lz4"));
 
-opts.aopts = opts // I think this sets the ADAGrad options to opts
+opts.aopts = opts; // I think this sets the ADAGrad options to opts
 
 // FilesDS opts
 //opts.nstart = 0;                 // Don't set these, and BIDMach will automatically run over all files
 //opts.nend = nrTrainFiles;
-//opts.order = 1;                  // (0) sample order, 0=linear, 1=random
-//opts.lookahead = 2;              // (2) number of prefetch threads
+opts.order = 1;                  // (0) sample order, 0=linear, 1=random
+opts.lookahead = 2;              // (2) number of prefetch threads
 opts.featType = 1;               // (1) feature type, 0=binary, 1=linear
 opts.addConstFeat = false;        // add a constant feature (effectively adds a $\beta_0$ term to $X\beta$)
 
@@ -34,7 +33,9 @@ opts.addConstFeat = false;        // add a constant feature (effectively adds a 
 opts.batchSize=1000;
 opts.reg1weight = 0.0001;
 opts.lrate = 0.5f;
+//opts.waitsteps = 10;
 opts.texp = 0.4f;
+//opts.vexp = 0.6f;
 opts.npasses = 3;
 
 // DNN Opts
@@ -46,12 +47,10 @@ opts.links = iones(nrValidMoods,1);
  * First FC layer width is given as an argument, then it tapers off by taper 
  * (each layer width is taper*previous width).
  * nonlin specifies activation function: 1-> tanh, 2-> sigmoid, 3-> ReLU, 4-> Softplus
-
  * 
  * def dlayers(depth0:Int, width:Int, taper:Float, ntargs:Int, opts:Opts, nonlin:Int = 1)
  */
-
-DNN.dlayers3(5,200,0.5f,nrValidMoods,opts,2);
+DNN.dlayers(5,200,0.5f,nrValidMoods,opts,2);
 
 // Train model
 nn.train;
