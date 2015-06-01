@@ -15,7 +15,7 @@ val nrValidMoods = nrMoods-3;
 val validMoodIdx = (1->50) \ (51->94) \ (95->nrMoods) // 0,50,94 aren't valid
 
 // Input directory for test and train data
-val indir = "/var/local/destress/preprocessed6/"; // This one has 75000 words
+val indir = "/var/local/destress/preprocessed/"; // Top 75000 words, no	additional preprocessing
 
 val (nn,opts)= DNN.learnerX(indir+"trainData%03d.smat.lz4",indir+"trainLabels%03d.fmat.lz4");
 
