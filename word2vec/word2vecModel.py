@@ -12,6 +12,7 @@ import multiprocessing
 from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
 
+if __name__ == '__main__':
     program = os.path.basename(sys.argv[0])
     logger = logging.getLogger(program)
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
@@ -19,8 +20,8 @@ from gensim.models.word2vec import LineSentence
     logger.info("running %s" % ' '.join(sys.argv))
 
     sentDirectory = '/var/local/destress/text_sent_ids/'
-    outputModel = '/var/local/destress/LJ_word2vec/word2vecLJ.model'
-    outputModelOG = '/var/local/destress/LJ_word2vec/word2vecLJGoogle2.txt'
+    outputModel = '/var/local/destress/LJ_word2vec/word2vecLJ.txt'
+    outputModelOG = '/var/local/destress/LJ_word2vec/word2vecLJGoogle.bin'
 
     fileName = 'sents_1.txt'
     sentences = LineSentence(sentDirectory+fileName)

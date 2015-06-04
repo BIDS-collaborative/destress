@@ -12,27 +12,23 @@ import multiprocessing
 from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
 
+if __name__ == '__main__':
     program = os.path.basename(sys.argv[0])
     logger = logging.getLogger(program)
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
     logging.root.setLevel(level=logging.INFO)
     logger.info("running %s" % ' '.join(sys.argv))
 
-    sentDirectory = '/var/local/destress/text_sent_ids/'
-    outputModel = '/var/local/destress/LJ_word2vec/word2vecLJ.model'
-    outputModelOG = '/var/local/destress/LJ_word2vec/word2vecLJGoogle2.txt'
-
-    fileName = 'sents_1.txt'
+    sentDirectory = '/var/local/destress/text_sent_idsCAT/'
+    outputModel = '/var/local/destress/LJ_word2vec/word2vecLJ_2.txt'
+    outputModelOG = '/var/local/destress/LJ_word2vec/word2vecLJGoogle_2.bin'
+    fileName = 'sents_ALL.txt'
     sentences = LineSentence(sentDirectory+fileName)
 
     model = Word2Vec(sentences, size=300, window=10, min_count=5, workers=multiprocessing.cpu_count())
 
-    for i in range(2, 1131):
-        print('TEXT FILE NUMBER : ', str(i))
-    fileName = 'sents_' + str(i)+'.txt'
-        sentences = LineSentence(sentDirectory+fileName)
-        model.train(sentences)
-        #model = Word2Vec(sentences, size=400, window=5, min_count=5, workers=multiprocessing.cpu_count())
+    sentences = LineSentence(sentDirectory+fileName)
+    model.train(sentences)
 
     model.save(outputModel)      # save in gensim format
     model.save_word2vec_format(outputModelOG, binary=True)     #save in original google's C binary format
