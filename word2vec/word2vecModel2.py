@@ -26,8 +26,6 @@ if __name__ == '__main__':
     sentences = LineSentence(sentDirectory+fileName)
 
     model = Word2Vec(sentences, size=300, window=10, min_count=5, workers=multiprocessing.cpu_count())
-
-    sentences = LineSentence(sentDirectory+fileName)
     model.train(sentences)
 
     model.save(outputModel)      # save in gensim format
