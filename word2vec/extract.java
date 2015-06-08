@@ -18,12 +18,12 @@ import java.io.IOException;
 public class extract{
 
 	public static void main(String [] args) throws FileNotFoundException,IOException  {
-		String trainingdir = "/var/local/destress/";
+		String trainingdir = "/var/local/destress/LJ_word2vec/";
 
-		String filename = trainingdir + "google.txt";
+		String filename = trainingdir + "word2vecTEXT.txt";
 
-		String words = "words.txt";
-		String vectors = "vectors.txt";
+		String words = "new_words.txt";
+		String vectors = "new_vectors.txt";
 		BufferedWriter word_writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(words)));
 		BufferedWriter vector_writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vectors)));
 		FileInputStream fstream = new FileInputStream(filename);
