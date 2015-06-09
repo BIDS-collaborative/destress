@@ -1,0 +1,13 @@
+Flex approach is too slow, so we are shifing gears to word2vec/gensim.
+
+Plan: Automate a script to run ~20-50 Lucene searches via word2Vec on our XML posts, for each keyword/phrases(s).
+Results will then be outputted to text files (1 for each of the 79 questions).
+Files: queryX.txt and resultX.txt   X : [1:79]
+	Steps:
+		1) Create queryX.txt for each question
+		2) Write script for lucene search
+		3) Validate output (visually skim...)
+		4) drop output into word2vec
+
+
+

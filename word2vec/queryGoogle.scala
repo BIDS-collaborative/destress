@@ -1,5 +1,5 @@
 import utils._
-
+import java.io._
 
 var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
 //var dict = loadDict("/var/local/destress/text_tokenized/masterDict.sbmat");
@@ -12,6 +12,9 @@ var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
 
 def query( query_s : String , top : Int) = {
+
+  var file = "/home/gene/illnessGoogle.txt"
+  val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
 
   var query_vec = googleVecs(0, ?) * 0;
 
@@ -54,6 +57,7 @@ def query( query_s : String , top : Int) = {
 
   var i = 0;
   var count = 0;
+  var res_list = List();
   // for(i <- 0 until bestIndex.length) {
   while(count < top) {
     var ix = bestIndex(i);
@@ -66,6 +70,8 @@ def query( query_s : String , top : Int) = {
       prev = sent;
     prev_res = res(ix);
       printf("%.3f -- %s\n", res(ix), sent);
+      var res_str = "%.3f -- %s\n".format(res(ix), sent);
+      res_list :+res_str;
       count += 1;
     }
     // else {
@@ -74,6 +80,10 @@ def query( query_s : String , top : Int) = {
     i += 1;
   }
   println();
+  for (x <- res_list) {
+    writer.write(x);
+  }
+  writer.close();
 }
 
 // Example usage:
