@@ -4,15 +4,16 @@ import utils._
 var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
 var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
-var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
+//var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
+var liveJournalVecs = loadFMat("/var/local/destress/LJ_word2vec/mymat.fmat")
 
-var magic = data.t * googleVecs;
+var magic = data.t * liveJournalVecs;
 var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
 
 def query( query_s : String , top : Int) = {
 
-  var query_vec = googleVecs(0, ?) * 0;
+  var query_vec = liveJournalVecs(0, ?) * 0;
 
   var ss = query_s.split(" ");
   var s = "";
@@ -23,10 +24,10 @@ def query( query_s : String , top : Int) = {
     if(dict(s) == -1) {
       printf("WARNING: did not find %s in master dict\n", s);
     } else {
-      var vec = googleVecs(dict(s), ?);
+      var vec = liveJournalVecs(dict(s), ?);
 
       if(sum(vec^2)(0) == 0) {
-        printf("WARNING: %s is not in google wordvec database\n", s);
+        printf("WARNING: %s is not in LiveJournal wordvec database\n", s);
       } else {
         printf("adding %s to vector\n", s);
         query_vec += vec;
