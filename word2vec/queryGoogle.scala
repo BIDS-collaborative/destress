@@ -2,6 +2,7 @@ import utils._
 
 
 var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
+//var dict = loadDict("/var/local/destress/text_tokenized/masterDict.sbmat");
 var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
 var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
