@@ -13,7 +13,7 @@ var nmagic = magic / sqrt(n);
 
 def query( query_s : String , top : Int) = {
 
-  var file = "/home/gene/illnessGoogle.txt"
+  var file = "illnessGoogle.txt"
   val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
 
   var query_vec = googleVecs(0, ?) * 0;
