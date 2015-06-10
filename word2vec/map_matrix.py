@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
 	#have to load in text files as lists
 	masterList = masterDict.readlines()
-	ljList = liveJournal.readLines()
+	ljList = liveJournal.readlines()
 	masterDict.close()
 	liveJournal.close()
 	
