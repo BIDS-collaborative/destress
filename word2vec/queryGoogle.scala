@@ -71,7 +71,7 @@ def query( query_s : String , top : Int) = {
     prev_res = res(ix);
       printf("%.3f -- %s\n", res(ix), sent);
       var res_str = "%.3f -- %s\n".format(res(ix), sent);
-      res_list :+res_str;
+      res_list :+ res_str;
       count += 1;
     }
     // else {
@@ -83,6 +83,7 @@ def query( query_s : String , top : Int) = {
   for (x <- res_list) {
     writer.write(x);
   }
+  writer.close();
 }
 
 

@@ -1,6 +1,5 @@
 import utils._
 
-
 var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
 var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
@@ -45,7 +44,6 @@ def query( query_s : String , top : Int) = {
   // res(find(res > 0.9999)) = -1; // single word, not interesting
 
   var (x, bestIndex) = sortdown2(res);
-  // var bestIndex = ind(0 until top);
 
   var nwords = size(sents)(0);
   var prev = "   ";
