@@ -30,14 +30,15 @@ if __name__ == '__main__':
   #  outputMatrix.write(k + v + '\n')
    
   for word in masterList:
-    weight = ljMap.get(word.rstrip())
-    outputMatrix.write(word + ' ')
+    word = word.rstrip()
+    weight = ljMap.get(word)
+    outputMatrix.write(word)
     if weight is not None:
       print word, 'NOT NONE'
-      outputMatrix.write(weight + '\n')
+      outputMatrix.write(' ' + weight)
     else: 
       print word, 'IS NOT IN WORD2VECLIST'
-      outputMatrix.write(zeroes + '\n')
+      outputMatrix.write(' ' + zeroes + '\n')
   
   masterDict.close()
   liveJournal.close()

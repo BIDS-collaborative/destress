@@ -83,8 +83,8 @@ def query( query_s : String , top : Int) = {
   for (x <- res_list) {
     writer.write(x);
   }
-  writer.close();
 }
+
 
 // Example usage:
 // query("cancer", 20)
