@@ -12,8 +12,6 @@ if __name__ == '__main__':
 	#have to load in text files as lists
 	masterList = masterDict.readlines()
 	ljList = liveJournal.readlines()
-	masterDict.close()
-	liveJournal.close()
 	
 	ljMap = {}
 
@@ -23,13 +21,20 @@ if __name__ == '__main__':
 	for line in ljList:
 		word, sep, weight = line.partition(" ")
 		ljMap[word] = weight
-
+	#for k,v in ljMap.items():
+	#	print k, v	
+	
+	count = 1
 	for word in masterList:
+		print count
 		weight = ljMap.get(word)
 		outputMatrix.write(word + ' ')
+		
 		if weight is not None:
 			outputMatrix.write(weight + '\n')
 		else:
 			outputMatrix.write(zeroes + '\n')
-
+		count += 1
+	masterDict.close()
+	liveJournal.close()
 	outputMatrix.close()
