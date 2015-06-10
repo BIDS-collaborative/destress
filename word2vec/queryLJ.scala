@@ -1,7 +1,7 @@
 import utils._
 
 
-var dict = loadDict("/var/local/destress/text_tokenized/masterDict.sbmat");
+var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
 var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
 var liveJournalVecs = loadFMat("/var/local/destress/LJ_word2vec/mymat.fmat")
