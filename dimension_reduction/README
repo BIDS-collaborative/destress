@@ -3,3 +3,6 @@ Here's some work on data dimension reduction, and trying to map the emotions to 
 TODO: Fix/inspect/etc.
 
 Note: the BIDMach .ssc script will have some broken directory paths if called right now.
+
+Note: the data I used (moodsByUser) is from Cory's original data, but with the three nonexistent
+moods (at index 0, 50, and 94 IIRC) removed. You might need to remove those rows if you run the code
