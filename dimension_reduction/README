@@ -1,0 +1,5 @@
+Here's some work on data dimension reduction, and trying to map the emotions to a 2-D plane.
+
+TODO: Fix/inspect/etc.
+
+Note: the BIDMach .ssc script will have some broken directory paths if called right now.
