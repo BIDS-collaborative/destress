@@ -1,0 +1,16 @@
+Here's some work on data dimension reduction, and trying to map the emotions to a 2-D plane.
+For questions, contact Daniel Seita.
+
+The BIDMach script livejournal.ssc needs to be called from an appropriate directory. Here are some
+assumptions:
+
+- That there is a directory called moods_data that contains the moodsByUser.smat.lz4 matrix (not in
+  the git repository) that is 132 x 780471. Cory made that for me.
+- That one can call BIDMach.models.{LDA,NMF,SFA,ICA}.learner from the directory. Note that ICA isn't
+  loaded with the other models now so you need to prepend BIDMach.models to that.
+
+To plot the data, use the Python script livejournal_plots.py. That assumes we have a file called
+sorted_moodIDs which contains the sorted moods. This is in the git repository. It also assumes a
+directory where the output from the BIDMach script (livejournal.ssc, not the extension name) is
+located. You will need to change that.
+

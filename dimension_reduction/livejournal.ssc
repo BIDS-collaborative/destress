@@ -1,0 +1,101 @@
+// Commands for playing around with the Livejournal data
+// This is from the first week of May 2015 by the way.
+// EDIT: And now going through the middle of June. ;)
+
+// Data loading and pre-processing. Choose either LDA or NMF since SFA gives a bunch of NaNs.
+val doSFA = false
+val doLDA = false
+val doNMF = true
+val d = 6
+
+val fdata = FMat(loadSMat("moods_data/moodsByUser.smat.lz4"))
+size(fdata)
+
+val (nn , opts) = if (doLDA) {
+    LDA.learner(fdata , d)
+} else if (doNMF) {
+    NMF.learner(fdata , d)
+} else {
+    SFA.learner(fdata , d)
+}
+
+opts.putBack = 1
+opts.npasses = 10
+opts.what
+nn.train
+val mmat = nn.modelmats(0) // A (d x fdata.nrows) matrix
+val user = nn.datamats(1)  // A (d x fdata.ncols) matrix
+size(mmat)
+size(user)
+
+if (doLDA) {
+    saveMat("moods_data/LDA_dim" + d + "_mmat.txt", mmat.t)
+    saveMat("moods_data/LDA_dim" + d + "_user.txt", user)
+} else if (doNMF) {
+    saveMat("moods_data/NMF_dim" + d + "_mmat.txt", mmat.t)
+    saveMat("moods_data/NMF_dim" + d + "_user.txt", user) 
+} else {
+    saveMat("moods_data/SFA_dim" + d + "_mmat.txt", mmat.t)
+    saveMat("moods_data/SFA_dim" + d + "_user.txt", user)
+}
+
+// Prepare data for ICA by centering and whitening data
+val centeredData = user - mean(user , 2)
+val estCov = (centeredData *^ centeredData) / (centeredData.ncols - 1)
+val (v , m) = seig(estCov)
+val D = mkdiag(1f / sqrt(v))
+val whiteningMatrix = m * D *^ m
+val whitenedData = whiteningMatrix * centeredData
+
+// Actually run ICA
+val (nn , opts) = BIDMach.models.ICA.learner(whitenedData)
+opts.G_function = "exponent"
+opts.numOrthogIter = 25
+opts.preWhitened = true // Important!
+opts.what
+nn.train
+val W = nn.modelmats(0)             // A (d x d) matrix which is the inverse of the mixing matrix
+val meanVector = nn.modelmats(1)    // A column vector with means of each row
+val predictedSources = W * (whitenedData - meanVector)
+
+// Save some results
+if (doLDA) {
+    saveMat("moods_data/LDA_white_dim" + d + "_data.txt", whitenedData)
+    saveMat("moods_data/LDA_pred_W.txt", W)
+} else if (doNMF) {
+    saveMat("moods_data/NMF_white_dim" + d + "_data.txt", whitenedData)
+    saveMat("moods_data/NMF_pred_W.txt", W)
+} else {
+    saveMat("moods_data/SFA_white_dim" + d + "_data.txt", whitenedData)
+    saveMat("moods_data/SFA_pred_W.txt", W)
+}
+
+// Now determine the two most powerful signals by rank-ordering the six we have.
+val rmse : Array[Float] = new Array[Float](d)
+val Winv = inv(W)
+for (i <- 0 until d) {
+    val A = Winv(? , i) * predictedSources(i , ?)
+    rmse(i) = sum(sum(A *@ A)).dv.toFloat // No need to apply sqrt or divide since it maintains ordering
+}
+val rmseSorted = rmse.sorted
+
+// Then store data to plot each original mood as a 2-D point based on the two best signals.
+val firstSource = rmse.indexOf(rmseSorted(d-1))
+val secondSource = rmse.indexOf(rmseSorted(d-2))
+val result = zeros(132 , 2)
+for (mood <- 0 until 132) {
+    val v1 = mmat(? , mood).t * Winv(? , firstSource)
+    val v2 = mmat(? , mood).t * Winv(? , secondSource)
+    result(mood , ?) = v1.dv.toFloat \ v2.dv.toFloat
+}
+
+// Finally save the result as text file matrices. Then we plot! Use matplotlib and python for that.
+if (doLDA) {
+    saveMat("moods_data/LDA_" + d + "_result.txt" , result)
+} else if (doNMF) {
+    saveMat("moods_data/NMF_" + d + "_result.txt" , result)
+} else {
+    saveMat("moods_data/SFA_" + d + "_result.txt" , result)
+}
+
+
