@@ -159,7 +159,6 @@ def query( query_s : String , top : Int) = {
   println();
 }
 
-
 // Example usage:
 // multi_query(illness_queries, 100)
 // multi_query(Array("drunk", "sad"), 20)
