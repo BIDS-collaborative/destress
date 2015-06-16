@@ -4,15 +4,16 @@ import utils._
 var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
 var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
-var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
+//var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
+var liveJournalVecs = loadFMat("/var/local/destress/LJ_word2vec/mymat.fmat")
 
-
-var magic = data.t * googleVecs;
+//var magic = data.t * googleVecs;
+var magic = data.t * liveJournalVecs;
 var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
 
 
-var illness_queries = Array(
+var illness_google = Array(
   "illness",
   "my mother who fell ill to a mental illness twice",
   "my brother is sick with bronchitis",
@@ -28,11 +29,17 @@ var illness_queries = Array(
   "i probably have a sinus infection",
   "she goes through all this depression since her cancer operations");
 
+//var illness_lj = Array( 
+//  
+//);
+
+
 
 def make_query_vec(query_s : String) : FMat  = {
 
-  var query_vec = googleVecs(0, ?) * 0;
+//  var query_vec = googleVecs(0, ?) * 0;
 
+  var query_vec = liveJournalVecs(0, ?) * 0;
   var ss = query_s.split(" ");
   var s = "";
 
@@ -42,8 +49,9 @@ def make_query_vec(query_s : String) : FMat  = {
     if(dict(s) == -1) {
       // printf("WARNING: did not find %s in master dict\n", s);
     } else {
-      var vec = googleVecs(dict(s), ?);
-
+      //var vec = googleVecs(dict(s), ?);
+      var vec = liveJournalVecs(dict(s), ?);
+      
       if(sum(vec^2)(0) == 0) {
         // printf("WARNING: %s is not in google wordvec database\n", s);
       } else {
