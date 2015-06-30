@@ -8,13 +8,24 @@ var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
 var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
 
 var magic = data.t * googleVecs;
-var n = sum(magic^2, 2);
-var nmagic = magic / sqrt(n);
+var lp_max = maxi(magic, 2);
+
+//var n = sum(magic^2, 2);
+//var nmagic = magic / sqrt(n);
+
+
+
+//for (n <- 1 to 300) {
+//  p = (1/n).toDouble;
+//  var matReduced = sum(magic^n,2);
+//  var lpMagic = Math.pow(matReduced,n);
+//}
+
 
 def query( query_s : String , top : Int) = {
 
-  var file = "illnessGoogle.txt"
-  val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+  //var file = "illnessGoogle.txt"
+  //val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
 
   var query_vec = googleVecs(0, ?) * 0;
 
@@ -42,9 +53,10 @@ def query( query_s : String , top : Int) = {
 
   query_vec = query_vec / sqrt(sum(query_vec^2));
 
-  var res = nmagic * query_vec.t;
+  //var res = nmagic * query_vec.t;
+  var res = lp_max * query_vec.t;
 
-  res(find(n == 0)) = -1; // sentence sums to 0
+  //res(find(n == 0)) = -1; // sentence sums to 0
 
   // res(find(res > 0.9999)) = -1; // single word, not interesting
 
@@ -80,10 +92,10 @@ def query( query_s : String , top : Int) = {
     i += 1;
   }
   println();
-  for (x <- res_list) {
-    writer.write(x);
-  }
-  writer.close();
+ // for (x <- res_list) {
+ //   writer.write(x);
+ //}
+ // writer.close();
 }
 
 
