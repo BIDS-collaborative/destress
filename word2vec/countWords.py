@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     for i in range(1, 1131):
         print('TEXT FILE NUMBER : ', str(i))
-        fileName = 'sents_' + str(i)+'.txt'
+        fileName = 'sents_' + str(i) +'.txt'
         textFile = open('/var/local/destress/text_sent_ids/'+fileName)
         sentences = textFile.readlines() # list of list of words
         textFile.close()
@@ -35,7 +35,7 @@ if __name__ == '__main__':
             else:
                 wordCount[count] = 1
 
-    for k, v in wordCount:
+    for k, v in wordCount.iteritems():
         statStr = str(k) + ' : ' + str(v)   
         outputCount.write(statStr + '\n')
     # write the count of the output to the dictionary
