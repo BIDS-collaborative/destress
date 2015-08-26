@@ -22,10 +22,12 @@ if __name__ == '__main__':
     points = []
     for k, v in wordCount.iteritems():
         print(k)
-        for i in range(v):
-            points.append(k)
-    plt.title("Sentence Length of Live Journal Corpus")
-    plt.xlabel("Length of sentence (in words)")
-    plt.ylabel("Frequency")
-    plt.hist(points, bins=50)
-    plt.show()
+        if k <= 50:
+            for i in range(v):
+                points.append(k)
+    # plt.title("Length (50 and Below) of Live Journal Sentences")
+    # plt.xlabel("Length of sentence (in words)")
+    # plt.ylabel("Frequency")
+    # plt.hist(points, bins=50)
+    # plt.show()
+
