@@ -55,6 +55,8 @@ DNN.dlayers(5,200,0.5f,nrValidMoods,opts,2);
 // Train model
 nn.train;
 
+val dnn = nn.model.asInstanceOf[DNN];
+
 // Test model on subset of test set
 // First creat a FilesDS of test data
 opts.fnames = List(FilesDS.simpleEnum(indir+"testData%03d.smat.lz4", 1, 0), 
@@ -98,7 +100,8 @@ while(testDS.hasNext) {
   testCount = testCount \ icol(mats(1).ncols); 
 
   val tcatsHat = zeros(tcats.nrows, tcats.ncols); // Create empty matrix to fill with predicted labels
-  val (tnn, topts) = DNN.predictor(nn.model, SMat(mats(0)), tcatsHat); // Create predictor from model
+  //val (tnn, topts) = DNN.predictor(nn.model, SMat(mats(0)), tcatsHat); // Create predictor from model
+  val (tnn, topts) = DNN.predictor(dnn, SMat(mats(0)), tcatsHat); // Create predictor from model
 
   topts.autoReset = false; // It seems that without this, each predict erases the weights in the trained model
 
