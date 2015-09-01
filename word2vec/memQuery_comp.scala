@@ -255,6 +255,119 @@ object memQuery {
 
 
 
+def loadMemSentences_v3(percData: Double=0.01, corpus: Int=0): (Dict, FMat, SMat, FMat, Int) =  {
+
+        tic
+
+        // Inputs
+        // percData: percentage of data to load in memory
+        // corpus: which word2vec model to use // 0 - google; 1 - LJ
+
+        // Constants
+        val sentsSize = 500;  // Size (nrOfWords) of sentences
+
+        // Paths to Dictionary, word2VecMatrix, Sentences' Data
+        //val sentsDataDir = "/big/livejournal/sentences/"
+        //val dictFile = sentsDataDir + "masterDict.sbmat";
+        //var w2vMatFile = sentsDataDir;
+        //if (corpus == 0) {
+        //    w2vMatFile += "googleEmbeddings.fmat";
+        //} else {
+        //    w2vMatFile += "LJEmbeddings.fmat";
+        //}
+        val sentsDataDir = "/var/local/destress/featurized_sent/";
+        val dictFile = "/var/local/destress/tokenized2/masterDict.sbmat";
+        var w2vMatFile = "/var/local/destress/";
+        if (corpus == 0) {
+           w2vMatFile += "google_training/wordvec_google_2.fmat";
+        } else {
+           w2vMatFile += "LJ_word2vec/mymat.fmat";
+        }
+
+        // Load Dictionary and w2v
+        var dict = loadDict(dictFile);
+        val nrWords = dict.cstr.nrows;
+        var w2vMat = loadFMat(w2vMatFile).t;  // 300xnrWords
+        val sentVecSize = size(w2vMat, 1);
+
+
+        // Find all the values in filenames dataxxx_sent.smat.lz4
+        // Get only xxx and then order
+        val listLabels = new File(sentsDataDir).list.filter(_.endsWith("_sent.smat.lz4")).filter(_.startsWith("data"));
+        //val numbers =  listLabels.map(c => c.split('.')(0).drop(4).dropRight(5)).sortBy(_.toInt).toList;
+        val nrDataFiles = listLabels.size;
+        println("Nr of Files: %d" format (nrDataFiles));
+        Random.setSeed(94720)  // for repeatability - change later
+        val orderFiles2Load = Random.shuffle(listLabels.toList);
+        val nrFiles2Load = floor(nrDataFiles * percData)(0).toInt;
+        val sentsPerFile = 500000;
+        val totalSents = sentsPerFile*nrFiles2Load;
+
+        // Init Data Matrices
+        // Because dataMat and sentsMat are sparse, the best way is to concatenate them
+        var dataMat = FMat(sentVecSize, totalSents);
+        var sentsMat = sparse(izeros(0,0), izeros(0,0), izeros(0,0), sentsSize, 0);
+
+        val tInit = toc
+        tic
+
+        var iter = 0;
+        var succFiles = 0;
+        val nrIters = min(nrFiles2Load, nrDataFiles)(0);
+        var sentsCount = 0;
+
+        while (iter < nrIters) {
+            println("Iteration %d out of %d" format (iter+1, nrIters));
+            val currSentFile = orderFiles2Load(iter);
+
+            // Data Files
+            // sentences  -> sentsDataDir + "dataxxx_sent.smat.lz4"
+            // bagOfWords -> sentsDataDir + "dataxxx.smat.lz4"
+            val sentFile = sentsDataDir + currSentFile;
+            val bOfwFile = sentsDataDir + currSentFile.dropRight(14)+".smat.lz4";
+            if (new File(sentFile).exists() && new File(bOfwFile).exists()) {
+                // Both files exist,  Load data
+                val sents = loadSMat(sentFile);
+                val data = loadSMat(bOfwFile);
+
+                if (size(data,2) == size(sents,2)) {
+                    // Data size is consistent, Add to Memory
+
+                        // Process each sentence data into vector
+                        val nrSents = size(data, 2)
+                        val nrSents2Proc = min(nrSents, totalSents-sentsCount)(0);
+
+                        println("%d %d %d" format (sentsCount, sentsCount+nrSents2Proc, nrSents));
+                        if (nrSents2Proc == nrSents) {
+                            dataMat(?, sentsCount->(sentsCount+nrSents)) = w2vMat*data;
+                            sentsMat \= sents;
+                        }
+                        else {
+                           dataMat(?, sentsCount->(sentsCount+nrSents2Proc)) = w2vMat*data(?, 0->nrSents2Proc);
+                           sentsMat \= sents(?, 0->nrSents2Proc);
+                        }
+
+                        sentsCount += nrSents2Proc;
+                        if (sentsCount >= totalSents) {
+                           iter = nrIters; // breaks the loop
+                        }
+                        succFiles += 1;
+                    }
+            }
+
+            iter += 1;
+        }
+
+        val tLoad = toc;
+
+        println("Total Time %f; Load Time = %f secs" format (tInit+tLoad, tLoad));
+        println("Nr valid Files = %d; Nr of sentences = %d" format(succFiles, size(dataMat,2)));
+
+        return (dict, dataMat, sentsMat, w2vMat, sentsCount)
+    }
+
+
+
 
 }
 
