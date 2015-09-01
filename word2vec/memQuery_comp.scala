@@ -29,15 +29,22 @@ object memQuery {
 	val sentsSize = 500;  // Size (nrOfWords) of sentences
 
 	// Paths to Dictionary, word2VecMatrix, Sentences' Data
-	val sentsDataDir = "/big/livejournal/sentences/"
-	val dictFile = sentsDataDir + "masterDict.sbmat";
-	var w2vMatFile = sentsDataDir;
+	//val sentsDataDir = "/big/livejournal/sentences/"
+	//val dictFile = sentsDataDir + "masterDict.sbmat";
+	//var w2vMatFile = sentsDataDir;
+	//if (corpus == 0) {
+    	//    w2vMatFile += "googleEmbeddings.fmat";
+	//} else {
+    	//    w2vMatFile += "LJEmbeddings.fmat";
+	//}
+	val sentsDataDir = "/var/local/destress/featurized_sent/";
+	val dictFile = "/var/local/destress/tokenized2/masterDict.sbmat";
+	var w2vMatFile = "/var/local/destress/";
 	if (corpus == 0) {
-    	    w2vMatFile += "googleEmbeddings.fmat";
+	   w2vMatFile += "google_training/wordvec_google_2.fmat";
 	} else {
-    	    w2vMatFile += "LJEmbeddings.fmat";
-	}
-
+    	   w2vMatFile += "LJ_word2vec/mymat.fmat";
+    	}
 
 	// Load Dictionary and w2v
 	var dict = loadDict(dictFile);
@@ -137,13 +144,21 @@ object memQuery {
 	val sentsSize = 500;  // Size (nrOfWords) of sentences
 
         // Paths to Dictionary, word2VecMatrix, Sentences' Data
-        val sentsDataDir = "/big/livejournal/sentences/"
-        val dictFile = sentsDataDir + "masterDict.sbmat";
-        var w2vMatFile = sentsDataDir;
+        //val sentsDataDir = "/big/livejournal/sentences/"
+        //val dictFile = sentsDataDir + "masterDict.sbmat";
+        //var w2vMatFile = sentsDataDir;
+        //if (corpus == 0) {
+        //    w2vMatFile += "googleEmbeddings.fmat";
+        //} else {
+        //    w2vMatFile += "LJEmbeddings.fmat";
+        //}
+        val sentsDataDir = "/var/local/destress/featurized_sent/";
+        val dictFile = "/var/local/destress/tokenized2/masterDict.sbmat";
+        var w2vMatFile = "/var/local/destress/";
         if (corpus == 0) {
-            w2vMatFile += "googleEmbeddings.fmat";
+           w2vMatFile += "google_training/wordvec_google_2.fmat";
         } else {
-            w2vMatFile += "LJEmbeddings.fmat";
+           w2vMatFile += "LJ_word2vec/mymat.fmat";
         }
 
 
@@ -201,15 +216,19 @@ object memQuery {
 			val nrSents2Proc = min(nrSents, totalSents-sentsCount)(0);
 
 			println("%d %d %d" format (sentsCount, sentsCount+nrSents2Proc, nrSents));
-			if (nrSents2Proc == nrSents) {			    
-			    dataMat(?, sentsCount->(sentsCount+nrSents)) = FMat(w2vMat*data);
+			if (nrSents2Proc == nrSents) {
+			    val tempProd = w2vMat*data;			    
+			    dataMat(?, sentsCount->(sentsCount+nrSents)) = FMat(tempProd);
+			    tempProd.free;
 			    sentsMat \= sents;
 			}
 			else {
 			   val tempMat = SMat(data);
 			   val temp2 = GSMat(tempMat(?, 0->nrSents2Proc));
-			   dataMat(?, sentsCount->(sentsCount+nrSents2Proc)) = FMat(w2vMat*temp2);
+			   val tempProd = w2vMat*temp2;
+			   dataMat(?, sentsCount->(sentsCount+nrSents2Proc)) = FMat(tempProd);
 			   temp2.free;
+			   tempProd.free
 			   sentsMat \= sents(?, 0->nrSents2Proc);
 			}
 
