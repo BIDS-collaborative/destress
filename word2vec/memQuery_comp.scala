@@ -8,6 +8,14 @@ import scala.util.Random
 
 object memQuery {
 
+    def getCPUmem() {
+    	val mb = 1024*1024;
+	val runtime = Runtime.getRuntime;
+	println("Used Memory:  " + (runtime.totalMemory - runtime.freeMemory) / mb + " MB.")
+	println("Free Memory:  " + runtime.freeMemory / mb + " MB.")
+	println("Total Memory: " + runtime.totalMemory / mb + " MB.")
+	println("Max Memory:   " + runtime.maxMemory / mb + " MB.")
+    }
 
     def loadMemSentences(percData: Double=0.01, corpus: Int=0): (Dict, SMat, SMat, FMat) =  {
 
@@ -21,13 +29,13 @@ object memQuery {
 	val sentsSize = 500;  // Size (nrOfWords) of sentences
 
 	// Paths to Dictionary, word2VecMatrix, Sentences' Data
-	val sentsDataDir = "/var/local/destress/featurized_sent/";
-	val dictFile = "/var/local/destress/tokenized2/masterDict.sbmat";
-	var w2vMatFile = "/var/local/destress/";
+	val sentsDataDir = "/big/livejournal/sentences/"
+	val dictFile = sentsDataDir + "masterDict.sbmat";
+	var w2vMatFile = sentsDataDir;
 	if (corpus == 0) {
-    	    w2vMatFile += "google_training/wordvec_google_2.fmat";
+    	    w2vMatFile += "googleEmbeddings.fmat";
 	} else {
-    	    w2vMatFile += "LJ_word2vec/mymat.fmat";
+    	    w2vMatFile += "LJEmbeddings.fmat";
 	}
 
 
@@ -129,13 +137,13 @@ object memQuery {
 	val sentsSize = 500;  // Size (nrOfWords) of sentences
 
         // Paths to Dictionary, word2VecMatrix, Sentences' Data
-        val sentsDataDir = "/var/local/destress/featurized_sent/";
-        val dictFile = "/var/local/destress/tokenized2/masterDict.sbmat";
-        var w2vMatFile = "/var/local/destress/";
+        val sentsDataDir = "/big/livejournal/sentences/"
+        val dictFile = sentsDataDir + "masterDict.sbmat";
+        var w2vMatFile = sentsDataDir;
         if (corpus == 0) {
-            w2vMatFile += "google_training/wordvec_google_2.fmat";
+            w2vMatFile += "googleEmbeddings.fmat";
         } else {
-            w2vMatFile += "LJ_word2vec/mymat.fmat";
+            w2vMatFile += "LJEmbeddings.fmat";
         }
 
 
@@ -183,8 +191,7 @@ object memQuery {
             if (new File(sentFile).exists() && new File(bOfwFile).exists()) {
                 // Both files exist,  Load data
                 val sents = loadSMat(sentFile);
-                val data = loadSMat(bOfwFile);
-                //val vecData = sparse(w2vMat * data);
+                val data = GSMat(loadSMat(bOfwFile));
 
                 if (size(data,2) == size(sents,2)) {
                     // Data size is consistent, Add to Memory
@@ -195,14 +202,19 @@ object memQuery {
 
 			println("%d %d %d" format (sentsCount, sentsCount+nrSents2Proc, nrSents));
 			if (nrSents2Proc == nrSents) {			    
-			    dataMat(?, sentsCount->(sentsCount+nrSents)) = FMat(w2vMat*GSMat(data));
+			    dataMat(?, sentsCount->(sentsCount+nrSents)) = FMat(w2vMat*data);
 			    sentsMat \= sents;
 			}
 			else {
-			   dataMat(?, sentsCount->(sentsCount+nrSents2Proc)) = FMat(w2vMat*GSMat(data(?, 0->nrSents2Proc)));
+			   val tempMat = SMat(data);
+			   val temp2 = GSMat(tempMat(?, 0->nrSents2Proc));
+			   dataMat(?, sentsCount->(sentsCount+nrSents2Proc)) = FMat(w2vMat*temp2);
+			   temp2.free;
 			   sentsMat \= sents(?, 0->nrSents2Proc);
 			}
 
+			data.free;
+			Mat.clearCaches;
 			sentsCount += nrSents2Proc;
 			if (sentsCount >= totalSents) {
 			   iter = nrIters; // breaks the loop
