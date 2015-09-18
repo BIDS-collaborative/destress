@@ -66,7 +66,7 @@ def query( query_s : String , top : Int, filter: String = "NaN") = {
       if (filter == "NaN") {
         printf("%.3f -- %s\n", res(ix), sent);
         count += 1;
-      } else Pif (!sent.contains(filter)) {
+      } else if (!sent.contains(filter)) {
         printf("%.3f -- %s\n", res(ix), sent);
         count += 1;
       }
