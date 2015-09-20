@@ -7,6 +7,9 @@ var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
 //var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
 var liveJournalVecs = loadFMat("/var/local/destress/LJ_word2vec/mymat.fmat")
 
+var userDict = loadDict("/home/pierre/combined/userDict.sbmat", pad=false);
+var labels = loadIMat("/var/local/destress/featurized_sent/data1.imat");
+
 //var magic = data.t * googleVecs;
 var magic = data.t * liveJournalVecs;
 var n = sum(magic^2, 2);
@@ -88,6 +91,10 @@ def multi_query(queries : Array[String], top : Int, report:Boolean = true, ignor
   var prev = "   ";
   var prev_res = -1f;
 
+  var userId = 0;
+  var user = "";
+  var url = "";
+
   i = 0;
 
   var out = new Array[String](top-ignore);
@@ -104,12 +111,16 @@ def multi_query(queries : Array[String], top : Int, report:Boolean = true, ignor
       prev = sent;
       prev_res = res(ix);
 
+      userId = labels(0,ix);
+      user = userDict(userId);
+      url = "http://" + user + ".livejournal.com/";
+
       if(count >= ignore) {
         out(count - ignore) = sent;
       }
 
       if(report) {
-        printf("%.3f -- %s\n", res(ix), sent);
+        printf("%.3f -- %-100s -- %s \n", res(ix), sent, url);
       }
 
       count += 1;
