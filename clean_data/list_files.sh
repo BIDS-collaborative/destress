@@ -10,8 +10,9 @@ mkdir -p $OUTPUT_PATH
 
 echo > $OUTPUT_PATH/$OUTPUT_NAME
 
-for f in `ls $DATA_PATH`; do
+for f in `ls -v $DATA_PATH`; do
     echo $f
-    find -L $DATA_PATH/$f -maxdepth 1 -type f | sort  >> $OUTPUT_PATH/$OUTPUT_NAME
+    # find -L $DATA_PATH/$f -maxdepth 1 -type f | sort  >> $OUTPUT_PATH/$OUTPUT_NAME
+    ls $DATA_PATH/$f >> $OUTPUT_PATH/$OUTPUT_NAME
 done
 
