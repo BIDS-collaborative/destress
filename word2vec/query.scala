@@ -6,6 +6,10 @@ var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
 var googleVecs = loadFMat("/var/local/destress/google_training/wordvec_google_2.fmat")
 
+var userDict = loadDict("/home/pierre/combined/userDict.sbmat", pad=false);
+var labels = loadIMat("/var/local/destress/featurized_sent/data1.imat");
+
+
 var magic = data.t * googleVecs;
 var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
@@ -51,6 +55,10 @@ def query( query_s : String , top : Int) = {
   var prev = "   ";
   var prev_res = -1f;
 
+  var userId = 0;
+  var user = "";
+  var url = "";
+
   var i = 0;
   var count = 0;
   // for(i <- 0 until bestIndex.length) {
@@ -63,8 +71,13 @@ def query( query_s : String , top : Int) = {
     // if(sent.substring(0, sent.length-2) != prev.substring(0, prev.length-2)) {
     if(res(ix) != prev_res) {
       prev = sent;
-    prev_res = res(ix);
-      printf("%.3f -- %s\n", res(ix), sent);
+      prev_res = res(ix);
+
+      userId = labels(0,ix);
+      user = userDict(userId);
+      url = "http://" + user + ".livejournal.com/";
+
+      printf("%.3f -- %-100s -- %s \n", res(ix), sent, url);
       count += 1;
     }
     // else {
@@ -78,3 +91,9 @@ def query( query_s : String , top : Int) = {
 // Example usage:
 // query("cancer", 20)
 // query("amazing", 10)
+
+
+
+
+
+
