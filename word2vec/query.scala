@@ -1,6 +1,5 @@
 import utils._
 
-
 var dict = loadDict("/var/local/destress/tokenized2/masterDict.sbmat");
 var data = loadSMat("/var/local/destress/featurized_sent/data1.smat.lz4");
 var sents = loadSMat("/var/local/destress/featurized_sent/data1_sent.smat.lz4")
@@ -14,7 +13,7 @@ var magic = data.t * googleVecs;
 var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
 
-def query( query_s : String , top : Int) = {
+def query( query_s : String , top : Int, filter: String = "NaN") = {
 
   var query_vec = googleVecs(0, ?) * 0;
 
@@ -77,8 +76,10 @@ def query( query_s : String , top : Int) = {
       user = userDict(userId);
       url = "http://" + user + ".livejournal.com/";
 
+      if (filter == "NaN" || !sent.contains(filter)) {
       printf("%.3f -- %-100s -- %s \n", res(ix), sent, url);
       count += 1;
+      } 
     }
     // else {
     //   printf("ignoring %s\n", sent);
@@ -91,9 +92,3 @@ def query( query_s : String , top : Int) = {
 // Example usage:
 // query("cancer", 20)
 // query("amazing", 10)
-
-
-
-
-
-
