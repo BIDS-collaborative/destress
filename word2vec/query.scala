@@ -13,7 +13,7 @@ var magic = data.t * googleVecs;
 var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
 
-def query( query_s : String , top : Int, filter: String = "NaN") = {
+def query( query_s : String , top : Int, filter: String = null) = {
 
   var query_vec = googleVecs(0, ?) * 0;
 
@@ -76,10 +76,10 @@ def query( query_s : String , top : Int, filter: String = "NaN") = {
       user = userDict(userId);
       url = "http://" + user + ".livejournal.com/";
 
-      if (filter == "NaN" || !sent.contains(filter)) {
-      printf("%.3f -- %-100s -- %s \n", res(ix), sent, url);
-      count += 1;
-      } 
+      if (filter == null || !sent.contains(filter)) {
+        printf("%.3f -- %-100s -- %s \n", res(ix), sent, url);
+        count += 1;
+      }
     }
     // else {
     //   printf("ignoring %s\n", sent);

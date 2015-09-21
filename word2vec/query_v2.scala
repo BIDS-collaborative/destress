@@ -14,13 +14,13 @@ var (dict, dataMat, sents, w2vMat, nValidSents, ids) = loadMemSentences_CPU(perc
 // ids -> IMat 3 x #sentences
 
 
-def query( query_s : String , top : Int, filter: String = "NaN") = {
+def query( query_s : String , top : Int, filter: String = null) = {
 
   var query_vec = FMat(size(w2vMat, 1), 1);
 
   // Converts input query to dictionary indexes
   var ss = query_s.toLowerCase().split(" ")
-  
+
   // Convert input query to a word2vec vector
   for(s <- ss) {
     if(dict(s) == -1) {
@@ -64,10 +64,7 @@ def query( query_s : String , top : Int, filter: String = "NaN") = {
 
     if(res(ix) != prev_res) { // discard repeated strings?
       prev_res = res(ix);
-      if (filter == "NaN") {
-        printf("%.3f -- %s\n", res(ix), sent);
-        count += 1;
-      } else if (!sent.contains(filter)) {
+      if (filter == null || !sent.contains(filter)) {
         printf("%.3f -- %s\n", res(ix), sent);
         count += 1;
       }
