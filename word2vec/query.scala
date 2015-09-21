@@ -21,8 +21,8 @@ def query( query_s : String , top : Int, filter: String = null, minWords: Int = 
   var ss = query_s.split(" ");
   var str = "";
 
-  val weights = Array.fill(ss.length){1.0}; // Create a weight vector 
-  for (i <- 0 until ss.length-1) {
+  val weights = Array.fill(ss.length+1){1.0}; // Create a weight vector 
+  for (i <- 0 until ss.length) {
    str = ss(i).toLowerCase();
    if (str(0) == '[' && str(str.length - 1) == ']') {
       // Convert weight inside the brackets into a double
@@ -32,7 +32,7 @@ def query( query_s : String , top : Int, filter: String = null, minWords: Int = 
 
 
   var s = "";
-  for(i <- 0 until ss.length-1) {
+  for(i <- 0 until ss.length) {
     s = ss(i).toLowerCase();
    
     if(dict(s) == -1) {
