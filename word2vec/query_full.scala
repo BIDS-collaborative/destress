@@ -4,16 +4,13 @@ import java.io._
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
 
-var percData = 0.01;  // no more than 0.012
 var corpus = 0;  // select 1-for LJ; 0-for Google
-var seed = 94720;  // default is 94720
-                   // Loads, converts to w2v and normalizes
 
 val resultsDir = "/big/livejournal/full_results/";
 val sentsDataDir = "/big/livejournal/sentences/";
 
 val nFiles = 1130; // all of them, except last one because Pierre messed up
-// val nFiles = 5;
+                   // val nFiles = 5;
 
 
 val w2vMatFile = sentsDataDir + "googleEmbeddings.fmat";
@@ -76,9 +73,57 @@ def make_query_vec( queries : Array[String]) : FMat = {
 
 // need to load query vectors here
 // for now, let's pretend we have two
-var vec1 = make_query_vec(Array("i feel fantastic [10]"));
-var vec2 = make_query_vec(Array("my mom is smart"));
-var vecs = Array(vec1, vec2);
+// var vec1 = make_query_vec(Array("i feel fantastic [10]"));
+// var vec2 = make_query_vec(Array("my mom is smart"));
+// var vecs = Array(vec1, vec2);
+
+var svecs = Array(
+  // Airi
+  Array("neighbor"),
+  Array("neighbor in my building"),
+  Array("next door neighbor"),
+  Array("well ... last night was uneventful ... really got to know the next door neighbor ",
+    "saturday got up kinda early and went over the next door neighbor s house so i could meet cody and kayla"),
+  Array("really got to know the next door neighbor ", "went over next door neighbor house"),
+  Array("really got know next door neighbor", "next door neighbor house"),
+  Array("my next door neighbor was screaming you like fucking with my stuff"),
+  Array("the annoying neighbor from next door , jason , is moving out !"),
+
+  // Coye
+  Array("trust and emotion"),
+  Array("exchange reciprocity"),
+  Array("exchange reciprocity negotiation"),
+  Array("personality and a mutual respect"),
+  Array("family"),
+  Array("holiday emotions"),
+  Array("the night somehow fules my creativity and fills me with ideas and thoughts",
+    "my feelings are actually always repressed ... i tend not to show them sometimes",
+    "many fears are born of fatigue and loneliness"),
+
+  // Victor
+  Array("couple obese"),
+  Array("eating obese"),
+  Array("i m trying to eat healthy and avoid eating sweets"),
+  Array("i lost weight and kept it off"),
+  Array("i lost weight by using calorie counting"),
+  Array("this other diet is better than calorie counting"),
+  Array("I redesigned my lifestyle"),
+  Array("I redesigned my lifestyle to lose weight"),
+  Array("gobble eat devour"),
+  Array("gobble devour"),
+  Array("devour gobble ingest"),
+  Array("slow carb diet"),
+  Array("i am following atkins diet"),
+  Array("i follow the paleo diet"),
+  Array("yoyo diet"),
+  Array("yo-yo diet"),
+  Array("today begins a healthy eating and exercise regime"),
+  Array("balancing better exercise and eating habits with my much loved unhealthy habits")
+
+)
+
+var vecs = new Array[FMat](svecs.length);
+
 
 // get top 1000 queries from each file
 var top = 1000;
@@ -88,7 +133,10 @@ var minWords = 15;
 
 // define filters here
 // in this case, sentences with "fantastic" and "feel" are excluded
-var filters = Array[String]("fantastic", null);
+// var filters = Array[String]("fantastic", null);
+
+// no filters
+var filters = Array.fill[String](vecs.length){null}
 
 
 var filterRegex = new Array[Regex](vecs.length);
@@ -97,6 +145,8 @@ var outSents = new Array[ListBuffer[String]](vecs.length);
 var outRes = new Array[ListBuffer[Float]](vecs.length);
 
 for(i <- 0 until vecs.length) {
+  vecs(i) = make_query_vec(svecs(i))
+
   if(filters(i) == null) {
     filterRegex(i) = null;
   } else {
