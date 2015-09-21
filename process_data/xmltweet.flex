@@ -25,9 +25,9 @@ AMP        ("&"|"&amp;")
 "&lt;"[^&<=]{1,15}"&gt;"
 "&amp;lt;"[^&<=]{1,15}"&amp;&gt;" /* eat up some short, simple ampersand based html tags in text */
 
-"&lt;"[^&<=]*"="[^&<]*"&gt;" /* eat up longer html tags, these usually contain = signs
+"&lt;"[^&<=]*"="[^&<]*"&gt;" /* eat up longer html tags, these usually contain = signs */
 
-"&lt;!"[^&<]*"&gt;" /* eat up xml comment tags <!-- comment -->, onditional tags <!-[if condition]>, even when formatted incorrectly
+"&lt;!"[^&<]*"&gt;" /* eat up xml comment tags <!-- comment -->, onditional tags <!-[if condition]>, even when formatted incorrectly*/
 
 {AMP}"lt;""/"?[wo]":"[^&<]*{AMP}"gt;" /* eat some Microsoft tags that show up regularly */
 
