@@ -13,16 +13,28 @@ var magic = data.t * googleVecs;
 var n = sum(magic^2, 2);
 var nmagic = magic / sqrt(n);
 
-def query( query_s : String , top : Int, filter: String = null) = {
+def query( query_s : String , top : Int, filter: String = null, minWords: Int = 15) = {
+
 
   var query_vec = googleVecs(0, ?) * 0;
 
   var ss = query_s.split(" ");
+  var str = "";
+
+  val weights = Array.fill(ss.length){1.0}; // Create a weight vector 
+  for (i <- 0 until ss.length-1) {
+   str = ss(i).toLowerCase();
+   if (str(0) == '[' && str(str.length - 1) == ']') {
+      // Convert weight inside the brackets into a double
+      weights(i) = (str.stripPrefix("[").stripSuffix("]").trim).toDouble;    
+    }  
+  }
+
+
   var s = "";
-
-  for(x <- ss) {
-    s = x.toLowerCase();
-
+  for(i <- 0 until ss.length-1) {
+    s = ss(i).toLowerCase();
+   
     if(dict(s) == -1) {
       printf("WARNING: did not find %s in master dict\n", s);
     } else {
@@ -32,7 +44,7 @@ def query( query_s : String , top : Int, filter: String = null) = {
         printf("WARNING: %s is not in google wordvec database\n", s);
       } else {
         printf("adding %s to vector\n", s);
-        query_vec += vec;
+        query_vec += vec * weights(i+1);
       }
     }
   }
@@ -76,10 +88,17 @@ def query( query_s : String , top : Int, filter: String = null) = {
       user = userDict(userId);
       url = "http://" + user + ".livejournal.com/";
 
-      if (filter == null || !sent.contains(filter)) {
-        printf("%.3f -- %-100s -- %s \n", res(ix), sent, url);
-        count += 1;
-      }
+      
+      val words = sent.split(" ");
+      val numWords = words.length;
+      //println(s"Number of words = $numWords");
+      if (numWords >= minWords) {
+        if (filter == null || !sent.contains(filter)) {
+          printf("%.3f -- %-100s -- %s \n", res(ix), sent, url);
+          count += 1;
+        } 
+      }    
+
     }
     // else {
     //   printf("ignoring %s\n", sent);
