@@ -1,4 +1,4 @@
-stress
+destress
 ======
 
 Helping @peparedes with text analysis of livejournal data. Particular focus on
