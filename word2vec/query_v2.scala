@@ -21,21 +21,41 @@ def query( query_s : String , top : Int, filter: String = null) = {
   // Converts input query to dictionary indexes
   var ss = query_s.toLowerCase().split(" ")
 
-  // Convert input query to a word2vec vector
-  for(s <- ss) {
-    if(dict(s) == -1) {
-      printf("WARNING: did not find %s in master dict\n", s);
-    } else {
-      var vec = w2vMat(?, dict(s));
+  var str = "";
 
-      if(sum(vec^2)(0) == 0) {
-        printf("WARNING: %s is not in word2vec database\n", s);
+  val weights = Array.fill(ss.length+1){1.0}; // Create a weight vector
+  for (i <- 0 until ss.length) {
+    str = ss(i).toLowerCase();
+    if (str(0) == '[' && str(str.length - 1) == ']') {
+      // Convert weight inside the brackets into a double
+      weights(i) = (str.stripPrefix("[").stripSuffix("]").trim).toDouble;
+      ss(i) = null;
+    }
+  }
+
+  // Convert input query to a word2vec vector
+  var s = "";
+  for(i <- 0 until ss.length) {
+    if(ss(i) != null) {
+      s = ss(i).toLowerCase();
+
+      if(dict(s) == -1) {
+        printf("WARNING: did not find %s in master dict\n", s);
       } else {
-        printf("adding %s to vector\n", s);
-        query_vec += vec;
+        var vec = w2vMat(?, dict(s));
+
+        if(sum(vec^2)(0) == 0) {
+          printf("WARNING: %s is not in google wordvec database\n", s);
+        } else {
+          printf("adding %s to vector\n", s);
+          query_vec += vec * weights(i+1);
+        }
       }
     }
   }
+
+  // Convert input query to a word2vec vector
+
   // Normalize
   // size 300x1
   query_vec = query_vec / norm(query_vec);
@@ -62,7 +82,9 @@ def query( query_s : String , top : Int, filter: String = null) = {
     var z = dict(curr).t;
     var sent = (z ** csrow(" ")).toString().replace(" ,", " ");
 
-    if(res(ix) != prev_res) { // discard repeated strings?
+    if(res(ix) != prev_res && // discard repeated strings?
+        numWords >= minWords && // minimum words
+        (filterRegex(vnum)== null || filterRegex(vnum).findFirstIn(sent) == None)) // filter for words) { // discard repeated strings?
       prev_res = res(ix);
       if (filter == null || !sent.contains(filter)) {
         printf("%.3f -- %s\n", res(ix), sent);
