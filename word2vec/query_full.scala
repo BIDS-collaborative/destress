@@ -4,14 +4,15 @@ import java.io._
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
 
-var corpus = 0;  // select 1-for LJ; 0-for Google
+val corpus = 0;  // select 1-for LJ; 0-for Google
 
 val resultsDir = "/big/livejournal/full_results/";
 val sentsDataDir = "/big/livejournal/sentences/";
 
-val nFiles = 1130; // all of them, except last one because Pierre messed up
-                   // val nFiles = 5;
+// val nFiles = 1130; // all of them, except last one because Pierre messed up
+val nFiles = 5; // only 5, just for testing
 
+val maxWords = 500; // max words in sentence, they're already trimmed in featurization stage
 
 val w2vMatFile = sentsDataDir + "googleEmbeddings.fmat";
 // val w2vMatFile = sentsDataDir + "LJEmbeddings.fmat";
@@ -54,9 +55,9 @@ def make_query_vec( queries : Array[String]) : FMat = {
           var vec = w2vMat(?, dict(s));
 
           if(sum(vec^2)(0) == 0) {
-            printf("WARNING: %s is not in google wordvec database\n", s);
+            // printf("WARNING: %s is not in google wordvec database\n", s);
           } else {
-            printf("adding %s to vector\n", s);
+            // printf("adding %s to vector\n", s);
             query_vec += vec * weights(i+1);
           }
         }
@@ -141,8 +142,11 @@ var filters = Array.fill[String](vecs.length){null}
 
 var filterRegex = new Array[Regex](vecs.length);
 
-var outSents = new Array[ListBuffer[String]](vecs.length);
-var outRes = new Array[ListBuffer[Float]](vecs.length);
+// var outSents = new Array[ListBuffer[String]](vecs.length);
+// var outRes = new Array[ListBuffer[Float]](vecs.length);
+var outSents = new Array[IMat](vecs.length);
+var outRes = new Array[FMat](vecs.length);
+var currIxs = new Array[Int](vecs.length);
 
 for(i <- 0 until vecs.length) {
   vecs(i) = make_query_vec(svecs(i))
@@ -153,20 +157,24 @@ for(i <- 0 until vecs.length) {
     filterRegex(i) = filters(i).r;
   }
 
-  outSents(i) = ListBuffer();
-  outRes(i) = ListBuffer();
+  outSents(i) = IMat(maxWords, nFiles * top);
+  outRes(i) = FMat(nFiles * top, 1);
+  outRes(i)(?) = -1;
+
+  currIxs(i) = 0;
 }
 
 tic;
 println("");
+
 
 // loop through list of files
 for(fnum <- 1 to nFiles) {
   println(fnum);
 
   // load the data
-  var sentFile = sentsDataDir + "data" + fnum + "_sent.smat.lz4";
-  var bowFile = sentsDataDir + "data" + fnum + ".smat.lz4";
+  val sentFile = sentsDataDir + "data" + fnum + "_sent.smat.lz4";
+  val bowFile = sentsDataDir + "data" + fnum + ".smat.lz4";
   val idFile = sentsDataDir + "data" + fnum + ".imat";
 
   var sents = loadSMat(sentFile);
@@ -177,13 +185,13 @@ for(fnum <- 1 to nFiles) {
   magic ~ magic / sqrt(magic dot magic)
 
 
-  for(vnum <- 0 until outSents.length) {
+  for(vnum <- 0 until vecs.length) {
 
     // perform query
     var query_vec = vecs(vnum);
 
     var res = query_vec.t * magic;  // 1x#sentences
-    res(find((1-(res<=0))*@(1-(res>0)))) = -1; // sentence sums to 0
+    res(find(1-((res dot res)>=0))) = -1; // sentence sums to 0
 
     // Sort Results to Return Top Ones
     var (x, bestIndex) = sortdown2(res);
@@ -199,8 +207,7 @@ for(fnum <- 1 to nFiles) {
       var curr = IMat(FMat(sents(find(sents(?, ix)), ix)));
       var z = dict(curr).t;
       var sent = (z ** csrow(" ")).toString().replace(" ,", " ");
-      var numWords = z.length;
-
+      var numWords = curr.length;
 
       if(res(ix) != prev_res && // discard repeated strings?
         numWords >= minWords && // minimum words
@@ -210,8 +217,13 @@ for(fnum <- 1 to nFiles) {
 
         // printf("%.3f -- %s\n", res(ix), sent);
 
-        outSents(vnum).append(sent);
-        outRes(vnum).append(res(ix));
+        // outSents(vnum).append(sent);
+        // outRes(vnum).append(res(ix));
+
+        outSents(vnum)(?, currIxs(vnum)) = IMat(FMat(sents(?, ix)));
+        outRes(vnum)(currIxs(vnum)) = res(ix);
+        currIxs(vnum) += 1
+
         count += 1;
       }
 
@@ -229,11 +241,11 @@ tic;
 println("saving results...")
 // save results
 for(i <- 0 until vecs.length) {
-  var res = row(outRes(i).toList);
-  saveFMat(resultsDir + "res_" + i + ".fmat", res);
+  // var res = row(outRes(i).toList);
+  saveFMat(resultsDir + "res_" + i + ".fmat", outRes(i));
 
-  var sents = SBMat(csrow(outSents(i).toList));
-  saveSBMat(resultsDir + "sents_" + i + ".sbmat", sents);
+  // var sents = SBMat(csrow(outSents(i).toList));
+  saveSMat(resultsDir + "sents_" + i + ".smat.lz4", sparse(outSents(i)));
 }
 
 println("it took " + toc + " seconds to save data");
