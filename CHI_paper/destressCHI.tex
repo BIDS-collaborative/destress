@@ -127,9 +127,75 @@
 
 \section{Introduction}
 
-Imagine a huge library filled with millions of personal diaries. 
+Semi-structured interviews are a central tool in user research and the social sciences more generally.
+They allow for rich and open-ended exploration of user attitudes, preferences, desires, fears and values. 
+While they are of tremendous value, they also have difficulties:
 
-The use of big data in the qualitative research community has increased quite a bit in recent years. From Twitter sentiment inference [AA] to semantic research corpus data search tools [BB] there are more and more efforts being made to extract meaning from large corpus of text data. Our approach is to take advantage of modern algorithms such as word2vec, which transform words into high dimensional vectors (typically 300) and perform arithmetic operations in this basis coordinates. For example, (the vector for the word) ?king? minus the word ?man? plus the word ?woman? equals to ?queen?.
+\begin{itemize}
+\item They are expensive in time and resources. They often involve travel by one or both parties,
+  recording and transcription of content, subject reimbursement, and later effort by the interviewer
+  to form a synthesis from individual interviews.
+\item They are real-time which affords continuity in the thoughts of the interviewee, but also challenges
+  the interviewer to decide instantly what topics to pursue.
+\item They typically involve a relatively small sample of subjects. While one obtains a breadth of
+  responses it is difficult to know how widely-shared these are.
+\item They are normally time-bounded. Parties make a prior commitment to the duration of the interview,
+  which cannot be adjusted to follow promising threads that emerge late in the interview.
+\end{itemize}
+
+In this paper, we explore the use of Big Data technologies to provide an alternative to
+semi-structured interviews that serves some of the same goals. Specifically we explore recently
+developed deep semantic embedding techniques to discover relevant posts from a large corpus of
+user-generated content. We use a corpus of public posts from the Livejournal site.  Livejournal is a
+social media site where users maintain a personal online journal or diary. Livejournal posts tend to
+be longer than other sites, and the journal format encourages externalization of user attitudes and
+values. Explicit sentiment is attached to some posts via an emoticon system. The site contains many
+themed areas around topics such as health and lifestyle.  Even among the public posts there are many
+where users discuss significantly life challenges and seek and provide support for others. The
+content does not cover every possible topic, but the corpus is quite large and rich and coverage of
+rarer topics grows as the corpus grows.  We describe a tool which allows an ``interviewer'' to
+explore this corpus via a series of ``questions'' similar to a semi-structured interview. Each
+question retrieves a set of relevant sentences from various parts of the corpus, and the containing
+posts can be retrieved to provide context around them.
+
+Within the Livejournal corpus are significant tracts of text where users discuss attitudes, values
+and personal experiences around various topics. We argue that these tracts are similar to the
+responses users might give in a semi-structured interview. They even occur in the context of that
+user's history of posts, which can be explored to better understand their background. The challenge
+then is to separate the relevant tracts from other parts of the corpus. This is where deep semantic
+technologies come in. Word2vec is a neural semantic embedding method that has been shown to perform
+well at a variety of semantic tasks. ``Semantics'' here includes not just propositional content,
+but sentiment and even style. We argue that use of these technologies provides a much richer form
+of matching than traditional keyword-based search and even first-generation semantic search
+techniques such as LSI (Latent Semantic Indexing). We bolster this argument with our experiments
+which showed that perceived quality of the retrieved results was improved by {\em filtering out}
+surface-matching (i.e. keyword-matching) posts from semantically-matching posts.
+
+While this approach is not a replacement for semi-structured interviews, it can serve some of the
+same goals. This is especially true for topics that are more general and therefore well-covered in
+the corpus. For these topics, there are potential advantages of this approach over classical
+interviews, which include:
+
+\begin{description}
+\item[Economy] Our approach is very economical compared to live interviews. No travel is involved,
+  no transcription, no subject payments.
+\item[Interviewer Reflection] Interviewers can take as much time as needed to compose questions.
+  There is no cost to persuing side themes, or with ``dead-end'' themes. Interviews can last as long
+  as desired, be paused/restarted etc. 
+\item[Representativeness/Diversity] The number of users who will post about a popular topic (e.g. health,
+  transportation) is large compared to the number of users who would be involved in face-to-face
+  interviews. By exploring up and down the set of relevant sentences, the interviewer gains a
+  sense of typical attitudes.
+\item[Interviewer Control] Our system provides a variety of controls and filters over the retrieved
+  results. With practice, this allows the interviewer to more quickly get the kinds of responses
+  they are looking for, compared to reformulating questions in a live interview. 
+\end{description}
+
+We present evidence that the value of this approach improves with the size of the corpus and the
+effectiveness of the semantic embedding method. With the recent rapid progress in scalability and
+accuracy of semantic embedding methods, this means that our approach will improve in usefulness
+with these developments. 
+
 
 \section{Methodology}
 
