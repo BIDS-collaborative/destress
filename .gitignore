@@ -1,3 +1,11 @@
+*.aux
+*.bbl
+*.blg
+*.out
+*.pdf
+*.synctex.gz
+
+
 *.class
 *.log
 
