@@ -15,7 +15,7 @@ if __name__ == '__main__':
     logging.root.setLevel(level=logging.INFO)
     logger.info("running %s" % ' '.join(sys.argv))
 
-    outputCount = open('/var/local/destress/text_sent_ids/word_counts_new.txt', 'r+')
+    outputCount = open('/var/local/destress/text_sent/counts.txt', 'r+')
     wordCount = {}
     sentDirectory = '/var/local/destress/text_sent/'
 
