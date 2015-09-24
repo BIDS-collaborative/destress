@@ -25,6 +25,7 @@
 \usepackage{color}
 \usepackage{booktabs}
 \usepackage{textcomp}
+\usepackage{multicol}
 % Some optional stuff you might like/need.
 \usepackage{microtype} % Improved Tracking and Kerning
 % \usepackage[all]{hypcap}  % Fixes bug in hyperref caption linking
@@ -222,10 +223,10 @@ The true power of the technique is that the resulting feature space demonstrates
 
 We use two embedding models. First, we train our own embedding model on the corpus of LiveJournal posts using the Skip-gram with negative sampling (SGNS) implementation of word2vec as recommended in \cite{MikolovSCCD13}. This model gives 300-dimensional embeddings for the 994,949 words in our dictionary. Conveniently, Mikolov et al published a pre-trained SGNS word2vec model for open source access \cite{word2vecWEB}. This model was trained on an approximately 100 billion-word Google News corpus, and gives 300-dimensional embeddings for 3 million unique words. All of the words from our LiveJournal dictionary that are not included in this model can be assumed to map to zero vectors. Common stop words (i.e. ``the", ``an", ``who'') are also mapped to zero vectors, as they provide little semantic information.  
 
-\begin{figure}[tb]
-\centering \includegraphics[width=0.5\textwidth]{figures/LJCounts} 
-\caption{Histogram of the distribution of sentence lengths in the LiveJournal dataset. \label{fig:wordCounts}}
-\end{figure}
+%\begin{figure}[tb]
+%\centering \includegraphics[width=0.5\textwidth]{figures/LJCounts} 
+%\caption{Histogram of the distribution of sentence lengths in the LiveJournal dataset. \label{fig:wordCounts}}
+%\end{figure}
 
 \begin{figure}[tb]
 \centering \includegraphics[width=0.5\textwidth]{figures/wordCDF} 
@@ -238,7 +239,7 @@ Our goal is to perform semantic searches on the dataset from queries which can r
 
 In order to query the data, we multiply the word2vec embedding matrix and the sparse bag of words matrix described above to get a semantic matrix. Each column of this matrix is the word2vec semantic encoding of a sentence in our data set. We divide each column by its norm, so that the magnitude of each column is 1 regardless of the number of words in the sentence. This allows us to perform queries simply by performing the dot product of each column with the query vector. The sentences with the largest inner product scores have the strongest semantic match to the query. We display a certain number of these sentences, which we call the responses to the question, for the interviewer.
 
-Although the system above gives us valuable information, we will see in the following section that some additional features are helpful to tune the responses and obtain more qualitatively interesting responses. First, we use a minimum {\em threshold} on the number of words in the response. No response is allowed which contains fewer words than the threshold. All words, including stop words and out-of-dictionary words, are included in this total. Figure~\ref{fig:wordCounts} shows the distribution of sentence lengths, thereby informing how such a cut will reduce the number of sentences available to query. We found that a minimum threshold of 7 is a good starting point for the LiveJournal dataset.
+Although the system above gives us valuable information, we will see in the following section that some additional features are helpful to tune the responses and obtain more qualitatively interesting responses. First, we use a minimum {\em threshold} on the number of words in the response. No response is allowed which contains fewer words than the threshold. All words, including stop words and out-of-dictionary words, are included in this total. Figure~\ref{fig:wordCDF} shows the distribution of sentence lengths, informing how such a cut will reduce the number of sentences available to query. We found that a minimum threshold of 7 is a good starting point for the LiveJournal dataset.
 
 The interviewer is given the power to {\em filter} responses which contain a specific word (or a word from a specific set). No sentence  containing one or more words from the set of filter words is returned in this case. One simple case in which this is helpful is to suppress responses with exact matches to words from the query question, thereby reducing the similarity of the responses to those of a traditional keyword search.
 
@@ -247,6 +248,11 @@ We also give an interviewer the ability to add {\em importance weighting} to wor
 In order to understand the context of answer sentences returned by the query, we also provide the interviewer a link to the original post on the LiveJournal website. 
 
 \section{Results}
+
+\begin{figure*}[tb]
+\centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
+\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview performed by ????. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.}
+\end{figure*}
 
 \subsection{Bridging Formal with Informal Language}
 By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an academic (insert\_name\_1), he/she states that ?the tool allows researchers to rapidly analyze an informal corpus ? one that has been previously hard to search?. (I am hoping we have transcripts that echo something along these lines). In such instances, we began validating the usability of synthetic interviewing for academic research. To demonstrate examples, we can observe (insert\_name\_1?s) 
