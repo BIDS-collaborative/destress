@@ -15,16 +15,16 @@ if __name__ == '__main__':
     logging.root.setLevel(level=logging.INFO)
     logger.info("running %s" % ' '.join(sys.argv))
 
-    outputCount = open('/var/local/destress/text_sent_ids/word_counts.txt', 'r+')
+    outputCount = open('/var/local/destress/text_sent_ids/word_counts_new.txt', 'r+')
     wordCount = {}
-    sentDirectory = '/var/local/destress/text_sent_ids/'
+    sentDirectory = '/var/local/destress/text_sent/'
 
     # fileName = 'sents_1.txt'
 
     for i in range(1, 1131):
         print('TEXT FILE NUMBER : ', str(i))
         fileName = 'sents_' + str(i) +'.txt'
-        textFile = open('/var/local/destress/text_sent_ids/'+fileName)
+        textFile = open('/var/local/destress/text_sent/'+fileName)
         sentences = textFile.readlines() # list of list of words
         textFile.close()
 
