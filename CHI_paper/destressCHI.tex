@@ -264,11 +264,16 @@ We also give the interviewer the ability to add {\em importance weighting} to wo
 In order to understand the context of answer sentences returned by the query, we also provide the interviewer a link to the original post on the LiveJournal website. 
 
 \section{Co-design Process}
+\begin{figure*}[tb]
+\centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
+\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.\label{fig:interviewFlow}}
+\end{figure*}
+
 \subsection{Initial Concept Formation}
-The design of this system starts with the realization that there is a potential to gather semantic data from large corpus of data, which could be used to help researchers identify what people are actually saying about a topic. The use of LiveJournal helps access colloquial terms. On the system side, it also comes from the frustration trying to use traditional text exploration methods like regular expressions and bag of words, which require much effort to render little results over time.
+The design of this system starts with the realization that there is a potential to gather semantic data from large corpus of data, which could be used to help researchers identify what people are actually saying about a topic. The use of LiveJournal text helps access colloquial terms. The size of the corpus also ensures that even less popular topics are often represented in many journal posts. 
+ We also felt that existing keyword-based tools to explore such large corpuses are limited in their ability to recover unexpected insights.
 
-We started with the idea of using the sentence as the analysis unit, rather than the word. This helps work through statements which carry both info about a topic but also are charged with emotions and actions. We therefore formulated a very simple format of asking ``questions'' or queries to the crowd data to obtain relevant answers from the dataset. The size of the corpus ensures that event less popular topics are often represented in many journal posts. 
-
+We also want the researchers to be able to pose queries as full sentences in addition to collections of words. In this way queries can carry additional information such as emotions. We therefore formulated a very simple format of asking ``questions'' or queries to the crowd data to obtain relevant answers from the dataset. Figure~\ref{fig:interviewFlow} shows an example of a series of synthetic interview questions analogous to the semi-structured interview process. We expect that an interviewer hones their line of questioning along with their hypothesis by exploring the responses at each step. 
 \subsection{Early Idea Validation}
 
 % First sentence
@@ -299,20 +304,24 @@ With this prototype working we presented the lo-fi prototype to two researchers.
 }\end{quote}
 
 
-During the process the interviewer asked if it was possible weight to the words in any way, as he noted that sometimes ancillary words dominated the answers. We took note of this as a potential improvement for the tool.
+During the process the interviewer asked if it was possible to weight the words in any way, as he noted that sometimes ancillary words dominated the answers. We took note of this as a potential improvement for the tool.
 
 With this initial mildly positive reaction we carried on engaging other researchers and we already started to develop some way to access the contextual information surrounding the hit phrases. 
 
 % This next paragraph is very long and convoluted, not going to touch it now -Cory 
 
-The second researcher was studying Airbnb and neighbor relationships with Airbnb landlords. The challenge here was the inherent difficulty to search for a topic that is more recent than our corpus of data which was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we did start with queries regarding issues concerning neighbors. The frustration of the researcher was quite enlightening. We observed how she wanted to use the query. We started to move away from the traditional keyword search approach and started searching more colloquial common expressions that one may hear about her topic. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers she was looking for. Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, the Airbnb researcher brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. She found this need as good and bad, on the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and starting helping the researcher to form ideas around the research topic, on the other hand the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI that would help her create queries. The researcher pointed out some tools like MaxQDA \cite{maxqda:2007} which she believes are examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other little tools that make her life more useful. 
+A second researcher studies Airbnb and neighbor relationships with Airbnb landlords. The challenge in this case is the inherent difficulty in searching for a recent topic while our data set was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we explored queries concerning issues with neighbors. The frustration of the researcher was quite enlightening. At the same time, we observed a change in the query inputs, as the researcher moved away from the traditional keyword search approach and started searching more colloquial common expressions. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers the researcher valued. There was an improvement when searching on the mid-fi prototype (1\% of the data) but, due to time constraints, we didn't gather further insights.
+
+Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, the Airbnb researcher brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. 
+%She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. 
+This was considered good and bad. On the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and helped the researcher form ideas around the research topic. On the other hand, the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI to help creating the queries. The researcher also pointed out some tools like MaxQDA \cite{maxqda:2007} as examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other smaller helpful tools. 
 
 \begin{quote}
 {\em
 For the smart system vs smart user, I was just thinking along the lines of how well the system is equipped to predict what the user means (think of early Altavista vs Google today) and how that affects how easy it is for the user to get what they want -- of course, the other side of this is how clear it is how the system works since if the rules of the game are obvious for the user, then it is easier to game the system to get what is sought for.
 }\end{quote}
 
-Finally we unavoidably discussed the notion of the types of topics that LiveJournal can handle. Of course there is a limitation due to the amount of data, but she believed having some preliminary understanding of what topics are well represented in the corpus would help at least know if the use of this corpus is adequate or not.
+Finally, we discussed the types of topics that LiveJournal can handle. The researcher believed that having some preliminary understanding of what topics are well represented in the corpus would help understand how adequate the corpus is. 
 
 \begin{quote}
 {\em
@@ -324,7 +333,7 @@ Finally we unavoidably discussed the notion of the types of topics that LiveJour
 \begin{figure*}[ht]
 \centering \includegraphics[width=.85\textwidth]{figures/results_1}
 \caption{In this figure, we show how the filters affect the query results. 
-At the top right are the top 8 results for the query ``family holiday" on the full data.  
+At the top right are the top 8 results for the query ``family holiday'' on the full data.  
 To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
 This is done in the bottom left panel. 
 Since we perform a semantic query, the results do not have to include our query terms. 
@@ -338,11 +347,6 @@ Note that each result belongs to a full post. For instance, the highlighted resu
 \end{figure*}
 
 One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, the researcher had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays'' (Figure~\ref{fig:familyHolidays} shows sample questions and responses related to this topic).
-
-\begin{figure}[tb]
-\centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
-\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
-\end{figure}
 
 The social relationships researcher quickly found that the data was very promising. He was very happy with the large number of responses easily available, including expressions syntactically similar to the initial query as well as others semantically close, but quite different syntactically. We visited the actual journals as well (see figure~\ref{fig:examplePost} for an example), going back and forth between the response sentences and the full journal posts. He started finding meta relations across the sentences and we came across more than one answer from the same journal. The researcher felt that the synthetic interview tool was naturally helping him to find ``genres'' of users, and thought this was a great innovation. 
 
@@ -364,6 +368,12 @@ He was also very impressed that among the different results he was able to find 
 {\em
 \dots more than searching for the tail, it would be better to filter out ``words'' like this ``family'' word that comes many times and see only things like this one about the ``brother and the sister''?
 }\end{quote}
+
+\begin{figure}[bt]
+\centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
+\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
+\end{figure}
+
 
 Despite his remarks about UI tools, his biggest interest was indeed in this unique ability that our tool brought to potentially find ``genres'' of journals or groups of users, which for him was very impressive.
 
@@ -389,7 +399,7 @@ He was delighted with the new results and made the remark that he believes that 
 \dots it is a really good tool to be able to find the chunks of data that I want to use in my studies and I would feel pretty comfortable in being able to use that [word2vec].}
 \end{quote}
 
-Finally we showed the tool to two other researchers. The first was a human computer interface researcher/designer studying online activism and multimedia communication tools for families. He found very little merit in the data for the activism topic, likely because his particular research topics were more modern than our dataset. We will later see that when we run the queries on 100\% of the data, the value of the results improces. Even with the mi-fi model, he did find some references that he found interesting once he adapted his search strategy from keywords to more colloquial expressions (such as ``please sign my petition''). At this point he made a very important remark. He found that he had to completely change his search paradigm when using the synthetic interview tool, moving away from the example based queries that are successful with traditional keyword search engine queries and towards semantically meaningful questions. 
+Finally we showed the tool to two other researchers. The first was a human computer interface researcher/designer studying online activism and multimedia communication tools for families. He found very little merit in the data for the activism topic, likely because his particular research topics were more modern than our dataset. Even with the mi-fi model, he did find some references that he found interesting once he adapted his search strategy from keywords to more colloquial expressions (such as ``please sign my petition''). At this point he made a very important remark. He found that he had to completely change his search paradigm when using the synthetic interview tool, moving away from the example based queries that are successful with traditional keyword search engine queries and towards semantically meaningful questions. 
 
 \begin{quote}
 {\em
@@ -421,16 +431,11 @@ I had experience in Brazil because my field was impossible, so I decided to make
 
 The law sociologist also expressed that she was eager to use the tool as soon as possible for her current research topic.
 
-\subsection{Search on the full dataset}
-We implemented an off-line search option at full capacity (100\%). Results from this implementation are explained in the next section.
+%\subsection{Full capacity Simulation}
+%We implemented an off-line search option at full capacity (100\%). Results from this implementation are explained in the next section.
 
 
 \section{Results}
-
-\begin{figure*}[htb]
-\centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
-\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.}
-\end{figure*}
 
 %\begin{figure}[tb]
 %\centering \includegraphics[width=0.45\textwidth]{figures/examplePost1} 
@@ -462,12 +467,6 @@ In this paper, we presented a new way to explore a text corpus by taking advanta
 In the future, we plan to implement to a distributed system to query in real-time on the full dataset and to develop a better user interface for performing queries.
 
 \section{Acknowledgments}
-
-Sample text: We thank all the volunteers, and all publications support
-and staff, who wrote and provided helpful comments on previous
-versions of this document. Authors 1, 2, and 3 gratefully acknowledge
-the grant from NSF (\#1234--2012--ABC). \textit{This whole paragraph is
-  just an example.}
 
 
 \bibliographystyle{SIGCHI-Reference-Format}
