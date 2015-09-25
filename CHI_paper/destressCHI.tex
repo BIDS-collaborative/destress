@@ -264,11 +264,16 @@ We also give the interviewer the ability to add {\em importance weighting} to wo
 In order to understand the context of answer sentences returned by the query, we also provide the interviewer a link to the original post on the LiveJournal website. 
 
 \section{Co-design Process}
+\begin{figure*}[htb]
+\centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
+\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.\label{fig:interviewFlow}}
+\end{figure*}
+
 \subsection{Initial Concept Formation}
-The design of this system starts with the realization that there is a potential to gather semantic data from large corpus of data, which could be used to help researchers identify what people are actually saying about a topic. The use of LiveJournal helps access colloquial terms. On the system side, it also comes from the frustration trying to use traditional text exploration methods like regular expressions and bag of words, which require much effort to render little results over time.
+The design of this system starts with the realization that there is a potential to gather semantic data from large corpus of data, which could be used to help researchers identify what people are actually saying about a topic. The use of LiveJournal text helps access colloquial terms. The size of the corpus also ensures that even less popular topics are often represented in many journal posts. 
+ We also felt that existing keyword-based tools to explore such large corpuses are limited in their ability to recover unexpected insights.
 
-We started with the idea of using the sentence as the analysis unit, rather than the word. This helps work through statements which carry both info about a topic but also are charged with emotions and actions. We therefore formulated a very simple format of asking ``questions'' or queries to the crowd data to obtain relevant answers from the dataset. The size of the corpus ensures that event less popular topics are often represented in many journal posts. 
-
+We also want the researchers to be able to pose queries as full sentences in addition to collections of words. In this way queries can carry additional information such as emotions. We therefore formulated a very simple format of asking ``questions'' or queries to the crowd data to obtain relevant answers from the dataset. Figure~\ref{fig:interviewFlow} shows an example of a series of synthetic interview questions analogous to the semi-structured interview process. We expect that an interviewer hones their line of questioning along with their hypothesis by exploring the responses at each step. 
 \subsection{Early Idea Validation}
 
 % First sentence
@@ -429,11 +434,6 @@ The law sociologist also expressed that she was eager to use the tool as soon as
 %We implemented an off-line search option at full capacity (100\%). Results from this implementation are explained in the next section.
 
 \section{Results}
-
-\begin{figure*}[htb]
-\centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
-\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.}
-\end{figure*}
 
 %\begin{figure}[tb]
 %\centering \includegraphics[width=0.45\textwidth]{figures/examplePost1} 
