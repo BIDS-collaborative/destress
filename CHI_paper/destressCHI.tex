@@ -147,8 +147,8 @@ While they are of tremendous value, they also have difficulties:
 In this paper, we explore the use of Big Data technologies to provide an alternative to
 semi-structured interviews that serves some of the same goals. Specifically we explore recently
 developed deep semantic embedding techniques to discover relevant posts from a large corpus of
-user-generated content. We use a corpus of public posts from the Livejournal site.  Livejournal is a
-social media site where users maintain a personal online journal or diary. Livejournal posts tend to
+user-generated content. We use a corpus of public posts from the LiveJournal site.  LiveJournal is a
+social media site where users maintain a personal online journal or diary. LiveJournal posts tend to
 be longer than other sites, and the journal format encourages externalization of user attitudes and
 values. Explicit sentiment is attached to some posts via an emoticon system. The site contains many
 themed areas around topics such as health and lifestyle.  Even among the public posts there are many
@@ -159,7 +159,7 @@ explore this corpus via a series of ``questions'' similar to a semi-structured i
 question retrieves a set of relevant sentences from various parts of the corpus, and the containing
 posts can be retrieved to provide context around them.
 
-Within the Livejournal corpus are significant tracts of text where users discuss attitudes, values
+Within the LiveJournal corpus are significant tracts of text where users discuss attitudes, values
 and personal experiences around various topics. We argue that these tracts are similar to the
 responses users might give in a semi-structured interview. They even occur in the context of that
 user's history of posts, which can be explored to better understand their background. The challenge
@@ -181,7 +181,7 @@ interviews, which include:
 \item[Economy] Our approach is very economical compared to live interviews. No travel is involved,
   no transcription, no subject payments.
 \item[Interviewer Reflection] Interviewers can take as much time as needed to compose questions.
-  There is no cost to persuing side themes, or with ``dead-end'' themes. Interviews can last as long
+  There is no cost to pursuing side themes, or with ``dead-end'' themes. Interviews can last as long
   as desired, be paused/restarted etc. 
 \item[Representativeness/Diversity] The number of users who will post about a popular topic (e.g. health,
   transportation) is large compared to the number of users who would be involved in face-to-face
@@ -201,23 +201,23 @@ with these developments.
 \section{Methodology}
 
 \subsection{LiveJournal Corpus}
-For this study we were able to obtain a data set consisting of all LiveJournal posts as of November 2012 in raw XML format. LiveJournal is a social networking service where users can keep a blog, journal, or diary. Users have their own journal pages, which show all of their most recent journal entries. Each journal entry can also be viewed on its own web page which includes comments left by other users. 
+For this study, we were able to obtain a data set consisting of all LiveJournal posts as of November 2012 in raw XML format. As previously mentioned, LiveJournal is a social networking service where users can keep a blog, journal, or diary. Users have their own journal pages, which show all of their most recent journal entries. Each journal entry can also be viewed on its own web page which includes comments left by other users. 
 
-LiveJournal in the United States currently receives about 170 million page views each month from 10 million unique visitors. Our data contains about one million users with a total of 64,326,865 text posts. Of the users that provided their date of birth, the majority were in the 17-25 age group. Users were able to indicate their binary gender; of those who did so 45\% identified as male and 55\% as female. 
+As of 2012, LiveJournal in the United States received about 170 million page views each month from 10 million unique visitors. Our data contains about one million users with a total of 64,326,865 text posts. Of the users that provided their date of birth, the majority were in the 17-25 age group. Additionally, users were able to indicate their binary gender; of those who did so 45\% identified as male and 55\% as female. 
 
 \subsection{Data preprocessing}
 
-We started with a raw XML dataset which consists of more than nine billion words in over 500 million sentences. In order to extract semantic meaning and run synthetic interviews through the use of natural language processing (NLP) algorithms, we implemented a data pipeline that allows us to extract and clean the post text in a computationally efficient form. 
+We started with a raw XML dataset which consists of more than 9 billion words in over 500 million sentences. In order to extract semantic meaning and run synthetic interviews through the use of natural language processing (NLP) algorithms, we implemented a data pipeline that allows us to extract and clean the post text in a computationally efficient form. 
 
 The first step is to tokenize the corpus using FLEX (Fast Lexical Analyzer), a scanner which maps each word in the corpus to a unique number and saves the mapping in a dictionary. For efficiency, we keep only the 994,949 most common words and discard the rest (all of which occur fewer than 41 times in the entire dataset). Care is taken to properly tokenize numbers and emoticons such as ``:-)'', ``=<'' or ``>:P''.
 
-After removing non-textual content such as images, hyperlinks, and XML formatting data, a bag of words representation is saved for each sentence from the posts as a column in a sparse feature matrix. The rows correspond to the entries in the dictionary above, and the values in the matrix are the counts of each entry for each sentence. For each sentence, we also store the id of the post it belongs to and the user who wrote it so that the original post can be found online. Finally, we need the sentence itself so that we can show it in the results when performing the query.
+After removing non-textual content such as images, hyperlinks, and XML formatting data, a bag-of-words (BOW) representation is saved for each sentence from the posts as a column in a sparse feature matrix. The rows of this matrix correspond to the entries in the dictionary above, and the values in the matrix are the counts of each entry for each sentence. For each sentence, we also store the id of the post it belongs to and the user who wrote it so that the original post can be found online. Finally, we need the sentence itself so that we can show it in the results when performing the query.
 
 %The first thing we implemented was Lucene search into our dataset. This allowed us to first actually see what users were writing and with what moods. UCSF School of Nursing has a life events questionnaire detailing < http://nursing.ucsf.edu/sites/nursing.ucsf.edu/files/LifeEventsQues.pdf> ten categories of life events that may bring about changes in the lives of those who experience them. Some major categories are health, work, love and marriage, family and close friends, personal and social. We wanted to search through the data and see the posts relating to major life events such as disease, cancer, and others. 
 
 \subsection{word2vec}
 
-We will begin our exploration towards synthetic interviewing by employing a popular word embedding model called word2vec \cite{Mikolov2013,MikolovSCCD13} which has been successful in a variety of NLP applications including analogy tasks, sentence completion, machine translation \cite{W15-4908}, and topic modelling \cite{djuric2015hierarchical}. Word embedding models map each word of a dictionary to a lower dimensional continuous vector representation. With word2vec, this embedding is learned automatically from a sample corpus using a recurrent neural network. 
+We will begin our exploration towards synthetic interviewing by employing a popular word embedding model called word2vec \cite{Mikolov2013,MikolovSCCD13} which has been successful in a variety of NLP applications including analogy tasks, sentence completion, machine translation \cite{W15-4908}, and topic modeling \cite{djuric2015hierarchical}. Word embedding models map each word of a dictionary to a lower dimensional continuous vector representation. With word2vec, this embedding is learned automatically from a sample corpus using a recurrent neural network. 
 
 The true power of the technique is that the resulting feature space demonstrates semantic structure, i.e. it has been shown that vec(``king'') - vec(``man'') + vec(``woman'') has a greater cosine similarity to vec(``queen'') than to the vector of any other word in the dictionary. We can also generalize this comparison technique beyond the scope of single-words. By performing vector addition on the word vector embeddings of corresponding words and normalizing the resulting sum, we can compare the semantic proximity of complete sentences. This procedure is described in detail below.
 
@@ -235,9 +235,9 @@ We use two embedding models. First, we train our own embedding model on the corp
 
 \subsection{Querying}
 
-Our goal is to perform semantic searches on the dataset from queries which can range from individual words to full sentences. To do this, we require a procedure for finding the similarity of sentences based on the embeddings of the individual words. We do this by first normalizing the rows of the embedding matrix, so that each word in the dictionary has the same norm. A sentence is then embedded by mean of the constituent word vectors. The question is posed to the data set using the cosine similarity in this embedding. Note that multi-sentence queries are also possible by treating the entire query in the same way. Although more sophisticated approaches have been shown to outperform this method for comparing the similarity of short text strings based on word embeddings \cite{kenter15short}, we find that this simple approach has sufficient power for our purposes while favoring rapid retrieval of the best matches from a large corpus. 
+Our goal is to perform semantic searches on the dataset from queries which can range from individual words to full sentences. To do this, we require a procedure for finding the similarity of sentences based on the embeddings of the individual words. We do this by first normalizing the rows of the embedding matrix, so that each word in the dictionary has the same norm. A sentence is then embedded by the mean of the constituent word vectors. The question is posed to the data set using the cosine similarity in this embedding. Note that multi-sentence queries are also possible by treating the entire query in the same way. Although more sophisticated approaches have been shown to outperform this method for comparing the similarity of short text strings based on word embeddings \cite{kenter15short}, we find that this simple approach has sufficient power for our purposes while favoring rapid retrieval of the best matches from a large corpus. 
 
-In order to query the data, we multiply the word2vec embedding matrix and the sparse bag of words matrix described above to get a semantic matrix. Each column of this matrix is the word2vec semantic encoding of a sentence in our data set. We divide each column by its norm, so that the magnitude of each column is 1 regardless of the number of words in the sentence. This allows us to perform queries simply by performing the dot product of each column with the query vector. The sentences with the largest inner product scores have the strongest semantic match to the query. We display a certain number of these sentences, which we call the responses to the question, for the interviewer.
+In order to query the data, we multiply the word2vec embedding matrix and the sparse bag of words matrix described above to get a semantic matrix. Each column of this matrix is the word2vec semantic encoding of a sentence in our data set. We divide each column by its norm, so that the magnitude of each column is 1, regardless of the number of words in the sentence. This allows us to perform queries simply by performing the dot product of each column with the query vector. The sentences with the largest inner product scores have the strongest semantic match to the query. We display a certain number of these sentences, which we call the responses to the question, for the interviewer.
 
 While the system above gives us valuable information, we will see in the following section that some additional features are helpful to tune the responses and obtain more qualitatively interesting responses. First, we use a minimum {\em threshold} on the number of words in the response. No response is allowed which contains fewer words than the threshold. All words, including stop words and out-of-dictionary words, are included in this total. Figure~\ref{fig:wordCDF} shows the distribution of sentence lengths, informing how such a cut will reduce the number of sentences available to query. We found that a minimum threshold of 7 is a good starting point for the LiveJournal dataset.
 
@@ -258,7 +258,7 @@ In order to understand the context of answer sentences returned by the query, we
 By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an academic (insert\_name\_1), he/she states that ?the tool allows researchers to rapidly analyze an informal corpus ? one that has been previously hard to search?. (I am hoping we have transcripts that echo something along these lines). In such instances, we began validating the usability of synthetic interviewing for academic research. To demonstrate examples, we can observe (insert\_name\_1?s) 
 results when querying topics relating to atkins diet.  (insert\_diagram\_of\_results\_of\_diet\_query\_here) In another instance, (insert\_name\_2) of (some\_other\_field), ran queries and yielded similar results. (insert\_diagram\_of\_results\_of\_family\_query\_here). 
 
-The obtained results demonstrate one of many applications of generating synthetic interviews. This inspires curiosity of finding ways to expand its relevance beyond an academic setting. 
+The obtained results demonstrate one of many applications of generating synthetic interviews. Such application inspires curiosity of finding ways to expand its relevance beyond an academic setting. 
 
 \subsection{Model versus Corpus}
 While a majority of our trials yielded positive results, we cannot ignore the remaining minority that did not echo similar success. [insert\_example\_of\_unsucessful\_results\_here]
