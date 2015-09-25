@@ -207,7 +207,7 @@ Researchers have also made efforts to developing a semantic similarity metric ap
 \section{Methodology}
 
 \subsection{LiveJournal Corpus}
-For this study, we obtained a data set consisting of all LiveJournal posts as of November 2012 in raw XML format. As previously mentioned, LiveJournal is a social networking service where users can keep a blog, journal, or diary. Users have their own journal pages, which show all of their most recent journal entries. Each journal entry can also be viewed on its own web page which includes comments left by other users. 
+For this study, we obtained a data set consisting of all public LiveJournal posts as of November 2012 in raw XML format. As previously mentioned, LiveJournal is a social networking service where users can keep a blog, journal, or diary. Users have their own journal pages, which show all of their most recent journal entries. Each journal entry can also be viewed on its own web page which includes comments left by other users. 
 
 As of 2012, LiveJournal in the United States received about 170 million page views each month from 10 million unique visitors. Our data contains about one million users with a total of 64,326,865 text posts. Of the users that provided their date of birth, the majority were in the 17-25 age group. Additionally, users were able to indicate their binary gender; of those who did so 45\% identified as male and 55\% as female. 
 
@@ -333,7 +333,7 @@ Finally, we discussed the types of topics that LiveJournal can handle. The resea
 \begin{figure*}[ht]
 \centering \includegraphics[width=.85\textwidth]{figures/results_1}
 \caption{Example of the effect of filters in the query results. 
-Top right displays the top 8 results for the query ``family holiday'' on the full data. To see more in depth responses, we can filter out the sentences with less than 30 words, see results in the bottom left. Since we perform a semantic query, we may choose to exclude the words ``family'' or ``holiday'' from the results. In the top right panel, we exclude the word ``family''. Finally, we can define a weighting scheme on the query words. In the bottom right panel, we increase the weight on the word ``family'', to obtain results that relate more to ``family'' than ``holiday''. Note that each result belongs to a full post, which we retrieve to the user, e.g., the original post of the highlighted result is shown in Figure~\ref{fig:examplePost}. 
+Top right displays the top 8 results for the query ``family holiday'' on the full data. To see more in depth responses, we can filter out the sentences with less than 30 words, see results in the bottom left. Since we perform a semantic query, we may choose to exclude the words ``family'' or ``holiday'' from the results. In the top right panel, we exclude the word ``family''. Finally, we can define a weighting scheme on the query words. In the bottom right panel, we increase the weight on the word ``family'', to obtain results that relate more to ``family'' than ``holiday''. Note that each result belongs to a full post, which we retrieve to the interviewer, e.g., the original post of the highlighted result is shown in Figure~\ref{fig:examplePost}. 
 \label{fig:familyHolidays} }
 \end{figure*}
 
@@ -362,7 +362,7 @@ He was also very impressed that among the different results he was able to find 
 
 \begin{figure}[bt]
 \centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
-\caption{Original post on LiveJournal.com, corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in greater depth. \label{fig:examplePost}}
+\caption{Public post on LiveJournal.com, corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in greater depth. \label{fig:examplePost}}
 \end{figure}
 
 
