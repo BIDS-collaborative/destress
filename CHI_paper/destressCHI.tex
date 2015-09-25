@@ -264,7 +264,7 @@ We also give the interviewer the ability to add {\em importance weighting} to wo
 In order to understand the context of answer sentences returned by the query, we also provide the interviewer a link to the original post on the LiveJournal website. 
 
 \section{Co-design Process}
-\begin{figure*}[htb]
+\begin{figure*}[tb]
 \centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
 \caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.\label{fig:interviewFlow}}
 \end{figure*}
@@ -348,11 +348,6 @@ Note that each result belongs to a full post. For instance, the highlighted resu
 
 One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, the researcher had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays'' (Figure~\ref{fig:familyHolidays} shows sample questions and responses related to this topic).
 
-\begin{figure}[tb]
-\centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
-\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
-\end{figure}
-
 The social relationships researcher quickly found that the data was very promising. He was very happy with the large number of responses easily available, including expressions syntactically similar to the initial query as well as others semantically close, but quite different syntactically. We visited the actual journals as well (see figure~\ref{fig:examplePost} for an example), going back and forth between the response sentences and the full journal posts. He started finding meta relations across the sentences and we came across more than one answer from the same journal. The researcher felt that the synthetic interview tool was naturally helping him to find ``genres'' of users, and thought this was a great innovation. 
 
 \begin{quote}
@@ -373,6 +368,12 @@ He was also very impressed that among the different results he was able to find 
 {\em
 \dots more than searching for the tail, it would be better to filter out ``words'' like this ``family'' word that comes many times and see only things like this one about the ``brother and the sister''?
 }\end{quote}
+
+\begin{figure}[bt]
+\centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
+\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
+\end{figure}
+
 
 Despite his remarks about UI tools, his biggest interest was indeed in this unique ability that our tool brought to potentially find ``genres'' of journals or groups of users, which for him was very impressive.
 
