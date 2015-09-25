@@ -211,9 +211,11 @@ For this study, we obtained a data set consisting of all LiveJournal posts as of
 
 As of 2012, LiveJournal in the United States received about 170 million page views each month from 10 million unique visitors. Our data contains about one million users with a total of 64,326,865 text posts. Of the users that provided their date of birth, the majority were in the 17-25 age group. Additionally, users were able to indicate their binary gender; of those who did so 45\% identified as male and 55\% as female. 
 
+The median sentence length is 10 and, as expected, the distribution of sentence lengths follows a power law.
+
 \begin{figure}[tb]
 \centering \includegraphics[width=0.3\textwidth]{figures/demographics} 
-\caption{The representation of countries in our data set. }
+\caption{The representation of the top 10 countries in our data set.  \label{fig:demographics}}
 \end{figure}
 
 
@@ -239,10 +241,10 @@ We use two embedding models trained on two different corpus. First, we train our
 %\caption{Histogram of the distribution of sentence lengths in the LiveJournal dataset. \label{fig:wordCounts}}
 %\end{figure}
 
-\begin{figure}[tb]
-\centering \includegraphics[width=0.4\textwidth]{figures/wordCDF} 
-\caption{Cumulative distribution function (CDF) for the distribution of sentence lengths in the LiveJournal dataset which represents the percentage of sentences containing less than a given number of words. Note that the $y$-axis is logarithmic and the median sentence length is 10 words. \label{fig:wordCDF}}
-\end{figure}
+%\begin{figure}[tb]
+%\centering \includegraphics[width=0.4\textwidth]{figures/wordCDF} 
+%\caption{Cumulative distribution function (CDF) for the distribution of sentence lengths in the LiveJournal dataset which represents the percentage of sentences containing less than a given number of words. Note that the $y$-axis is logarithmic and the median sentence length is 10 words. \label{fig:wordCDF}}
+%\end{figure}
 
 \subsection{Querying}
 
@@ -251,7 +253,9 @@ The goal is to perform semantic searches on the dataset from queries which can r
 
 In order to query the data, we multiply the word2vec embedding matrix and the sparse bag of words matrix described above to get a semantic matrix. Each column of this matrix is the word2vec semantic encoding of a sentence in our data set. We normalize each column to make sure that the magnitude of each column is the same, regardless of the number of words in each sentence. This allows us to perform queries simply by performing the dot product of each column with the query vector. The sentences with the largest inner product scores have the strongest semantic match to the query. We display a certain number of these sentences, which we call the responses to the interviewer's question.
 
-While the system above gives us valuable information, we will see in the following section that some additional features are helpful to tune the responses and obtain more qualitatively interesting responses. First, we use a minimum {\em threshold} on the number of words in the response. No response is allowed which contains fewer words than the threshold. All words, including stop words and out-of-dictionary words, are included in this total. Figure~\ref{fig:wordCDF} shows the distribution of sentence lengths, informing how such a cut will reduce the number of sentences available to query. We found that a minimum threshold of 7 is a good starting point for the LiveJournal dataset, but it can be selected by the interviewer at any time.
+While the system above gives us valuable information, we will see in the following section that some additional features are helpful to tune the responses and obtain more qualitatively interesting responses. First, we use a minimum {\em threshold} on the number of words in the response. No response is allowed which contains fewer words than the threshold. All words, including stop words and out-of-dictionary words, are included in this total. 
+% Figure~\ref{fig:wordCDF} shows the distribution of sentence lengths, informing how such a cut will reduce the number of sentences available to query. 
+We found that a minimum threshold of 7 is a good starting point for the LiveJournal dataset, but it can be selected by the interviewer at any time.
 
 The interviewer is given the power to {\em filter} out responses which contain a specific word (or a word from a specific set). The tool does not return sentences containing one or more words from the set of filter words. One simple case in which this is helpful is to suppress responses with exact matches to words from the query question, thereby avoiding responses similar to those of a traditional keyword search.
 
@@ -268,7 +272,7 @@ We started with the idea of using the sentence as the analysis unit, rather than
 \subsection{Early Idea Validation}
 
 % First sentence
-Once we had established what we wanted to do we worked in two fronts, the method to obtain the data and the validation. We approached researchers very soon to gather perspective on the way semi-structured interviewing work and the overall perspective of the qualitative methods and tools. We started talking with a social worker and a couple of technology ethnographers, and simply asked them what they believed a large corpus of data could do for them. We used the analogy of giving them access to millions of diaries, and that they could ``interview'' their users through them. The Social Worker believed that such a tool would be very beneficial to have a ``universal'' perspective of people?s thoughts. She believed that a fundamental need was to have ``context'', i.e. to be able to modify the unit of analysis from sentences to journals and back. She also mentioned that having a simple interface to pose queries is very important, especially if the tool can help search not only technical terms but also colloquial expressions. 
+Once we had established what we wanted to do we worked in two fronts, the method to obtain the data and the validation. We approached researchers very soon to gather perspective on the way semi-structured interviewing work and the overall perspective of the qualitative methods and tools. We started talking with a social worker and a couple of technology ethnographers, and simply asked them what they believed a large corpus of data could do for them. We used the analogy of giving them access to millions of diaries, and that they could ``interview'' their users through them. The Social Worker believed that such a tool would be very beneficial to have a ``universal'' perspective of people's thoughts. She believed that a fundamental need was to have ``context'', i.e. to be able to modify the unit of analysis from sentences to journals and back. She also mentioned that having a simple interface to pose queries is very important, especially if the tool can help search not only technical terms but also colloquial expressions. 
 
 \begin{quote}
 {\em
@@ -301,7 +305,7 @@ With this initial mildly positive reaction we carried on engaging other research
 
 % This next paragraph is very long and convoluted, not going to touch it now -Cory 
 
-The second researcher was studying ``airbnb'' and neighbor relationships with airbnb landlords. The challenge here was the inherent difficulty to search for a topic that is more recent than our corpus of data which was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we did start with queries regarding issues concerning neighbors. The frustration of the researcher was quite enlightening. We observed how she wanted to use the query. We started to move away from the traditional keyword search approach and started searching more colloquial common expressions that one may hear about her topic. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers she was looking for. Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, she brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. She found this need as good and bad, on the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and starting helping the researcher to form ideas around the research topic, on the other hand the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI that would help her create queries. She pointed out some tools like XXXXXX and YYYYY which she believe are examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other little tools that make her life more useful. 
+The second researcher was studying ``Airbnb'' and neighbor relationships with Airbnb landlords. The challenge here was the inherent difficulty to search for a topic that is more recent than our corpus of data which was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we did start with queries regarding issues concerning neighbors. The frustration of the researcher was quite enlightening. We observed how she wanted to use the query. We started to move away from the traditional keyword search approach and started searching more colloquial common expressions that one may hear about her topic. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers she was looking for. Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, she brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. She found this need as good and bad, on the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and starting helping the researcher to form ideas around the research topic, on the other hand the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI that would help her create queries. She pointed out some tools like XXXXXX and YYYYY which she believe are examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other little tools that make her life more useful. 
 
 \begin{quote}
 {\em
@@ -322,15 +326,15 @@ Finally we unavoidably discussed the notion of the types of topics that LiveJour
 \caption{In this figure, we show how the filters affect the query results. 
 At the top right are the top 8 results for the query "family holiday" on the full data.  
 To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
-This is done in the bottom right panel. 
+This is done in the bottom left panel. 
 Since we perform a semantic query, the results do not have to include our query terms. 
 We can exclude the words ``family'' or ``holiday''  entirely and still get good, perhaps even better, results.
 In the top right panel, we exclude the word ``family'' from the sentences in the results.
 Finally, we can place more or less weight on some terms in our query. 
 In the bottom right panel, we increase the weight on the word ``family'', 
-to get results relating more to ``family'' than ``holiday''.
-\label{fig:familyHolidays}
-}
+to get results relating more to ``family'' than ``holiday''.  
+Note that each result belongs to a full post. For instance, the highlighted result is shown in full context in Figure~\ref{fig:examplePost}. 
+\label{fig:familyHolidays} }
 \end{figure*}
 
 One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, he had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays'' (Figure~\ref{fig:familyHolidays} shows sample questions and responses related to this topic).
@@ -420,12 +424,12 @@ We implemented an off-line search option at full capacity (100\%). Results from 
 
 \begin{figure*}[htb]
 \centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
-\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview performed by ????. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.}
+\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.}
 \end{figure*}
 
 \begin{figure}[tb]
 \centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
-\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure ?. By viewing the full text in it's original context, the interviewer is able to explore a response in even greater depth. }
+\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
 \end{figure}
 
 %\begin{figure}[tb]
@@ -435,7 +439,8 @@ We implemented an off-line search option at full capacity (100\%). Results from 
 
 \begin{figure*}[h!]
 \centering \includegraphics[width=\textwidth]{figures/results_2} 
-\caption{Results ... }
+\caption{ Some example queries and results using our method. 
+ \label{fig:moreResults}}
 \end{figure*}
 
 \subsection{Bridging Formal with Informal Language}
@@ -450,9 +455,6 @@ Such subpar retrievals bring attention to the parameters that may impact the qua
 
 To find such pair that is appropriate for a desired topic, we recognize that there are distinct trends and biases from corpus to corpus. In our case, we observed that a dominating majority of the posts were in the form of journal entries, as LiveJournal was designed for that purpose. Additionally, most authors were within the 17-25 age group.
 
-
-\subsection{EVALUATION}
-We interviewed 5 researchers who worked on the tool generating queries. Initially
 
 \section{Conclusions}
 
