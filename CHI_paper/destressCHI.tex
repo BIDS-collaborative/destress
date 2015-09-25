@@ -299,7 +299,7 @@ During the process the interviewer asked if it was possible weight to the words 
 
 With this initial mildly positive reaction we carried on engaging other researchers and we already started to develop some way to access the contextual information surrounding the hit phrases. 
 
-% This next paragraph is very long and convoluted 
+% This next paragraph is very long and convoluted, not going to touch it now -Cory 
 
 The second researcher was studying ``airbnb'' and neighbor relationships with airbnb landlords. The challenge here was the inherent difficulty to search for a topic that is more recent than our corpus of data which was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we did start with queries regarding issues concerning neighbors. The frustration of the researcher was quite enlightening. We observed how she wanted to use the query. We started to move away from the traditional keyword search approach and started searching more colloquial common expressions that one may hear about her topic. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers she was looking for. Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, she brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. She found this need as good and bad, on the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and starting helping the researcher to form ideas around the research topic, on the other hand the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI that would help her create queries. She pointed out some tools like XXXXXX and YYYYY which she believe are examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other little tools that make her life more useful. 
 
@@ -315,25 +315,41 @@ Finally we unavoidably discussed the notion of the types of topics that LiveJour
 \dots now, this is better, but you have to make some ``crazy'' assumptions to get to this level.
 }\end{quote}
 
-One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, he had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays'':
+% End of not-touching section. -Cory
 
-REFERENCE PIERRE's FIGURE
+\begin{figure*}[ht!]
+\centering \includegraphics[width=.85\textwidth]{figures/results_1} 
+\caption{In this figure, we show how the filters affect the query results. 
+At the top right are the top 8 results for the query "family holiday" on the full data.  
+To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
+This is done in the bottom right panel. 
+Since we perform a semantic query, the results do not have to include our query terms. 
+We can exclude the words ``family'' or ``holiday''  entirely and still get good, perhaps even better, results.
+In the top right panel, we exclude the word ``family'' from the sentences in the results.
+Finally, we can place more or less weight on some terms in our query. 
+In the bottom right panel, we increase the weight on the word ``family'', 
+to get results relating more to ``family'' than ``holiday''.
+\label{fig:familyHolidays}
+}
+\end{figure*}
 
-He quickly found that the data was very promising. He was very happy to observe the plethora of expressions about this topic, that ranged from expressions very close to the initial query to others semantically close, but quite different syntactically. We visited the actual journals and went back and forth from the tool to different journals. He started finding meta relations across the sentences and we came across more than one answer from the same journal. He then realized that this tool had a tremendous potential to not only provide content, but it could help find ``genres'' of users! He thought this was a great innovation. 
+One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, he had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays'' (Figure~\ref{fig:familyHolidays} shows sample questions and responses related to this topic).
+
+He quickly found that the data was very promising. He was very happy with the large number of responses easily available, including expressions syntactically similar to the initial query as well as others semantically close, but quite different syntactically. We visited the actual journals as well, going back and forth between the response sentences and the full journal posts. He started finding meta relations across the sentences and we came across more than one answer from the same journal. He felt that the synthetic interview tool was naturally helping him to find ``genres'' of users! He thought this was a great innovation. 
 
 \begin{quote}
 {\em
 This is impressive\dots the actual responses for a query are very similar\dots Ah!, if you can search for all those ``authors'', people that write about the same topic you could get something like ``genres''\dots yeah, this would be very useful
 }\end{quote}
 
-He believed that changing the unit of research from sentences to journals to genres of journals would be very valuable. He mentioned that at that level some UI tools would be necessary to make the process more tractable. He suggested some way of faceted search, history of queries and key words saving different top answers and make a micro corpus from that data and do additional semantic search on it.
+He believed that an ability to changing the unit of research from sentences to journals to genres of journals would be very valuable. He also suggested that it might be interesting to store a history of queries, making a micro corpus from previous responses on which to perform additional semantic searches. He mentioned that, as the synthetic interview tool incorporates these additional complexities, some user interface (UI) tools would be necessary to make the process more tractable. 
 
 \begin{quote}
 {\em
 \dots exploring text is hard... yeah, some tools like remembering my searches or some faceted search would be good, but I do not want the system to make many decisions for me, it will lead us to a ``search bubble''\dots similar to what we have not with [search engine]
 }\end{quote}
 
-He was also very interested and impressed that among the different results he was able to find phrases that were semantically right on target with his query, but which did not include the actual query words at all. As you can see in figure X.a he searched for ``family holidays'' and found a lot of results with the word family in it, but also that were about family without the actual word.. He told us that he would like very much that we add a filter where the actual query word(s) are excluded from the results.
+He was also very impressed that among the different results he was able to find phrases that were relevant to his query, but which did not include the actual query words at all. As you can see in figure~\ref{fig:familyHolidays} he searched for ``family holidays'' and found many results containing the word family, but also many that were about family without the actual word. He told us that he would like the ability to add a filter where the actual query words are excluded from the results.
 
 \begin{quote}
 {\em
@@ -344,18 +360,18 @@ Despite his remarks about UI tools, his biggest interest was indeed in this uniq
 
 \subsection{Testing on more data}
 
-By this time we had enabled a larger server with  64GB of memory to run 1\% of the data. We wanted to contrast this new iteration with the same public health researcher, who had a mild experience the first time we had interacted. We wanted to run a simple iteration only with 1\% of the data, but no filters. He started with some more precise questions about the tool. He wanted to know how many users were there, number of posts per use, etc. He considered this important to scope and frame his research. He also wanted to understand better the semantic searching process and asked whether it was better to search keywords or sentences. He mentioned that he is very interested in finding some people that are archetypes of people that used successful strategies to lose weight and keep it low. He had also prepared a group of synonyms about eating that he wanted to search. We started searching in the lo-fi prototype just as a way to see the difference. He searched for 
-
-{\ttfamily query(``i lost weight and kept it off'',100)}
-
-He found little value. We moved then to the mid-fi prototype, which rendered very relevant results with the same query. He was very impressed and wanted to see various journals. He believed that some journals were excellent case studies about his topic and he even thought of other potential research that people in public policy could make. 
+By this time we had enabled a larger server with  64GB of memory to run the interactive queries on 1\% of the data. We wanted to demonstrate this new iteration to the same public health researcher, who had a mild experience the first time we had interacted. 
+%We wanted to run a simple iteration only with 1\% of the data, but no filters. 
+The researcher began by asking demographic questions about the data set, such as number of users, posts per user, etc. He considered this important to frame his research. He also wanted to understand better the semantic searching process and asked whether it was better to search keywords or sentences. He mentioned that he is very interested in finding users that are archetypes of those who used successful strategies to lose weight and keep it low. He had also prepared a group of synonyms about eating that he wanted to search. We started searching in the lo-fi prototype just as a way to see the difference. He began by posing the question ``i lost weight and kept it off'' with no filter and the default threshold, but found little value in the results from the lo-fi dataset. We moved then to the mid-fi prototype, which return much more relevant results for the same query. He was very impressed and wanted to see various full journal entries. He felt that some journals were excellent case studies about his topic and he even thought of other potential research that people in public policy could make. 
 
 \begin{quote}
 {\em
 \dots and I think I will send this to my colleagues in the CDC, or even better get many other dissertations to other students in my department! :) \dots
 }\end{quote}
 
-He said that he would love to see some more results with some filters like subtracting words and to get the sentence before and after the ones that he got. Finally he said that he would like to be able to easily see the journals and select the ones he wants to work on and search on those journals alone. He also mentioned the need for some socio-demographic and additional info that would validate the tool. He was not concerned about knowing the topics embedded in the corpus, not much interested in a predetermined diversity filter. He would not mind using it but only if he can control it.
+He said that he would love to see some additional features like the ability to subtract words or to get the sentences before and after the matches. Finally he said that he would like to be able to easily see the journals and select the ones he wants to work on and search on those journals alone. He also reiterated the importance of understanding the socio-demographic properties of the dataset. He was not concerned about knowing the topics embedded in the corpus, and not much interested in a predetermined diversity filter. He would not mind using it but only if he can control it.
+
+% Edited to here. -Cory
 
 \subsection{Mid Fidelity (Mi-Fi) Prototype}
 With the provided feedback we were able now to fully implement the mid-fidelity (mi-fi) prototype and implemented all the filters described in section X of this paper.
@@ -416,21 +432,6 @@ We implemented an off-line search option at full capacity (100\%). Results from 
 %\centering \includegraphics[width=0.45\textwidth]{figures/examplePost1} 
 %\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure ?. }
 %\end{figure}
-
-\begin{figure*}[h!]
-\centering \includegraphics[width=\textwidth]{figures/results_1} 
-\caption{In this figure, we show how the filters affect the query results. 
-At the top right are the top 8 results for the query "family holiday" on the full data.  
-To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
-This is done in the bottom right panel. 
-Since we perform a semantic query, the results do not have to include our query terms. 
-We can exclude the word ``family'' or ``holiday'' and still get good, perhaps even better, results! 
-In the top right panel, we exclude the word ``family'' from the sentences in the results.
-Finally, we can place more or less weight on some terms in our query. 
-In the bottom right panel, we increase the weight on the word ``family'', 
-to get results relating more to ``family'' than ``holiday''.
-}
-\end{figure*}
 
 \begin{figure*}[h!]
 \centering \includegraphics[width=\textwidth]{figures/results_2} 
