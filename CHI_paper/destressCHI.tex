@@ -89,7 +89,7 @@
   breaklinks=true,
 }
 
-% create a shortcut to typeset table headings
+% create a shortcut to typeset table andings
 % \newcommand\tabhead[1]{\small\textbf{#1}}
 
 % End of preamble. Here it comes the document.
@@ -267,7 +267,7 @@ In order to understand the context of answer sentences returned by the query, we
 \subsection{Initial Concept Formation}
 The design of this system starts with the realization that there is a potential to gather semantic data from large corpus of data, which could be used to help researchers identify what people are actually saying about a topic. The use of LiveJournal helps access colloquial terms. On the system side, it also comes from the frustration trying to use traditional text exploration methods like regular expressions and bag of words, which require much effort to render little results over time.
 
-We started with the idea of using the sentence as the analysis unit, rather than the word. This helps work through statements which carry both info about a topic but also are charged with emotions and actions. We therefore formulated a very simple format of asking ``questions'' or queries to the crowd data to obtain relevant answers from the dataset. The importance of having a large corpus of data matter as well, because even less popular topics could be represented. 
+We started with the idea of using the sentence as the analysis unit, rather than the word. This helps work through statements which carry both info about a topic but also are charged with emotions and actions. We therefore formulated a very simple format of asking ``questions'' or queries to the crowd data to obtain relevant answers from the dataset. The size of the corpus ensures that event less popular topics are often represented in many journal posts. 
 
 \subsection{Early Idea Validation}
 
@@ -279,7 +279,7 @@ Once we had established what we wanted to do we worked in two fronts, the method
 If you can search in all those journals would be really good\dots and if there are many that are similar it helps to contrast. 
 }\end{quote}
 
-The ethnographers mentioned that their need to observe a population is fundamental, and a tool that allow would allow them to describe a group of people that have common interests would be valuable to help them formulate initial hypotheses. One interesting conversation we had with the ethnographers was around an option to postprocess the responses. Because we observed that many of our queries generated repetitive and redundant answers, one idea we had was to create a ``diversity'' filter that would help increase the entropy of our answers. We proposed this concept to the Ethnographers and to our surprise they rejected it immediately. They believed that in their field ``saturation'' of responses, or receiving extremely similar answers repeatedly, could also be informative.
+The ethnographers mentioned that their need to observe a population is fundamental, and a tool allowing them to describe a group of people with common interests would be valuable to help them when formulating initial hypotheses. One interesting conversation we had concerned an option to postprocess the responses. Since some of our queries generated repetitive or redundant answers, one idea we had was to design a ``diversity'' filter to increase the entropy of our answers. To our surprise, the ethnographers rejected this idea. They believed that, in their field, ``saturation'' of responses (repeatedly receiving similar responses) could also be informative.
 
 \begin{quote}
 {\em
@@ -381,7 +381,7 @@ The researcher began by asking demographic questions about the data set, such as
 The public health researcher said that he would love to see some additional features like the ability to subtract words or to get the sentences before and after the matches. Finally he said that he would like to be able to easily see the journals and select the ones he wants to work on and search on those journals alone. He also reiterated the importance of understanding the socio-demographic properties of the dataset. He was not concerned about knowing the topics embedded in the corpus, and not much interested in a predetermined diversity filter. He would not mind using it but only if he can control it.
 
 \subsection{Mid Fidelity (Mi-Fi) Prototype}
-In response to the feedback from the interviewers we implemented the additional search options (filtering, importance weighting, and minimum threshold) described Querying subsection above. We also expanded the interactive search to 1\% of the dataset. We call this the mid-fidelity (mi-fI) prototype. We now wanted to contrast our former iteration with our filters and again contacted the social networks researcher and run some of his former queries but this time with filters. 
+In response to the feedback from the interviewers we implemented the additional search options (filtering, importance weighting, and minimum threshold) described Querying subsection above. We also expanded the interactive search to 1\% of the dataset. We call this the mid-fidelity (mi-fi) prototype. We now wanted to contrast our former iteration with our filters and again contacted the social networks researcher and run some of his former queries but this time with filters. 
 
 He was delighted with the new results and made the remark that he believes that even at this level of fidelity he would be much more interested in using the tool.
 \begin{quote}
