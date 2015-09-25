@@ -211,6 +211,12 @@ For this study, we obtained a data set consisting of all LiveJournal posts as of
 
 As of 2012, LiveJournal in the United States received about 170 million page views each month from 10 million unique visitors. Our data contains about one million users with a total of 64,326,865 text posts. Of the users that provided their date of birth, the majority were in the 17-25 age group. Additionally, users were able to indicate their binary gender; of those who did so 45\% identified as male and 55\% as female. 
 
+\begin{figure}[tb]
+\centering \includegraphics[width=0.4\textwidth]{figures/demographics} 
+\caption{The representation of countries in our data set. }
+\end{figure}
+
+
 \subsection{Data preprocessing}
 
 We started with a raw XML dataset which consists of more than 9 billion words in over 500 million sentences. In order to extract semantic meaning and run synthetic interviews through the use of natural language processing (NLP) algorithms, we implemented a data pipeline that allows us to extract and clean the post text in a computationally efficient form. 
@@ -414,7 +420,16 @@ We implemented an off-line search option at full capacity (100\%). Results from 
 \begin{figure*}[h!]
 \centering \includegraphics[width=\textwidth]{figures/results_1} 
 \caption{In this figure, we show how the filters affect the query results. 
-At the top right are the top 8 results for the query "family holiday" on the full data. }
+At the top right are the top 8 results for the query "family holiday" on the full data.  
+To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
+This is done in the bottom right panel. 
+Since we perform a semantic query, the results do not have to include our query terms. 
+We can exclude the word "family" or "holiday" and still get good, perhaps even better, results! 
+In the top right panel, we exclude the word "family" from the sentences in the results.
+Finally, we can place more or less weight on some terms in our query. 
+In the bottom right panel, we increase the weight on the word "family", 
+to get results relating more to "family" than "holiday".
+}
 \end{figure*}
 
 \begin{figure*}[h!]
