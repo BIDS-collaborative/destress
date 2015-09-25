@@ -345,7 +345,7 @@ Finally we showed the tool to two other researchers, an HCI researcher/designer 
 
 When he started searching for the information about his former research topic ``reminiscence trigger" he found very interesting results. He said that the top results validated his findings very well. Things like songs and smells, were top elements in his findings. For a detail of his queries see figure YY (reults). He believed that this tool had merits to support research both at a formative phase as well as a supplement or supportive tool during the process or refinement of the hypothesis. With more information aobut the population, the tool could even become a good formal tool.
 
-Finally we closed our intervies with a lawyer sociologist researching access to justice. The searches were quite peculiar. When searching for ``presence in court'' many answers were about tennis courts. However when we added a filter to eliminate the word ``ball" from the results the answers were very much aligned with quotes about the judiciary system. She believed that a key element to make the tool viable is to have demographics or some sort of validation of the population. Without that it would be very hard to use it in publications.
+Finally we closed our interviews with a lawyer sociologist researching access to justice. The searches were quite peculiar. When searching for ``presence in court'' many answers were about tennis courts. However when we added a filter to eliminate the word ``ball" from the results the answers were very much aligned with quotes about the judiciary system. She believed that a key element to make the tool viable is to have demographics or some sort of validation of the population. Without that it would be very hard to use it in publications.
 
 [quote RAFAELA 1]
 
@@ -383,19 +383,16 @@ We implemented an off-line search option at full capacity (100\%). Results from 
 \end{figure*}
 
 \subsection{Bridging Formal with Informal Language}
-By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an academic (insert\_name\_1), he/she states that ?the tool allows researchers to rapidly analyze an informal corpus ? one that has been previously hard to search?. (I am hoping we have transcripts that echo something along these lines). In such instances, we began validating the usability of synthetic interviewing for academic research. To demonstrate examples, we can observe (insert\_name\_1?s) 
-results when querying topics relating to atkins diet.  (insert\_diagram\_of\_results\_of\_diet\_query\_here) In another instance, (insert\_name\_2) of (some\_other\_field), ran queries and yielded similar results. (insert\_diagram\_of\_results\_of\_family\_query\_here). 
+By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an online activism researcher, this tool is unlike others in that it is "not all about keywords". Instead, the researcher states that he "can also profit from [our tool]" by simply "thinking of examples to search on". Unlike traditional searching, querying on an example can return "instances of people saying similar things". 
 
-The obtained results demonstrate one of many applications of generating synthetic interviews. Such application inspires curiosity of finding ways to expand its relevance beyond an academic setting. 
+The obtained responses demonstrate one of many applications of generating synthetic interviews. Such application inspires curiosity of finding ways to expand its relevance beyond an academic setting. 
 
 \subsection{Model versus Corpus}
-While a majority of our trials yielded positive results, we cannot ignore the remaining minority that did not echo similar success. [insert\_example\_of\_unsucessful\_results\_here]
+While a majority of our trials yielded positive results, we cannot ignore the remaining minority that did not echo similar success. One researcher voiced that because "the corpus is LiveJournal, [most authors] post about topics such as food, love, and marriage", however there "would not be [entries] on topics like physics". 
 
-Such subpar retrievals bring attention to the parameters that may impact the quality of our queries. There are two major variables we chose in our implementation: the text corpus for training (Google News) and the actual corpus of text we are querying on (LiveJournal). In many cases, we found our choices to be sufficient; in an academic context, we can imagine researchers to seek answers to formal questions, in order to trigger responses that may be colloquial anecdotes. However, as demonstrated by the [failed\_attempt], an appropriate training-query corpus pair for one category may not necessarily be optimal for another category.
+Such subpar retrievals bring attention to the parameters that may impact the quality of our queries. There are two major variables we chose in our implementation: the text corpus for training (Google News) and the actual corpus of text we are querying on (LiveJournal). In many cases, we found our choices to be sufficient; in an academic context, we can imagine researchers to seek answers to formal questions, in order to trigger responses that may be colloquial anecdotes. However, as demonstrated by the above response, an appropriate training-query corpus pair for one category may not necessarily be optimal for another category.
 
-To find such pair that is appropriate for a desired topic, we recognize that there are distinct trends and biases from corpus to corpus. In our case, we observed that a dominating majority of the posts were in the form of journal entries, as LiveJournal was designed for that purpose. And most authors were within the 17-25 age group. Furthermore, we noticed from our bag-of-words model that topics frequently discussed included [list of frequent topics]. 
-
-By understanding these properties, we can???. [to be continued] 
+To find such pair that is appropriate for a desired topic, we recognize that there are distinct trends and biases from corpus to corpus. In our case, we observed that a dominating majority of the posts were in the form of journal entries, as LiveJournal was designed for that purpose. Additionally, most authors were within the 17-25 age group.
 
 
 \subsection{EVALUATION}
