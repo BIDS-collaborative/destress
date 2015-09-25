@@ -264,11 +264,17 @@ We started with the idea of using the sentence as the analysis unit, rather than
 % First sentence
 Once we had established what we wanted to do we worked in two fronts, the method to obtain the data and the validation. We approached researchers very soon to gather perspective on the way semi-structured interviewing work and the overall perspective of the qualitative methods and tools. We started talking with a social worker and a couple of technology ethnographers, and simply asked them what they believed a large corpus of data could do for them. We used the analogy of giving them access to millions of diaries, and that they could ``interview'' their users through them. The Social Worker believed that such a tool would be very beneficial to have a ``universal'' perspective of people?s thoughts. She believed that a fundamental need was to have ``context'', i.e. to be able to modify the unit of analysis from sentences to journals and back. She also mentioned that having a simple interface to pose queries is very important, especially if the tool can help search not only technical terms but also colloquial expressions. 
 
-[quote social worker]
+\begin{quote}
+{\em
+If you can search in all those journals would be really good? and if there are many that are similar it helps to contrast. 
+}\end{quote}
 
 The ethnographers mentioned that their need to observe a population is fundamental, and a tool that allow would allow them to describe a group of people that have common interests would be valuable to help them formulate initial hypotheses. One interesting conversation we had with the ethnographers was around an option to postprocess the responses. Because we observed that many of our queries generated repetitive and redundant answers, one idea we had was to create a ``diversity'' filter that would help increase the entropy of our answers. We proposed this concept to the Ethnographers and to our surprise they rejected it immediately. They believed that in their field ``saturation'' of responses, or receiving extremely similar answers repeatedly, could also be informative.
 
-[quote ethnographers]
+\begin{quote}
+{\em
+For us seeing that something is repeted many times is valid. There is a concept in ethnography called "saturation", and we use it all the time
+}\end{quote}
 
 Of course they were interested in having such a feature if it could be toggled, and they believed that a filter for diversity or even a simple option that allows them to see larger (more complex) expressions would already help.
 
@@ -277,7 +283,11 @@ Once we gathered this initial perspective we began to refine our search tool. Du
 
 With this prototype working we presented the lo-fi prototype to two researchers. First we had a very short conversation with a public health researcher interested in the topic of diet, and how people maintain weight after dieting. He started by generating a couple of very simple queries about diet, and even though we were working with the lo-fi prototype he already found value in some of the responses. However he also immediately wanted access to contextual data such as the surrounding sentences or, even better, access to the sentence embedded in the actual post. 
 
-[quote victor]
+\begin{quote}
+{\em
+? if you can show me some context would be good? like, maybe the sentence before, or even better before and after? yeah, the link to the page would be good also, ?
+}\end{quote}
+
 
 During the process the interviewer asked if it was possible weight to the words in any way, as he noted that sometimes ancillary words dominated the answers. We took note of this as a potential improvement for the tool.
 
@@ -287,30 +297,43 @@ With this initial mildly positive reaction we carried on engaging other research
 
 The second researcher was studying ``airbnb" and neighbor relationships with airbnb landlords. The challenge here was the inherent difficulty to search for a topic that is more recent than our corpus of data which was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we did start with queries regarding issues concerning neighbors. The frustration of the researcher was quite enlightening. We observed how she wanted to use the query. We started to move away from the traditional keyword search approach and started searching more colloquial common expressions that one may hear about her topic. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers she was looking for. Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, she brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. She found this need as good and bad, on the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and starting helping the researcher to form ideas around the research topic, on the other hand the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI that would help her create queries. She pointed out some tools like XXXXXX and YYYYY which she believe are examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other little tools that make her life more useful. 
 
-
-[QUOTE AIRI]
+\begin{quote}
+{\em
+For the smart system vs smart user, I was just thinking along the lines of how well the system is equipped to predict what the user means (think of early Altavista vs Google today) and how that affects how easy it is for the user to get what they want -- of course, the other side of this is how clear it is how the system works since if the rules of the game are obvious for the user, then it is easier to game the system to get what is sought for.
+}\end{quote}
 
 Finally we unavoidably discussed the notion of the types of topics that LiveJournal can handle. Of course there is a limitation due to the amount of data, but she believed having some preliminary understanding of what topics are well represented in the corpus would help at least know if the use of this corpus is adequate or not.
 
-[QUOTE AIRI 2]
+\begin{quote}
+{\em
+? now, this is better, but you have to make some "crazy" assumptions to get to this level.
+}\end{quote}
 
 One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, he had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays":
-[QUERY]
 
-
+REFERENCE PIERRE's FIGURE
 
 He quickly found that the data was very promising. He was very happy to observe the plethora of expressions about this topic, that ranged from expressions very close to the initial query to others semantically close, but quite different syntactically. We visited the actual journals and went back and forth from the tool to different journals. He started finding meta relations across the sentences and we came across more than one answer from the same journal. He then realized that this tool had a tremendous potential to not only provide content, but it could help find ``genres'' of users! He thought this was a great innovation. 
 
-[QUOTE COYE]
-
+\begin{quote}
+{\em
+This is impressive? the actual responses for a query are very similar? Ah!, if you can search for all those "authors", people that write about the same topic you could get somethingn like "genres" ? yeah, this would be very useful
+}\end{quote}
 
 He believed that changing the unit of research from sentences to journals to genres of journals would be very valuable. He mentioned that at that level some UI tools would be necessary to make the process more tractable. He suggested some way of faceted search, history of queries and key words saving different top answers and make a micro corpus from that data and do additional semantic search on it.
 
-[QUOTE]
+\begin{quote}
+{\em
+? exploring text is hard... yeah, some tools like remembering my searches or some faceted search would be good, but I do not want the system to make many decisions for me, it will lead us to a "search bubble"? similar to what we have not with [search engine]
+}\end{quote}
 
 He was also very interested and impressed that among the different results he was able to find phrases that were semantically right on target with his query, but which did not include the actual query words at all. As you can see in figure X.a he searched for ``family holidays" and found a lot of results with the word family in it, but also that were about family without the actual word.. He told us that he would like very much that we add a filter where the actual query word(s) are excluded from the results.
 
-[QUOTE COYE 2]
+\begin{quote}
+{\em
+? more than searching for the tail, it would be better to filter out "words" like this "family" word that comes many times and see only things like this one about the "brother and the sister"?
+}\end{quote}
+
 Despite his remarks about UI tools, his biggest interest was indeed in this unique ability that our tool brought to potentially find ``genres'' of journals or groups of users, which for him was very impressive.
 
 \subsection{Testing on more data}
@@ -321,7 +344,10 @@ query(``i lost weight and kept it off",100)
 
 He found little value. We moved then to the mid-fi prototype, which rendered very relevant results with the same query. He was very impressed and wanted to see various journals. He believed that some journals were excellent case studies about his topic and he even thought of other potential research that people in public policy could make. 
 
-[QUOTE 2 VICTOR]
+\begin{quote}
+{\em
+? and I think I will send this to my colleagues in the CDC, or even better get many other dissertations to other students in my department! :) ?
+}\end{quote}
 
 He said that he would love to see some more results with some filters like subtracting words and to get the sentence before and after the ones that he got. Finally he said that he would like to be able to easily see the journals and select the ones he wants to work on and search on those journals alone. He also mentioned the need for some socio-demographic and additional info that would validate the tool. He was not concerned about knowing the topics embedded in the corpus, not much interested in a predetermined diversity filter. He would not mind using it but only if he can control it.
 
@@ -340,17 +366,26 @@ But it is a really good tool to be able to find the chunks of data that I want t
 
 Finally we showed the tool to two other researchers, an HCI researcher/designer who worked on activism online and also on multimedia communication tools for families. He found very little merit in the data for the activism topic, specially because he researches topics that are modern and our data (which predates May 2015) may not capture the topic well. We will later show that when we run the data on 100\% of the data, the info became very relevant. However he did find some minor references that he found interesting once he started changing his searches from keywords to expressions such as ``please sign my petition". At this point he made a very important remark. He believed that he has to completely change his approach to use the tool, he mentioned that our current approach using traditional search engines is to think about keywords, while for this tool his queries should be about expressions. 
 
-[quote cristian]
+\begin{quote}
+{\em
+I think the problem might be when you think about a search or a query tool we are way to much biased by our daily search experience, ?all about keywords?. but it seems to me that this, for this to work, you have to give an example.
+}\end{quote}
 
 When he started searching for the information about his former research topic ``reminiscence trigger" he found very interesting results. He said that the top results validated his findings very well. Things like songs and smells, were top elements in his findings. For a detail of his queries see figure YY (reults). He believed that this tool had merits to support research both at a formative phase as well as a supplement or supportive tool during the process or refinement of the hypothesis. With more information aobut the population, the tool could even become a good formal tool.
 
 Finally we closed our interviews with a lawyer sociologist researching access to justice. The searches were quite peculiar. When searching for ``presence in court'' many answers were about tennis courts. However when we added a filter to eliminate the word ``ball" from the results the answers were very much aligned with quotes about the judiciary system. She believed that a key element to make the tool viable is to have demographics or some sort of validation of the population. Without that it would be very hard to use it in publications.
 
-[quote RAFAELA 1]
+\begin{quote}
+{\em
+I believe that I can use this tool in two moments. In the beginning of my research when i want to decide which issue I will talk about say I will try to figure out what is going on, what people are talking about, what are the main issues that are going on. I can bring one issue that is  interesting to help me make the right question. It?s nice to see what people are talking. I can then build the question to be tested. And then I see another time to use it when I want to make real research with people and I don?t have enough money or have enough time to go to the field, it will make it easier and more applicable to make research with people. not more like to view the end process like the middle of the research when you finish the bibliography review and everything and you build your experiment your questions then you go to the field
+}\end{quote}
 
-However, she believed that even without those key validation elements, the tool could have great potential during the initial phase of the hypothesis formulation. She believed that the tool itself would be a great way to save money and time instead of going ``door to door'' at the early stages. In certain projects that she worked, like in the fabelas of Rio de Janeiro, she was not even able to go to the field as it was too dangerous and had to use secondary sources, like police or judiciary documents to try to capture the process of pacification within the fabelas. She believed that applied to a corpus of data characteristic of certain difficult to access areas, this tool would help quite a bit. Even in more accessible areas, she believe the simple ability to search quickly what the people think about a topic is very compelling. 
+However, she believed that even without those key validation elements, the tool could have great potential during the initial phase of the hypothesis formulation. She believed that the tool itself would be a great way to save money and time instead of going ``door to door'' at the early stages. In certain projects that she worked, like in the favelas of Rio de Janeiro, she was not even able to go to the field as it was too dangerous and had to use secondary sources, like police or judiciary documents to try to capture the process of pacification within the favelas. She believed that applied to a corpus of data characteristic of certain difficult to access areas, this tool would help quite a bit. Even in more accessible areas, she believe the simple ability to search quickly what the people think about a topic is very compelling. 
 
-[QUOTE RAFAELA 2]
+\begin{quote}
+{\em
+I had experience in brazil because my field was impossible, so I decided to make research where I could have access available. so i decided to make a new social system. it was impossible to have people to classify the favelas. so i went to the judicial system database for the jurisprudence so i could make a research through the point of view of the institution.
+}\end{quote}
 
 She also wanted to use the tool asap for her current research topic.
 
