@@ -408,7 +408,7 @@ I think the problem might be when you think about a search or a query tool we ar
 
 \begin{figure*}[ht!]
 \centering \includegraphics[width=\textwidth]{figures/results_2} 
-\caption{Some example queries and results using our method.  \label{fig:reminiscenceTriggers}}
+\caption{Some example queries and results on the full data set using our method.  \label{fig:reminiscenceTriggers}}
 \end{figure*}
 
 When he started searching for the information about a previous research topic, ``reminiscence trigger,'' the human computer interaction researcher was very happy with the results results (see figure~\ref{fig:reminiscenceTriggers} for some examples). He said that the top results validated his past findings, from traditional research processes, that songs and smells are extremely triggers of reminiscence. He believed that synthetic interviewing has potential to support research at a formative phase as well as during refinement of the hypothesis. With more information about the population, the synthetic interview process could even become a useful formal tool.
@@ -455,9 +455,12 @@ Such subpar retrievals bring attention to the parameters that may impact the qua
 
 To find such pair that is appropriate for a desired topic, we recognize that there are distinct trends and biases from corpus to corpus. In our case, we observed that a dominating majority of the posts were in the form of journal entries, as LiveJournal was designed for that purpose. Additionally, most authors were within the 17-25 age group.
 
-%
-%\subsection{Corpus Size}
-%We found that corpus size had a strong effect 
+\subsection{Queries on the full dataset}
+
+In addition to our Lo-Fi and Mi-Fi prototypes described above, we were able to query the full dataset offline.  The results on the full dataset are shown in Figures~\ref{fig:familyHolidays} and \ref{fig:reminiscenceTriggers}.
+
+\subsection{Corpus Size}
+We found that corpus size had a strong effect on our results. For very specific queries such as ``democracy participation" or ``social activism", querying on only a portion of the data yielded very little results. However, when we searched on the full dataset, we found a decent amount of appropriately matching sentences. This must be because if we are looking for a topic represented only a small proportion of the users, this proportion becomes a big number when we query on the full dataset.
 
 
 \section{Discussion}
