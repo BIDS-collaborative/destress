@@ -322,9 +322,9 @@ Finally we unavoidably discussed the notion of the types of topics that LiveJour
 % End of not-touching section. -Cory
 
 \begin{figure*}[ht!]
-\centering \includegraphics[width=.85\textwidth]{figures/results_1} 
+\centering \includegraphics[width=.85\textwidth]{figures/results_1}
 \caption{In this figure, we show how the filters affect the query results. 
-At the top right are the top 8 results for the query "family holiday" on the full data.  
+At the top right are the top 8 results for the query ``family holiday" on the full data.  
 To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
 This is done in the bottom left panel. 
 Since we perform a semantic query, the results do not have to include our query terms. 
@@ -375,42 +375,43 @@ The researcher began by asking demographic questions about the data set, such as
 
 He said that he would love to see some additional features like the ability to subtract words or to get the sentences before and after the matches. Finally he said that he would like to be able to easily see the journals and select the ones he wants to work on and search on those journals alone. He also reiterated the importance of understanding the socio-demographic properties of the dataset. He was not concerned about knowing the topics embedded in the corpus, and not much interested in a predetermined diversity filter. He would not mind using it but only if he can control it.
 
-% Edited to here. -Cory
-
 \subsection{Mid Fidelity (Mi-Fi) Prototype}
-With the provided feedback we were able now to fully implement the mid-fidelity (mi-fi) prototype and implemented all the filters described in section X of this paper.
+In response to the feedback from the interviewers we implemented the additional search options (filtering, importance weighting, and minimum threshold) described Querying subsection above. We also expanded the interactive search to 1\% of the dataset. We call this the mid-fidelity (mi-fI) prototype. We now wanted to contrast our former iteration with our filters and again contacted the social networks researcher and run some of his former queries but this time with filters. 
 
-We now wanted to contrast our former iteration with our filters and contacted again the social networks researcher and run some of his former queries but this time with filters. 
-
-[query FAMILY]
-
-He was delighted with these results and made the remark that he believes that even at this level of fidelity he would be interested in using the tool.
+He was delighted with the new results and made the remark that he believes that even at this level of fidelity he would be much more interested in using the tool.
 \begin{quote}
 {\em
-But it is a really good tool to be able to find the chunks of data that I want to use in my studies and I would feel pretty comfortable in being able to use that [word2vec].}
+\dots it is a really good tool to be able to find the chunks of data that I want to use in my studies and I would feel pretty comfortable in being able to use that [word2vec].}
 \end{quote}
 
-Finally we showed the tool to two other researchers, an HCI researcher/designer who worked on activism online and also on multimedia communication tools for families. He found very little merit in the data for the activism topic, specially because he researches topics that are modern and our data (which predates May 2015) may not capture the topic well. We will later show that when we run the data on 100\% of the data, the info became very relevant. However he did find some minor references that he found interesting once he started changing his searches from keywords to expressions such as ``please sign my petition''. At this point he made a very important remark. He believed that he has to completely change his approach to use the tool, he mentioned that our current approach using traditional search engines is to think about keywords, while for this tool his queries should be about expressions. 
+Finally we showed the tool to two other researchers. The first was a human computer interface researcher/designer studying online activism and multimedia communication tools for families. He found very little merit in the data for the activism topic, likely because his particular research topics were more modern than our dataset. We will later see that when we run the queries on 100\% of the data, the value of the results improces. Even with the mi-fi model, he did find some references that he found interesting once he adapted his search strategy from keywords to more colloquial expressions (such as ``please sign my petition''). At this point he made a very important remark. He found that he had to completely change his search paradigm when using the synthetic interview tool, moving away from the example based queries that are successful with traditional keyword search engine queries and towards semantically meaningful questions. 
 
 \begin{quote}
 {\em
 I think the problem might be when you think about a search or a query tool we are way to much biased by our daily search experience, ``all about keywords'' but it seems to me that this, for this to work, you have to give an example.
 }\end{quote}
 
-When he started searching for the information about his former research topic ``reminiscence trigger'' he found very interesting results. He said that the top results validated his findings very well. Things like songs and smells, were top elements in his findings. For a detail of his queries see figure YY (reults). He believed that this tool had merits to support research both at a formative phase as well as a supplement or supportive tool during the process or refinement of the hypothesis. With more information aobut the population, the tool could even become a good formal tool.
+\begin{figure*}[ht!]
+\centering \includegraphics[width=\textwidth]{figures/results_2} 
+\caption{Some example queries and results using our method.  \label{fig:reminiscenceTriggers}}
+\end{figure*}
 
-Finally we closed our interviews with a lawyer sociologist researching access to justice. The searches were quite peculiar. When searching for ``presence in court'' many answers were about tennis courts. However when we added a filter to eliminate the word ``ball'' from the results the answers were very much aligned with quotes about the judiciary system. She believed that a key element to make the tool viable is to have demographics or some sort of validation of the population. Without that it would be very hard to use it in publications.
+When he started searching for the information about a previous research topic, ``reminiscence trigger,'' he was very happy with the results results (see figure~\ref{fig:reminiscenceTriggers} for some examples). He said that the top results validated his past findings, from traditional research processes, that songs and smells are extremely triggers of reminiscence. He believed that synthetic interviewing has potential to support research at a formative phase as well as during refinement of the hypothesis. With more information about the population, the synthetic interview process could even become a useful formal tool.
+
+Finally, we closed our interviews with a law sociologist researching access to justice. The initial search results were quite peculiar because of the formal phrasing of her queries. When searching for ``presence in court'' many answers were about tennis courts. However when we added the filter to eliminate the word ``ball'' from the results the answers were much better and she found many interesting quotes about the judiciary system. She reiterated the point of previous researchers that access to detailed demographic information is a key element to make the tool viable. Without that it would be very hard to use it in publications.
+
+% Edited to here. -Cory
 
 \begin{quote}
 {\em
 I believe that I can use this tool in two moments. In the beginning of my research when i want to decide which issue I will talk about say I will try to figure out what is going on, what people are talking about, what are the main issues that are going on. I can bring one issue that is  interesting to help me make the right question. It's nice to see what people are talking. I can then build the question to be tested. And then I see another time to use it when I want to make real research with people and I don't have enough money or have enough time to go to the field, it will make it easier and more applicable to make research with people. not more like to view the end process like the middle of the research when you finish the bibliography review and everything and you build your experiment your questions then you go to the field
 }\end{quote}
 
-However, she believed that even without those key validation elements, the tool could have great potential during the initial phase of the hypothesis formulation. She believed that the tool itself would be a great way to save money and time instead of going ``door to door'' at the early stages. In certain projects that she worked, like in the favelas of Rio de Janeiro, she was not even able to go to the field as it was too dangerous and had to use secondary sources, like police or judiciary documents to try to capture the process of pacification within the favelas. She believed that applied to a corpus of data characteristic of certain difficult to access areas, this tool would help quite a bit. Even in more accessible areas, she believe the simple ability to search quickly what the people think about a topic is very compelling. 
+However, she believed that even without those key validation elements, the tool would be very helpful during the initial phase of the hypothesis formulation. She believed that the tool itself would be a great way to save money and time instead of going ``door to door'' at the early stages. In certain projects that she worked, like in the favelas of Rio de Janeiro, she was not even able to go to the field as it was too dangerous and had to use secondary sources, like police or judiciary documents to try to capture the process of pacification within the favelas. She believed that applied to a corpus of data characteristic of certain difficult to access areas, this tool would help quite a bit. Even in more accessible areas, she believe the simple ability to search quickly what the people think about a topic is very compelling. 
 
 \begin{quote}
 {\em
-I had experience in brazil because my field was impossible, so I decided to make research where I could have access available. so i decided to make a new social system. it was impossible to have people to classify the favelas. so i went to the judicial system database for the jurisprudence so i could make a research through the point of view of the institution.
+I had experience in Brazil because my field was impossible, so I decided to make research where I could have access available. so i decided to make a new social system. it was impossible to have people to classify the favelas. so i went to the judicial system database for the jurisprudence so i could make a research through the point of view of the institution.
 }\end{quote}
 
 She also wanted to use the tool asap for her current research topic.
@@ -437,11 +438,6 @@ We implemented an off-line search option at full capacity (100\%). Results from 
 %\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure ?. }
 %\end{figure}
 
-\begin{figure*}[h!]
-\centering \includegraphics[width=\textwidth]{figures/results_2} 
-\caption{ Some example queries and results using our method. 
- \label{fig:moreResults}}
-\end{figure*}
 
 \subsection{Bridging Formal with Informal Language}
 By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an online activism researcher, this tool is unlike others in that it is ``not all about keywords''. Instead, the researcher states that he ``can also profit from [our tool]'' by simply ``thinking of examples to search on''. Unlike traditional searching, querying on an example can return ``instances of people saying similar things''. 
