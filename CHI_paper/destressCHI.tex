@@ -399,7 +399,7 @@ I think the problem might be when you think about a search or a query tool we ar
 
 \begin{figure*}[ht!]
 \centering \includegraphics[width=\textwidth]{figures/results_2} 
-\caption{Example queries and results ran on \%100 of the data, and with distinct filters.\label{fig:reminiscenceTriggers}}
+\caption{Example queries and results ran on 100\% of the data, and with distinct filters.\label{fig:reminiscenceTriggers}}
 \end{figure*}
 
 When he started searching for the information about a previous research topic, ``reminiscence trigger,'' the human computer interaction researcher was very happy with the results results (see figure~\ref{fig:reminiscenceTriggers} for some examples). He said that the top results validated his past findings, from traditional research processes, that songs and smells are extremely triggers of reminiscence. He believed that synthetic interviewing has potential to support research at a formative phase as well as during refinement of the hypothesis. With more information about the population, the synthetic interview process could even become a useful formal tool.
@@ -426,25 +426,24 @@ The law sociologist also expressed that she was eager to use the tool as soon as
 %We implemented an off-line search option at full capacity (100\%). Results from this implementation are explained in the next section.
 
 
-\section{Results}
+\section{Conclusions}
 
 %\begin{figure}[tb]
 %\centering \includegraphics[width=0.45\textwidth]{figures/examplePost1} 
 %\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure ?. }
 %\end{figure}
 
+In this paper, we presented a new tool to perform synthetic interviews on a large, colloquial text corpus. We take advantage of advances in semantic word embeddings to provide a power semantic search tool based on queries phrased as sentences. Additional features for modifying and augmenting the search results were designed with the feedback of several qualitative researchers. The feedback from researchers indicated that the tool can serve some of the same goals as semi-structured interviews. The responses also highlight the tool's potential advantages in economy, interviewer reflection, representativeness, and interview control. 
 
-\subsection{Bridging Formal with Informal Language}
-By applying the discussed SGNS Google News-trained word2vec model on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an online activism researcher, this tool is unlike others in that it is ``not all about keywords''. Instead, the researcher states that he ``can also profit from [our tool]'' by simply ``thinking of examples to search on''. Unlike traditional searching, querying on an example can return ``instances of people saying similar things''. 
+The synthetic interview tool bridges the divide between formal research questions and a large collection of informal anecdotes. As stated by the online activism researcher, this tool is unlike others in that it is ``not all about keywords''. Instead, the researcher states that he ``can also profit from [our tool]'' by simply ``thinking of examples to search on''. Compared to traditional keyword searching, the synthetic interview gives a greater variety results, including many whose connection to the original query is not obvious to the interviewer at the beginning of the process.
 
-The obtained responses demonstrate one of many applications of generating synthetic interviews. Such application inspires curiosity of finding ways to expand its relevance beyond an academic setting. 
+While a majority of our trials yielded positive results, we cannot ignore the remaining minority that did not echo similar success. One researcher voiced that because ``the corpus is LiveJournal, [most authors] post about topics such as food, love, and marriage'', however there ``would not be [entries] on topics like physics''. This shortcoming is in the query corpus, which we can target in two ways. In addition to our lo-fi and mi-fi prototypes described above, we were able to query 100\% of the dataset offline (the process was too slow for interactive interviews).  The results in figures~\ref{fig:familyHolidays} and \ref{fig:reminiscenceTriggers} are from such full corpus. This improves the quality of some queries significantly. We also expect that synthetic interviews on other topic poorly represented in the LiveJournal posts can be executed successfully by choosing an alternate corpus with greater relevance. 
 
-\subsection{Model versus Corpus}
-While a majority of our trials yielded positive results, we cannot ignore the remaining minority that did not echo similar success. One researcher voiced that because ``the corpus is LiveJournal, [most authors] post about topics such as food, love, and marriage'', however there ``would not be [entries] on topics like physics''. 
-
-Such subpar retrievals bring attention to the parameters that may impact the quality of our queries. There are two major variables we chose in our implementation: the text corpus for training (Google News) and the actual corpus of text we are querying on (LiveJournal). In many cases, we found our choices to be sufficient; in an academic context, we can imagine researchers to seek answers to formal questions, in order to trigger responses that may be colloquial anecdotes. However, as demonstrated by the above response, an appropriate training-query corpus pair for one category may not necessarily be optimal for another category.
-
-To find such pair that is appropriate for a desired topic, we recognize that there are distinct trends and biases from corpus to corpus. In our case, we observed that a dominating majority of the posts were in the form of journal entries, as LiveJournal was designed for that purpose. Additionally, most authors were within the 17-25 age group.
+Another variable in the interviews is the choice of word embeddings. We experimented with embeddings trained on Google News as well as LiveJournal posts, and saw that the training corpus provides an additional option for tuning the synthetic interviews to specific research topics.
+%The synthetic interview process also solves the limitations with traditional semi-structured interviewing identified in the introduction. Specifically, we find that
+%\begin{itemize}
+%
+%\end{itemize}
 
 \subsection{Queries on the full dataset}
 
@@ -453,12 +452,44 @@ In addition to our Lo-Fi and Mi-Fi prototypes described above, we were able to q
 \subsection{Corpus Size}
 We found that corpus size had a strong effect on our results. For very specific queries such as ``democracy participation" or ``social activism", querying on only a portion of the data yielded very little results. However, when we searched on the full dataset, we found a decent amount of appropriately matching sentences. This must be because if we are looking for a topic represented only a small proportion of the users, this proportion becomes a big number when we query on the full dataset.
 
+\section{Future Work}
+This paper was a first exploration of semantic matching methods as a alternative/complement to semi-structured interviewing in user
+studies. At high-level, we found that using semantic matching improved over traditional keyword-based methods, and
+that searching a larger dataset improves the quality and diversity of retrieved posts. These findings suggest a number
+of avenues for future work:
 
-\section{Discussion}
+\begin{description}
 
-In this paper, we presented a new tool to perform synthetic interviews on a large, colloquial text corpus. We take advantage of advances in semantic word embeddings to provide a power semantic search tool based on sentence length queries. Additional features for modifying and augmenting the search results were designed with the feedback of several qualitative researchers. The compilation of feedback demonstrated that the tool can serve some of the same goals as semi-structured interviews. Additionally, the responses highlight the tool's potential advantages in economy, interviewer reflection, representativeness, and interview control. We showed that this can be a useful addition to a qualitative researcher's toolbox. 
+\item[Improved Semantic Technologies] Word2vec is a fast and
+  moderately effective semantic embedding scheme. But it ignores word
+  order and phrase structure. State-of-the-art methods use recurrent
+  neural nets (RNNs) such as LSTM (Long Short-Term Memory). These
+  better model local and global sentence structure, and can be used to
+  model paragraph and document-level structure. Using better embedding
+  methods will likely lead to more useful results from semantic
+  matching.
 
-In the future, we plan to implement to a distributed system to query in real-time on the full dataset and to develop a better user interface for performing queries. Another possible improvement would be the use of full-sentence embedding techniques such as skip-thought vectors \cite{kiros2015skip}.
+\item[Larger-Scale Live Matching] Semantic matching is expensive at
+  the full scale of Livejournal. With 500 million sentences and
+  300-dimensional embedding, one needs 600 GB of ``hot'' data in
+  memory to do model matching.  That requires either custom hardware
+  or a cluster of machines. In the former case, one also needs a fast
+  index to retrieve nearby sentences. Both solutions are practical but
+  require integration of state-of-the-art techniques, and remain work
+  in progress for us.
+
+\item[Synthetic Text Generation] One powerful affordance of the LSTM
+  design is the generation of text as well as matching. That is, one
+  can produce fully synthetic user output in response to a query. This
+  synthetic text has high quality on related tasks such as language
+  translation. While one loses the affordances related to exploring a
+  particular user's post in context, one gains affordances related to
+  the diversity and representativeness of the synthetic posts (via
+  controls on the diversity of their synthesis).  One also gains a
+  level of privacy protection relative to retrieving true posts. The
+  quality and utility of these posts is very much an open question.
+
+\end{description}
 
 \section{Acknowledgments}
 
