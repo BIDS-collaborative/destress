@@ -321,7 +321,7 @@ Finally we unavoidably discussed the notion of the types of topics that LiveJour
 
 % End of not-touching section. -Cory
 
-\begin{figure*}[ht!]
+\begin{figure*}[ht]
 \centering \includegraphics[width=.85\textwidth]{figures/results_1}
 \caption{In this figure, we show how the filters affect the query results. 
 At the top right are the top 8 results for the query ``family holiday" on the full data.  
@@ -339,7 +339,12 @@ Note that each result belongs to a full post. For instance, the highlighted resu
 
 One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, he had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays'' (Figure~\ref{fig:familyHolidays} shows sample questions and responses related to this topic).
 
-He quickly found that the data was very promising. He was very happy with the large number of responses easily available, including expressions syntactically similar to the initial query as well as others semantically close, but quite different syntactically. We visited the actual journals as well, going back and forth between the response sentences and the full journal posts. He started finding meta relations across the sentences and we came across more than one answer from the same journal. He felt that the synthetic interview tool was naturally helping him to find ``genres'' of users! He thought this was a great innovation. 
+\begin{figure}[tb]
+\centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
+\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
+\end{figure}
+
+He quickly found that the data was very promising. He was very happy with the large number of responses easily available, including expressions syntactically similar to the initial query as well as others semantically close, but quite different syntactically. We visited the actual journals as well (see figure~\ref{fig:examplePost} for an example), going back and forth between the response sentences and the full journal posts. He started finding meta relations across the sentences and we came across more than one answer from the same journal. He felt that the synthetic interview tool was naturally helping him to find ``genres'' of users! He thought this was a great innovation. 
 
 \begin{quote}
 {\em
@@ -427,11 +432,6 @@ We implemented an off-line search option at full capacity (100\%). Results from 
 \centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
 \caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.}
 \end{figure*}
-
-\begin{figure}[tb]
-\centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
-\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
-\end{figure}
 
 %\begin{figure}[tb]
 %\centering \includegraphics[width=0.45\textwidth]{figures/examplePost1} 
