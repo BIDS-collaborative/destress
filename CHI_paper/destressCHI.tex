@@ -230,9 +230,9 @@ After removing non-textual content such as images, hyperlinks, and XML formattin
 \subsection{word2vec}
 We explore synthetic interviewing by employing word2vec \cite{Mikolov2013,MikolovSCCD13}, a popular word embedding model which has been successful in a variety of NLP applications, including analogy tasks, sentence completion, machine translation \cite{W15-4908}, and topic modeling \cite{djuric2015hierarchical}. Word embedding models map each dictionary word into a lower dimensional continuous vector representation. With word2vec, this embedding is learned automatically from a sample corpus using a recurrent neural network. 
 
-The true power of the technique is that the resulting feature space demonstrates semantic structure, e.g. $\text{vec("king")}\,{-}\, \text{vec("man")}\,{+}\,\text{vec("woman")}$ has a greater cosine similarity to vec("queen") than to the vector of any other word in the dictionary. We can also generalize this comparison technique beyond the scope of single-words. By performing vector addition on the word vector embeddings of corresponding words and normalizing the resulting sum, we can compare the semantic proximity of complete sentences. This procedure is described in detail below.
+The true power of the technique is that the resulting feature space demonstrates semantic structure, e.g. $\text{vec(``king'')}\,{-}\, \text{vec(``man'')}\,{+}\,\text{vec(``woman'')}$ has a greater cosine similarity to vec(``queen'') than to the vector of any other word in the dictionary. We can also generalize this comparison technique beyond the scope of single-words. By performing vector addition on the word vector embeddings of corresponding words and normalizing the resulting sum, we can compare the semantic proximity of complete sentences. This procedure is described in detail below.
 
-We use two embedding models trained on two different corpus. First, we train our own embedding model on the corpus of LiveJournal posts using the Skip-gram with negative sampling (SGNS) implementation of word2vec as recommended in \cite{MikolovSCCD13}. This model gives 300-dimensional embeddings for the 994,949 words in our dictionary. Conveniently, Mikolov et.~al published a pre-trained SGNS word2vec model for open source access \cite{word2vecWEB}. This model was trained on a 100 billion-word Google News corpus, and gives 300-dimensional embeddings for 3 million unique words. All of the words from our LiveJournal dictionary that are not included in this model are mapped to zero vectors. Common stop words (i.e. ``the", ``an", ``who'') provide little semantic information and are also mapped to zero vectors.
+We use two embedding models trained on two different corpus. First, we train our own embedding model on the corpus of LiveJournal posts using the Skip-gram with negative sampling (SGNS) implementation of word2vec as recommended in \cite{MikolovSCCD13}. This model gives 300-dimensional embeddings for the 994,949 words in our dictionary. Conveniently, Mikolov et.~al published a pre-trained SGNS word2vec model for open source access \cite{word2vecWEB}. This model was trained on a 100 billion-word Google News corpus, and gives 300-dimensional embeddings for 3 million unique words. All of the words from our LiveJournal dictionary that are not included in this model are mapped to zero vectors. Common stop words (i.e. ``the'', ``an'', ``who'') provide little semantic information and are also mapped to zero vectors.
 
 %\begin{figure}[tb]
 %\centering \includegraphics[width=0.5\textwidth]{figures/LJCounts} 
@@ -279,7 +279,7 @@ The ethnographers mentioned that their need to observe a population is fundament
 
 \begin{quote}
 {\em
-For us seeing that something is repeted many times is valid. There is a concept in ethnography called "saturation", and we use it all the time
+For us seeing that something is repeated many times is valid. There is a concept in ethnography called ``saturation'', and we use it all the time
 }\end{quote}
 
 Of course they were interested in having such a feature if it could be toggled, and they believed that a filter for diversity or even a simple option that allows them to see larger (more complex) expressions would already help.
@@ -301,7 +301,7 @@ With this initial mildly positive reaction we carried on engaging other research
 
 % This next paragraph is very long and convoluted 
 
-The second researcher was studying ``airbnb" and neighbor relationships with airbnb landlords. The challenge here was the inherent difficulty to search for a topic that is more recent than our corpus of data which was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we did start with queries regarding issues concerning neighbors. The frustration of the researcher was quite enlightening. We observed how she wanted to use the query. We started to move away from the traditional keyword search approach and started searching more colloquial common expressions that one may hear about her topic. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers she was looking for. Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, she brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. She found this need as good and bad, on the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and starting helping the researcher to form ideas around the research topic, on the other hand the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI that would help her create queries. She pointed out some tools like XXXXXX and YYYYY which she believe are examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other little tools that make her life more useful. 
+The second researcher was studying ``airbnb'' and neighbor relationships with airbnb landlords. The challenge here was the inherent difficulty to search for a topic that is more recent than our corpus of data which was obtained in May 2012 (we are in the process of obtaining a more recent version of the LJ corpus). Despite this limitation we did start with queries regarding issues concerning neighbors. The frustration of the researcher was quite enlightening. We observed how she wanted to use the query. We started to move away from the traditional keyword search approach and started searching more colloquial common expressions that one may hear about her topic. Furthermore, she was interested in using the actual answers as queries themselves. Since we were having little success, this approach compensated our inability to frame a good query. This indeed brought us a bit closer to the type of answers she was looking for. Due to a time limitation we did a very quick search on the mid-fi prototype (1\% of the data), and we did observe already an improvement. As closing remarks, she brought a very relevant point, which is that in order to generate good answers she believes that it was important for the interviewer to become a ``smart user''. She pointed out two elements: first to know the tool better, how it generates the search and queries, and second, the mastery of the user. She found this need as good and bad, on the one hand, the overall process of creating queries and seeing the answers did add to the knowledge and starting helping the researcher to form ideas around the research topic, on the other hand the perils and frustration of generating good queries should be addressed not only by improving the quality of the searches but also by adding a good UI that would help her create queries. She pointed out some tools like XXXXXX and YYYYY which she believe are examples of some of the interfaces that qualitative researchers are used to, with good examples of knobs and other little tools that make her life more useful. 
 
 \begin{quote}
 {\em
@@ -312,10 +312,10 @@ Finally we unavoidably discussed the notion of the types of topics that LiveJour
 
 \begin{quote}
 {\em
-\dots now, this is better, but you have to make some ``crazy" assumptions to get to this level.
+\dots now, this is better, but you have to make some ``crazy'' assumptions to get to this level.
 }\end{quote}
 
-One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, he had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays":
+One more interaction with a researcher focused on social relationships online. He was well versed in search models and he wanted to have an initial description of the system, which he understood well. As a matter of fact, he had an inside story about a failed attempt by a commercial analysis software maker on trying to do semantic search a few years ago. He was very open to this idea and interested to see what he could find. He started with a simple query about ``family holidays'':
 
 REFERENCE PIERRE's FIGURE
 
@@ -333,11 +333,11 @@ He believed that changing the unit of research from sentences to journals to gen
 \dots exploring text is hard... yeah, some tools like remembering my searches or some faceted search would be good, but I do not want the system to make many decisions for me, it will lead us to a ``search bubble''\dots similar to what we have not with [search engine]
 }\end{quote}
 
-He was also very interested and impressed that among the different results he was able to find phrases that were semantically right on target with his query, but which did not include the actual query words at all. As you can see in figure X.a he searched for ``family holidays" and found a lot of results with the word family in it, but also that were about family without the actual word.. He told us that he would like very much that we add a filter where the actual query word(s) are excluded from the results.
+He was also very interested and impressed that among the different results he was able to find phrases that were semantically right on target with his query, but which did not include the actual query words at all. As you can see in figure X.a he searched for ``family holidays'' and found a lot of results with the word family in it, but also that were about family without the actual word.. He told us that he would like very much that we add a filter where the actual query word(s) are excluded from the results.
 
 \begin{quote}
 {\em
-\dots more than searching for the tail, it would be better to filter out ``words" like this ``family" word that comes many times and see only things like this one about the ``brother and the sister"?
+\dots more than searching for the tail, it would be better to filter out ``words'' like this ``family'' word that comes many times and see only things like this one about the ``brother and the sister''?
 }\end{quote}
 
 Despite his remarks about UI tools, his biggest interest was indeed in this unique ability that our tool brought to potentially find ``genres'' of journals or groups of users, which for him was very impressive.
@@ -346,7 +346,7 @@ Despite his remarks about UI tools, his biggest interest was indeed in this uniq
 
 By this time we had enabled a larger server with  64GB of memory to run 1\% of the data. We wanted to contrast this new iteration with the same public health researcher, who had a mild experience the first time we had interacted. We wanted to run a simple iteration only with 1\% of the data, but no filters. He started with some more precise questions about the tool. He wanted to know how many users were there, number of posts per use, etc. He considered this important to scope and frame his research. He also wanted to understand better the semantic searching process and asked whether it was better to search keywords or sentences. He mentioned that he is very interested in finding some people that are archetypes of people that used successful strategies to lose weight and keep it low. He had also prepared a group of synonyms about eating that he wanted to search. We started searching in the lo-fi prototype just as a way to see the difference. He searched for 
 
-{\ttfamily query(``i lost weight and kept it off",100)}
+{\ttfamily query(``i lost weight and kept it off'',100)}
 
 He found little value. We moved then to the mid-fi prototype, which rendered very relevant results with the same query. He was very impressed and wanted to see various journals. He believed that some journals were excellent case studies about his topic and he even thought of other potential research that people in public policy could make. 
 
@@ -370,16 +370,16 @@ He was delighted with these results and made the remark that he believes that ev
 But it is a really good tool to be able to find the chunks of data that I want to use in my studies and I would feel pretty comfortable in being able to use that [word2vec].}
 \end{quote}
 
-Finally we showed the tool to two other researchers, an HCI researcher/designer who worked on activism online and also on multimedia communication tools for families. He found very little merit in the data for the activism topic, specially because he researches topics that are modern and our data (which predates May 2015) may not capture the topic well. We will later show that when we run the data on 100\% of the data, the info became very relevant. However he did find some minor references that he found interesting once he started changing his searches from keywords to expressions such as ``please sign my petition". At this point he made a very important remark. He believed that he has to completely change his approach to use the tool, he mentioned that our current approach using traditional search engines is to think about keywords, while for this tool his queries should be about expressions. 
+Finally we showed the tool to two other researchers, an HCI researcher/designer who worked on activism online and also on multimedia communication tools for families. He found very little merit in the data for the activism topic, specially because he researches topics that are modern and our data (which predates May 2015) may not capture the topic well. We will later show that when we run the data on 100\% of the data, the info became very relevant. However he did find some minor references that he found interesting once he started changing his searches from keywords to expressions such as ``please sign my petition''. At this point he made a very important remark. He believed that he has to completely change his approach to use the tool, he mentioned that our current approach using traditional search engines is to think about keywords, while for this tool his queries should be about expressions. 
 
 \begin{quote}
 {\em
 I think the problem might be when you think about a search or a query tool we are way to much biased by our daily search experience, ``all about keywords'' but it seems to me that this, for this to work, you have to give an example.
 }\end{quote}
 
-When he started searching for the information about his former research topic ``reminiscence trigger" he found very interesting results. He said that the top results validated his findings very well. Things like songs and smells, were top elements in his findings. For a detail of his queries see figure YY (reults). He believed that this tool had merits to support research both at a formative phase as well as a supplement or supportive tool during the process or refinement of the hypothesis. With more information aobut the population, the tool could even become a good formal tool.
+When he started searching for the information about his former research topic ``reminiscence trigger'' he found very interesting results. He said that the top results validated his findings very well. Things like songs and smells, were top elements in his findings. For a detail of his queries see figure YY (reults). He believed that this tool had merits to support research both at a formative phase as well as a supplement or supportive tool during the process or refinement of the hypothesis. With more information aobut the population, the tool could even become a good formal tool.
 
-Finally we closed our interviews with a lawyer sociologist researching access to justice. The searches were quite peculiar. When searching for ``presence in court'' many answers were about tennis courts. However when we added a filter to eliminate the word ``ball" from the results the answers were very much aligned with quotes about the judiciary system. She believed that a key element to make the tool viable is to have demographics or some sort of validation of the population. Without that it would be very hard to use it in publications.
+Finally we closed our interviews with a lawyer sociologist researching access to justice. The searches were quite peculiar. When searching for ``presence in court'' many answers were about tennis courts. However when we added a filter to eliminate the word ``ball'' from the results the answers were very much aligned with quotes about the judiciary system. She believed that a key element to make the tool viable is to have demographics or some sort of validation of the population. Without that it would be very hard to use it in publications.
 
 \begin{quote}
 {\em
@@ -424,11 +424,11 @@ At the top right are the top 8 results for the query "family holiday" on the ful
 To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
 This is done in the bottom right panel. 
 Since we perform a semantic query, the results do not have to include our query terms. 
-We can exclude the word "family" or "holiday" and still get good, perhaps even better, results! 
-In the top right panel, we exclude the word "family" from the sentences in the results.
+We can exclude the word ``family'' or ``holiday'' and still get good, perhaps even better, results! 
+In the top right panel, we exclude the word ``family'' from the sentences in the results.
 Finally, we can place more or less weight on some terms in our query. 
-In the bottom right panel, we increase the weight on the word "family", 
-to get results relating more to "family" than "holiday".
+In the bottom right panel, we increase the weight on the word ``family'', 
+to get results relating more to ``family'' than ``holiday''.
 }
 \end{figure*}
 
@@ -438,12 +438,12 @@ to get results relating more to "family" than "holiday".
 \end{figure*}
 
 \subsection{Bridging Formal with Informal Language}
-By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an online activism researcher, this tool is unlike others in that it is "not all about keywords". Instead, the researcher states that he "can also profit from [our tool]" by simply "thinking of examples to search on". Unlike traditional searching, querying on an example can return "instances of people saying similar things". 
+By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an online activism researcher, this tool is unlike others in that it is ``not all about keywords''. Instead, the researcher states that he ``can also profit from [our tool]'' by simply ``thinking of examples to search on''. Unlike traditional searching, querying on an example can return ``instances of people saying similar things''. 
 
 The obtained responses demonstrate one of many applications of generating synthetic interviews. Such application inspires curiosity of finding ways to expand its relevance beyond an academic setting. 
 
 \subsection{Model versus Corpus}
-While a majority of our trials yielded positive results, we cannot ignore the remaining minority that did not echo similar success. One researcher voiced that because "the corpus is LiveJournal, [most authors] post about topics such as food, love, and marriage", however there "would not be [entries] on topics like physics". 
+While a majority of our trials yielded positive results, we cannot ignore the remaining minority that did not echo similar success. One researcher voiced that because ``the corpus is LiveJournal, [most authors] post about topics such as food, love, and marriage'', however there ``would not be [entries] on topics like physics''. 
 
 Such subpar retrievals bring attention to the parameters that may impact the quality of our queries. There are two major variables we chose in our implementation: the text corpus for training (Google News) and the actual corpus of text we are querying on (LiveJournal). In many cases, we found our choices to be sufficient; in an academic context, we can imagine researchers to seek answers to formal questions, in order to trigger responses that may be colloquial anecdotes. However, as demonstrated by the above response, an appropriate training-query corpus pair for one category may not necessarily be optimal for another category.
 
