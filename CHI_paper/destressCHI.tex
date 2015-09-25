@@ -433,13 +433,6 @@ While a majority of our trials yielded positive results, we cannot ignore the re
 
 Another variable in the interviews is the choice of word embeddings. We experimented with embeddings trained on Google News as well as LiveJournal posts, and concluded that the training corpus provides an additional option for tuning the synthetic interviews to specific research topics.
 
-\subsection{Queries on the full dataset}
-
-In addition to our Lo-Fi and Mi-Fi prototypes described above, we were able to query the full dataset offline.  The results on the full dataset are shown in Figures~\ref{fig:familyHolidays} and \ref{fig:reminiscenceTriggers}.
-
-\subsection{Corpus Size}
-We found that corpus size had a strong effect on our results. For very specific queries such as ``democracy participation" or ``social activism", querying on only a portion of the data yielded very little results. However, when we searched on the full dataset, we found a decent amount of appropriately matching sentences. This must be because if we are looking for a topic represented only a small proportion of the users, this proportion becomes a big number when we query on the full dataset.
-
 \section{Future Work}
 This paper was a first exploration of semantic matching methods as a alternative/complement to semi-structured interviewing in user
 studies. At high-level, we found that using semantic matching improved over traditional keyword-based methods, and
