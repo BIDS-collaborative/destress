@@ -350,7 +350,7 @@ He believed that an ability to changing the unit of research from sentences to j
 
 \begin{quote}
 {\em
-\dots exploring text is hard... yeah, some tools like remembering my searches or some faceted search would be good, but I do not want the system to make many decisions for me, it will lead us to a ``search bubble''\dots similar to what we have not with [search engine]
+\dots exploring text is hard... yeah, some tools like remembering my searches or some faceted search would be good, but I do not want the system to make many decisions for me, it will lead us to a ``search bubble''
 }\end{quote}
 
 He was also very impressed that among the different results he was able to find phrases that were relevant to his query, but which did not include the actual query words at all. As you can see in figure~\ref{fig:familyHolidays} the researcher searched for ``family holidays'' and found many results containing the word family, but also many that were about family without the actual word. He told us that he would like the ability to add a filter where the actual query words are excluded from the results.
@@ -413,7 +413,7 @@ Finally, we closed our interviews with a law sociologist researching access to j
 I believe that I can use this tool in two moments. In the beginning of my research when I want to decide which issue I will talk about say I will try to figure out what is going on, what people are talking about, what are the main issues that are going on. I can bring one issue that is interesting to help me make the right question. It's nice to see what people are talking [about]. I can then build the question to be tested. And then I see another time to use it when I want to make real research with people and I don't have enough money or have enough time to go to the field, it will make it easier and more applicable to make research with people. 
 }\end{quote}
 
-However, the law sociologist believed that even without those key validation elements, the tool would be very helpful during the initial phase of the hypothesis formulation. She believed that the tool itself would be a great way to save money and time instead of going ``door to door'' at the early stages. She mentioned that for some of her projects, e.g. in the favelas of Rio de Janeiro, she was not even able to go to the field as it was too dangerous and she was forced to rely on secondary sources, like police or judiciary documents, to study the process of pacification within the favelas. She believed that if the synthetic interview tool could be applied to a corpus of data containing posts from such areas, this tool would allow her direct contact with the people's voice. Even in more accessible areas, she believe the simple ability to search quickly through what the people think about a topic is very compelling. 
+However, the law sociologist believed that even without those key validation elements, the tool would be very helpful during the initial phase of the hypothesis formulation. She believed that the tool itself would be a great way to save money and time instead of going ``door to door'' at the early stages. She mentioned that for some of her projects, e.g. in the favelas of Rio de Janeiro, she was not even able to go to the field as it was too dangerous and she was forced to rely on secondary sources, like police or judiciary documents, to study the process of pacification within the favelas. She believed that if the synthetic interview tool could be applied to a corpus of data containing posts from such areas, this tool would allow her direct contact with the people's voice. Even in more accessible areas, she believes the simple ability to search quickly through what the people think about a topic is very compelling. 
 
 \begin{quote}
 {\em
@@ -425,6 +425,7 @@ The law sociologist also expressed that she was eager to use the tool as soon as
 %\subsection{Full capacity Simulation}
 %We implemented an off-line search option at full capacity (100\%). Results from this implementation are explained in the next section.
 
+
 \section{Results}
 
 %\begin{figure}[tb]
@@ -434,7 +435,7 @@ The law sociologist also expressed that she was eager to use the tool as soon as
 
 
 \subsection{Bridging Formal with Informal Language}
-By applying the discussed SGNS Google News-trained word2vec model, on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an online activism researcher, this tool is unlike others in that it is ``not all about keywords''. Instead, the researcher states that he ``can also profit from [our tool]'' by simply ``thinking of examples to search on''. Unlike traditional searching, querying on an example can return ``instances of people saying similar things''. 
+By applying the discussed SGNS Google News-trained word2vec model on our LiveJournal sparse matrix, we simulate a bridge between formal semantics and vast compilation of informal anecdotes. To explore the potential advantage of such combination, we extended this tool to several academic researchers. As stated by an online activism researcher, this tool is unlike others in that it is ``not all about keywords''. Instead, the researcher states that he ``can also profit from [our tool]'' by simply ``thinking of examples to search on''. Unlike traditional searching, querying on an example can return ``instances of people saying similar things''. 
 
 The obtained responses demonstrate one of many applications of generating synthetic interviews. Such application inspires curiosity of finding ways to expand its relevance beyond an academic setting. 
 
@@ -445,9 +446,16 @@ Such subpar retrievals bring attention to the parameters that may impact the qua
 
 To find such pair that is appropriate for a desired topic, we recognize that there are distinct trends and biases from corpus to corpus. In our case, we observed that a dominating majority of the posts were in the form of journal entries, as LiveJournal was designed for that purpose. Additionally, most authors were within the 17-25 age group.
 
+%
+%\subsection{Corpus Size}
+%We found that corpus size had a strong effect 
 
-\section{Conclusions}
 
+\section{Discussion}
+
+In this paper, we presented a new way to explore a text corpus by taking advantage of semantic embeddings, designed with the feedback of several qualitative researchers. We showed that this can be a useful addition to a qualitative researcher's toolbox. 
+
+In the future, we plan to implement to a distributed system to query in real-time on the full dataset and to develop a better user interface for performing queries.
 
 \section{Acknowledgments}
 
