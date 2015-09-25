@@ -207,7 +207,7 @@ Researchers have also made efforts to developing a semantic similarity metric ap
 \section{Methodology}
 
 \subsection{LiveJournal Corpus}
-For this study, we obtained a data set consisting of all LiveJournal posts as of November 2012 in raw XML format. As previously mentioned, LiveJournal is a social networking service where users can keep a blog, journal, or diary. Users have their own journal pages, which show all of their most recent journal entries. Each journal entry can also be viewed on its own web page which includes comments left by other users. 
+For this study, we obtained a data set consisting of all public LiveJournal posts as of November 2012 in raw XML format. As previously mentioned, LiveJournal is a social networking service where users can keep a blog, journal, or diary. Users have their own journal pages, which show all of their most recent journal entries. Each journal entry can also be viewed on its own web page which includes comments left by other users. 
 
 As of 2012, LiveJournal in the United States received about 170 million page views each month from 10 million unique visitors. Our data contains about one million users with a total of 64,326,865 text posts. Of the users that provided their date of birth, the majority were in the 17-25 age group. Additionally, users were able to indicate their binary gender; of those who did so 45\% identified as male and 55\% as female. 
 
@@ -215,7 +215,7 @@ The median sentence length is 10 and, as expected, the distribution of sentence 
 
 \begin{figure}[tb]
 \centering \includegraphics[width=0.3\textwidth]{figures/demographics} 
-\caption{The representation of the top 10 countries in our data set.  \label{fig:demographics}}
+\caption{Representation of the top 10 countries in the LiveJournal data set.  \label{fig:demographics}}
 \end{figure}
 
 
@@ -266,7 +266,7 @@ In order to understand the context of answer sentences returned by the query, we
 \section{Co-design Process}
 \begin{figure*}[tb]
 \centering \includegraphics[width=0.8\textwidth]{figures/InterviewFlow.pdf} 
-\caption{Example of how the synthetic interview questions evolve in response to the returned answers based on a real synthetic interview. This example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received.\label{fig:interviewFlow}}
+\caption{Example, based on a real synthetic interview, of how the interview questions evolve in response to the returned answers. The flow is somewhat analogous to semi-structured interviewing, where interviewers must modify their line of questioning on the fly to respond to answers received. The example is linear for simplicity of presentation, but the interviewer can easily follow a line of questioning and then return to an earlier query as many times as desired.\label{fig:interviewFlow}}
 \end{figure*}
 
 \subsection{Initial Concept Formation}
@@ -332,17 +332,8 @@ Finally, we discussed the types of topics that LiveJournal can handle. The resea
 
 \begin{figure*}[ht]
 \centering \includegraphics[width=.85\textwidth]{figures/results_1}
-\caption{In this figure, we show how the filters affect the query results. 
-At the top right are the top 8 results for the query ``family holiday'' on the full data.  
-To see more in depth responses, we can try filtering only the sentences with at least 30 words. 
-This is done in the bottom left panel. 
-Since we perform a semantic query, the results do not have to include our query terms. 
-We can exclude the words ``family'' or ``holiday''  entirely and still get good, perhaps even better, results.
-In the top right panel, we exclude the word ``family'' from the sentences in the results.
-Finally, we can place more or less weight on some terms in our query. 
-In the bottom right panel, we increase the weight on the word ``family'', 
-to get results relating more to ``family'' than ``holiday''.  
-Note that each result belongs to a full post. For instance, the highlighted result is shown in full context in Figure~\ref{fig:examplePost}. 
+\caption{Example of the effect of filters in the query results. 
+Top right displays the top 8 results for the query ``family holiday'' on the full data. To see more in depth responses, we can filter out the sentences with less than 30 words, see results in the bottom left. Since we perform a semantic query, we may choose to exclude the words ``family'' or ``holiday'' from the results. In the top right panel, we exclude the word ``family''. Finally, we can define a weighting scheme on the query words. In the bottom right panel, we increase the weight on the word ``family'', to obtain results that relate more to ``family'' than ``holiday''. Note that each result belongs to a full post, which we retrieve to the interviewer, e.g., the original post of the highlighted result is shown in Figure~\ref{fig:examplePost}. 
 \label{fig:familyHolidays} }
 \end{figure*}
 
@@ -371,7 +362,7 @@ He was also very impressed that among the different results he was able to find 
 
 \begin{figure}[bt]
 \centering \includegraphics[width=0.4\textwidth]{figures/examplePost2} 
-\caption{Actual post on LiveJournal.com corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in even greater depth. \label{fig:examplePost}}
+\caption{Public post on LiveJournal.com, corresponding to the highlighted result in Figure~\ref{fig:familyHolidays}. By viewing the full text in its original context, the interviewer is able to explore a response in greater depth. \label{fig:examplePost}}
 \end{figure}
 
 
@@ -408,7 +399,7 @@ I think the problem might be when you think about a search or a query tool we ar
 
 \begin{figure*}[ht!]
 \centering \includegraphics[width=\textwidth]{figures/results_2} 
-\caption{Some example queries and results on the full data set using our method.  \label{fig:reminiscenceTriggers}}
+\caption{Example queries and results ran on \%100 of the data, and with distinct filters.\label{fig:reminiscenceTriggers}}
 \end{figure*}
 
 When he started searching for the information about a previous research topic, ``reminiscence trigger,'' the human computer interaction researcher was very happy with the results results (see figure~\ref{fig:reminiscenceTriggers} for some examples). He said that the top results validated his past findings, from traditional research processes, that songs and smells are extremely triggers of reminiscence. He believed that synthetic interviewing has potential to support research at a formative phase as well as during refinement of the hypothesis. With more information about the population, the synthetic interview process could even become a useful formal tool.
@@ -465,9 +456,9 @@ We found that corpus size had a strong effect on our results. For very specific 
 
 \section{Discussion}
 
-In this paper, we presented a new way to explore a text corpus by taking advantage of semantic embeddings, designed with the feedback of several qualitative researchers. We showed that this can be a useful addition to a qualitative researcher's toolbox. 
+In this paper, we presented a new tool to perform synthetic interviews on a large, colloquial text corpus. We take advantage of advances in semantic word embeddings to provide a power semantic search tool based on sentence length queries. Additional features for modifying and augmenting the search results were designed with the feedback of several qualitative researchers. The compilation of feedback demonstrated that the tool can serve some of the same goals as semi-structured interviews. Additionally, the responses highlight the tool's potential advantages in economy, interviewer reflection, representativeness, and interview control. We showed that this can be a useful addition to a qualitative researcher's toolbox. 
 
-In the future, we plan to implement to a distributed system to query in real-time on the full dataset and to develop a better user interface for performing queries.
+In the future, we plan to implement to a distributed system to query in real-time on the full dataset and to develop a better user interface for performing queries. Another possible improvement would be the use of full-sentence embedding techniques such as skip-thought vectors \cite{kiros2015skip}.
 
 \section{Acknowledgments}
 
