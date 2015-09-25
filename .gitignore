@@ -26,3 +26,5 @@ project/plugins/project/
 
 # Folks have comitted vim swapfiles...
 .*.sw[opq]
+
+.DS_Store
