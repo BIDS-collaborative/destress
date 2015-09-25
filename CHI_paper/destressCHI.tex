@@ -168,7 +168,7 @@ technologies come in. Word2vec is a neural semantic embedding method that has be
 well at a variety of semantic tasks. ``Semantics'' here includes not just propositional content,
 but sentiment and even style. We argue that use of these technologies provides a much richer form
 of matching than traditional keyword-based search and even first-generation semantic search
-techniques such as LSI (Latent Semantic Indexing). We bolster this argument with our experiments
+techniques such as Latent Semantic Indexing (LSI). We bolster this argument with our experiments
 which showed that perceived quality of the retrieved results was improved by {\em filtering out}
 surface-matching (i.e. keyword-matching) posts from semantically-matching posts.
 
@@ -239,7 +239,7 @@ Our goal is to perform semantic searches on the dataset from queries which can r
 
 In order to query the data, we multiply the word2vec embedding matrix and the sparse bag of words matrix described above to get a semantic matrix. Each column of this matrix is the word2vec semantic encoding of a sentence in our data set. We divide each column by its norm, so that the magnitude of each column is 1 regardless of the number of words in the sentence. This allows us to perform queries simply by performing the dot product of each column with the query vector. The sentences with the largest inner product scores have the strongest semantic match to the query. We display a certain number of these sentences, which we call the responses to the question, for the interviewer.
 
-Although the system above gives us valuable information, we will see in the following section that some additional features are helpful to tune the responses and obtain more qualitatively interesting responses. First, we use a minimum {\em threshold} on the number of words in the response. No response is allowed which contains fewer words than the threshold. All words, including stop words and out-of-dictionary words, are included in this total. Figure~\ref{fig:wordCDF} shows the distribution of sentence lengths, informing how such a cut will reduce the number of sentences available to query. We found that a minimum threshold of 7 is a good starting point for the LiveJournal dataset.
+While the system above gives us valuable information, we will see in the following section that some additional features are helpful to tune the responses and obtain more qualitatively interesting responses. First, we use a minimum {\em threshold} on the number of words in the response. No response is allowed which contains fewer words than the threshold. All words, including stop words and out-of-dictionary words, are included in this total. Figure~\ref{fig:wordCDF} shows the distribution of sentence lengths, informing how such a cut will reduce the number of sentences available to query. We found that a minimum threshold of 7 is a good starting point for the LiveJournal dataset.
 
 The interviewer is given the power to {\em filter} responses which contain a specific word (or a word from a specific set). No sentence  containing one or more words from the set of filter words is returned in this case. One simple case in which this is helpful is to suppress responses with exact matches to words from the query question, thereby reducing the similarity of the responses to those of a traditional keyword search.
 
